@@ -1,0 +1,10 @@
+*.csproj.user
+*.ReSharper.user
+*.suo
+*.dotCover
+*.DotSettings.user
+desktop.ini
+_ReSharper*
+obj/
+bin/
+App_Data/
