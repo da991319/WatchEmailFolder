@@ -77,6 +77,9 @@
     <Compile Include="Utils\MimeReader.cs" />
     <Compile Include="Utils\QuotedPrintable.cs" />
     <Compile Include="Utils\RxMailMessage.cs" />
+    <Compile Include="Utils\WatchingFolder.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ViewModels\HomeWindowViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="Views\HomeWindow.xaml.cs">
