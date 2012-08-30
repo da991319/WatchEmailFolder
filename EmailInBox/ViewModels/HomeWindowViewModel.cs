@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
 using Catel.Data;
 using Catel.Logging;
@@ -15,7 +18,7 @@ namespace EmailInBox.ViewModels
     /// <summary>
     /// UserControl view model.
     /// </summary>
-    public class HomeWindowViewModel : ViewModelBase
+    public class HomeWindowViewModel : WindowViewModelBase
     {
         private FileSystemWatcher watcher;
         /// <summary>
@@ -27,6 +30,8 @@ namespace EmailInBox.ViewModels
             FileNumber = Settings.Default.NumberOfEmails;
             LogManager.RegisterDebugListener();
             InitializeWatcher();
+            IconPath = "/Icons/email.ico";
+            RowDoubleClick = new Command<MouseButtonEventArgs>(OnRowDoubleClickExecute, OnRowDoubleClickCanExecute);
         }
 
         private void InitializeWatcher()
@@ -59,6 +64,7 @@ namespace EmailInBox.ViewModels
         private void OnFileCreated(object sender, FileSystemEventArgs e)
         {
             CheckMessages();
+            IconPath = "/Icons/new_email.ico";
         }
 
         private void CheckMessages()
@@ -113,6 +119,38 @@ namespace EmailInBox.ViewModels
         public static readonly PropertyData FileNumberProperty = RegisterProperty("FileNumber", typeof(int), null);
         // TODO: Register view model properties with the vmprop or vmpropviewmodeltomodel codesnippets
         // TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
+        /// <summary>
+        /// Gets the name command.
+        /// </summary>
+        public Command<MouseButtonEventArgs> RowDoubleClick { get; private set; }
 
+        // TODO: Move code below to constructor
+        // TODO: Move code above to constructor
+
+        /// <summary>
+        /// Method to check whether the name command can be executed.
+        /// </summary>
+        /// <returns><c>true</c> if the command can be executed; otherwise <c>false</c></returns>
+        private bool OnRowDoubleClickCanExecute(MouseButtonEventArgs e)
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Method to invoke when the name command is executed.
+        /// </summary>
+        private void OnRowDoubleClickExecute(MouseButtonEventArgs e)
+        {
+            DataGrid source = e.Source as DataGrid;
+
+            if (source.SelectedItem != null)
+            {
+                MessageModel selectedMessage = source.SelectedItem as MessageModel;
+                Process.Start(selectedMessage.Path);
+            }
+            
+
+            int t = 2;
+        }
     }
 }

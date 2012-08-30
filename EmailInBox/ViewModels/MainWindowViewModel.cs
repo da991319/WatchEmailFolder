@@ -8,7 +8,7 @@ namespace EmailInBox.ViewModels
     /// <summary>
     /// MainWindow view model.
     /// </summary>
-    public class MainWindowViewModel : ViewModelBase
+    public class MainWindowViewModel : WindowViewModelBase
     {
         #region Fields
         private static HomeWindowViewModel homeViewModel = new HomeWindowViewModel();
@@ -32,17 +32,17 @@ namespace EmailInBox.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public ViewModelBase CurrentViewModel
+        public WindowViewModelBase CurrentViewModel
         {
-            get { return GetValue<ViewModelBase>(CurrentViewModelProperty); }
+            get { return GetValue<WindowViewModelBase>(CurrentViewModelProperty); }
             set { SetValue(CurrentViewModelProperty, value); }
         }
 
         /// <summary>
         /// Register the name property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData CurrentViewModelProperty = RegisterProperty("Messages", typeof(ViewModelBase), null);
-
+        public static readonly PropertyData CurrentViewModelProperty = RegisterProperty("Messages", typeof(WindowViewModelBase), null);
+        
         #endregion
 
         #region Commands

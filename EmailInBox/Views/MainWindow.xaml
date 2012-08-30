@@ -4,7 +4,8 @@
 				  xmlns:catel="http://catel.codeplex.com"
                   xmlns:vm="clr-namespace:EmailInBox.ViewModels"
                   xmlns:views="clr-namespace:EmailInBox.Views"
-                  ShowInTaskbar="True" ResizeMode="CanResize" SizeToContent="Manual" WindowStartupLocation="Manual" WindowState="Maximized">
+                  xmlns:tb="http://www.hardcodet.net/taskbar"
+                  ShowInTaskbar="True" ResizeMode="CanResize" SizeToContent="Manual" WindowStartupLocation="Manual">
     
     <!-- Resources -->
     <catel:DataWindow.Resources>
@@ -14,11 +15,14 @@
     </catel:DataWindow.Resources>
     
     <!-- Content -->
-     <catel:StackGrid x:Name="LayoutRoot">
+
+    <catel:StackGrid x:Name="LayoutRoot">
 		<catel:StackGrid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 		</catel:StackGrid.RowDefinitions>
-		
+        <tb:TaskbarIcon
+      x:Name="MyNotifyIcon"
+      IconSource="{Binding CurrentViewModel.IconPath}"/>
         <ContentControl Content="{Binding CurrentViewModel}"/>
     </catel:StackGrid>
 </catel:DataWindow>
