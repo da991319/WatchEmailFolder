@@ -1,4 +1,5 @@
 ﻿
+using System;
 using Catel.Data;
 
 namespace EmailInBox.ViewModels
@@ -50,7 +51,28 @@ namespace EmailInBox.ViewModels
         #endregion
 
         #region Methods
-        // TODO: Create your methods here
+        /// <summary>
+        /// Called when a property has changed for a view model type that the current view model is interested in. This can
+        /// be accomplished by decorating the view model with the <see cref="InterestedInAttribute"/>.
+        /// </summary>
+        /// <param name="viewModel">The view model.</param>
+        /// <param name="propertyName">Name of the property.</param>
+        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
+        {
+            int t = 2;
+        }
+
+        /// <summary>
+        /// Called when a command for a view model type that the current view model is interested in has been executed. This can
+        /// be accomplished by decorating the view model with the <see cref="InterestedInAttribute"/>.
+        /// </summary>
+        /// <param name="viewModel">The view model.</param>
+        /// <param name="command">The command that has been executed.</param>
+        /// <param name="commandParameter">The command parameter used during the execution.</param>
+        protected override void OnViewModelCommandExecuted(IViewModel viewModel, ICatelCommand command, object commandParameter)
+        {
+            int t = 2;
+        }
         #endregion
     }
 }

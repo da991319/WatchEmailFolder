@@ -23,6 +23,6 @@
         <tb:TaskbarIcon
       x:Name="MyNotifyIcon"
       IconSource="{Binding CurrentViewModel.IconPath}"/>
-        <ContentControl Content="{Binding CurrentViewModel}"/>
+        <ContentControl Content="{Binding CurrentViewModel}" />
     </catel:StackGrid>
 </catel:DataWindow>

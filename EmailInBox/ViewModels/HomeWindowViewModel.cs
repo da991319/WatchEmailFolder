@@ -10,10 +10,10 @@ using Catel.Data;
 using Catel.Logging;
 using EmailInBox.Models;
 using EmailInBox.Properties;
+using Catel.MVVM;
 
 namespace EmailInBox.ViewModels
 {
-    using Catel.MVVM;
 
     /// <summary>
     /// UserControl view model.
@@ -32,6 +32,8 @@ namespace EmailInBox.ViewModels
             InitializeWatcher();
             IconPath = "/Icons/email.ico";
             RowDoubleClick = new Command<MouseButtonEventArgs>(OnRowDoubleClickExecute, OnRowDoubleClickCanExecute);
+            OnFileCreatedCmd = new Command(OnFileCreatedCmdExecute);
+            OnFileDeletedCmd = new Command(OnFileDeletedCmdExecute);
         }
 
         private void InitializeWatcher()
@@ -58,13 +60,15 @@ namespace EmailInBox.ViewModels
 
         private void OnFileDeleted(object sender, FileSystemEventArgs e)
         {
-            CheckMessages();
+            //CheckMessages();
+            OnFileCreatedCmd.Execute();
         }
 
         private void OnFileCreated(object sender, FileSystemEventArgs e)
         {
-            CheckMessages();
-            IconPath = "/Icons/new_email.ico";
+            //CheckMessages();
+            //IconPath = "/Icons/new_email.ico";
+            OnFileDeletedCmd.Execute();
         }
 
         private void CheckMessages()
@@ -123,10 +127,7 @@ namespace EmailInBox.ViewModels
         /// Gets the name command.
         /// </summary>
         public Command<MouseButtonEventArgs> RowDoubleClick { get; private set; }
-
-        // TODO: Move code below to constructor
-        // TODO: Move code above to constructor
-
+        
         /// <summary>
         /// Method to check whether the name command can be executed.
         /// </summary>
@@ -151,6 +152,33 @@ namespace EmailInBox.ViewModels
             
 
             int t = 2;
+        }
+
+        /// <summary>
+        /// Gets the name command.
+        /// </summary>
+        public Command OnFileCreatedCmd { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the name command is executed.
+        /// </summary>
+        private void OnFileCreatedCmdExecute()
+        {
+            CheckMessages();
+            IconPath = "/Icons/new_email.ico";
+        }
+
+        /// <summary>
+        /// Gets the name command.
+        /// </summary>
+        public Command OnFileDeletedCmd { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the name command is executed.
+        /// </summary>
+        private void OnFileDeletedCmdExecute()
+        {
+            CheckMessages();
         }
     }
 }
