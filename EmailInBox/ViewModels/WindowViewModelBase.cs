@@ -1,6 +1,7 @@
 ﻿
 using Catel.Data;
 using Catel.MVVM;
+using EmailInBox.Utils;
 
 namespace EmailInBox.ViewModels
 {

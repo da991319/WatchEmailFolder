@@ -1,6 +1,8 @@
 ﻿
 using System;
+using System.IO;
 using Catel.Data;
+using EmailInBox.Utils;
 
 namespace EmailInBox.ViewModels
 {
@@ -9,8 +11,12 @@ namespace EmailInBox.ViewModels
     /// <summary>
     /// MainWindow view model.
     /// </summary>
+    /// 
+    [InterestedIn(typeof(HomeWindowViewModel))]
     public class MainWindowViewModel : WindowViewModelBase
     {
+        private readonly INotifyService notifyService = new NotifyService();
+
         #region Fields
         private static HomeWindowViewModel homeViewModel = new HomeWindowViewModel();
         #endregion
@@ -20,10 +26,11 @@ namespace EmailInBox.ViewModels
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
         public MainWindowViewModel()
-            : base()
         {
             CurrentViewModel = homeViewModel;
+            //notifyService.ChangeIconSource("/Icons/email.ico");
         }
+
         #endregion
 
         #region Properties
@@ -51,16 +58,6 @@ namespace EmailInBox.ViewModels
         #endregion
 
         #region Methods
-        /// <summary>
-        /// Called when a property has changed for a view model type that the current view model is interested in. This can
-        /// be accomplished by decorating the view model with the <see cref="InterestedInAttribute"/>.
-        /// </summary>
-        /// <param name="viewModel">The view model.</param>
-        /// <param name="propertyName">Name of the property.</param>
-        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
-        {
-            int t = 2;
-        }
 
         /// <summary>
         /// Called when a command for a view model type that the current view model is interested in has been executed. This can
@@ -72,6 +69,8 @@ namespace EmailInBox.ViewModels
         protected override void OnViewModelCommandExecuted(IViewModel viewModel, ICatelCommand command, object commandParameter)
         {
             int t = 2;
+            notifyService.ChangeIconSource(@"/Icons/new_email.ico");
+            notifyService.Notify("test");
         }
         #endregion
     }

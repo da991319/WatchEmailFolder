@@ -11,6 +11,7 @@ using Catel.Logging;
 using EmailInBox.Models;
 using EmailInBox.Properties;
 using Catel.MVVM;
+using EmailInBox.Utils;
 
 namespace EmailInBox.ViewModels
 {
@@ -24,7 +25,7 @@ namespace EmailInBox.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeWindowViewModel"/> class.
         /// </summary>
-        public HomeWindowViewModel()
+        public HomeWindowViewModel():base()
         {
             FolderToWatch = Settings.Default.FolderToWatch;
             FileNumber = Settings.Default.NumberOfEmails;
@@ -33,7 +34,7 @@ namespace EmailInBox.ViewModels
             IconPath = "/Icons/email.ico";
             RowDoubleClick = new Command<MouseButtonEventArgs>(OnRowDoubleClickExecute, OnRowDoubleClickCanExecute);
             OnFileCreatedCmd = new Command(OnFileCreatedCmdExecute);
-            OnFileDeletedCmd = new Command(OnFileDeletedCmdExecute);
+            //OnFileDeletedCmd = new Command(OnFileDeletedCmdExecute);
         }
 
         private void InitializeWatcher()
@@ -60,15 +61,15 @@ namespace EmailInBox.ViewModels
 
         private void OnFileDeleted(object sender, FileSystemEventArgs e)
         {
-            //CheckMessages();
-            OnFileCreatedCmd.Execute();
+            CheckMessages();
+            //OnFileDeletedCmd.Execute(); 
         }
 
         private void OnFileCreated(object sender, FileSystemEventArgs e)
         {
             //CheckMessages();
             //IconPath = "/Icons/new_email.ico";
-            OnFileDeletedCmd.Execute();
+            OnFileCreatedCmd.Execute();
         }
 
         private void CheckMessages()
@@ -165,20 +166,19 @@ namespace EmailInBox.ViewModels
         private void OnFileCreatedCmdExecute()
         {
             CheckMessages();
-            IconPath = "/Icons/new_email.ico";
         }
 
-        /// <summary>
-        /// Gets the name command.
-        /// </summary>
-        public Command OnFileDeletedCmd { get; private set; }
+        ///// <summary>
+        ///// Gets the name command.
+        ///// </summary>
+        //public Command OnFileDeletedCmd { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the name command is executed.
-        /// </summary>
-        private void OnFileDeletedCmdExecute()
-        {
-            CheckMessages();
-        }
+        ///// <summary>
+        ///// Method to invoke when the name command is executed.
+        ///// </summary>
+        //private void OnFileDeletedCmdExecute()
+        //{
+        //    CheckMessages();
+        //}
     }
 }

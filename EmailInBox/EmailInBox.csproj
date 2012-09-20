@@ -42,6 +42,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Program Files (x86)\Catel 3.2\libraries\NET40\System.Windows.Interactivity.dll</HintPath>
@@ -76,8 +77,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Models\MessageModel.cs" />
+    <Compile Include="Utils\File.cs" />
     <Compile Include="Utils\FilesRetrieve.cs" />
     <Compile Include="Utils\MimeReader.cs" />
+    <Compile Include="Utils\NotifyService.cs" />
     <Compile Include="Utils\QuotedPrintable.cs" />
     <Compile Include="Utils\RxMailMessage.cs" />
     <Compile Include="Utils\WatchingFolder.cs">
