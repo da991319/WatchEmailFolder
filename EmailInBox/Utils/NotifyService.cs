@@ -1,15 +1,17 @@
 ﻿using System;
-using System.Drawing;
-using System.IO;
+using System.Text;
 using System.Windows;
+using System.Windows.Input;
+using EmailInBox.Models;
 using Hardcodet.Wpf.TaskbarNotification;
 
 namespace EmailInBox.Utils
 {
     public interface INotifyService
     {
-        void Notify(string message);
+        void NotifyNewMessage(MessageModel message);
         void ChangeIconSource(string path);
+        void SetLeftClickCommand(ICommand command);
     }
 
     public class NotifyService : INotifyService
@@ -23,16 +25,27 @@ namespace EmailInBox.Utils
             };
 
 
-        public void Notify(string message)
+        public void NotifyNewMessage(MessageModel message)
         {
-            
-            icon.ShowBalloonTip("title", message, BalloonIcon.None);
+            var sb = new StringBuilder();
+
+            sb.AppendFormat("From: {0}{1}", message.From, Environment.NewLine);
+            sb.AppendFormat("To: {0}{1}", message.To, Environment.NewLine);
+            sb.AppendFormat("Subject: {0}{1}", message.Subject, Environment.NewLine);
+            sb.AppendFormat("Click here to read the email");
+
+            icon.ShowBalloonTip("Email Received", sb.ToString(), BalloonIcon.Info);
         }
 
         public void ChangeIconSource(string path)
         {
             icon.Icon = new System.Drawing.Icon(
                         Application.GetResourceStream(Utils.FileUtils.MakeUri(path)).Stream);
+        }
+
+        public void SetLeftClickCommand(ICommand command)
+        {
+            icon.LeftClickCommand = command;
         }
     }
 }

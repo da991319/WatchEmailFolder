@@ -1,5 +1,5 @@
 ﻿
-using System;
+using System.Linq;
 using System.IO;
 using Catel.Data;
 using EmailInBox.Utils;
@@ -28,7 +28,10 @@ namespace EmailInBox.ViewModels
         public MainWindowViewModel()
         {
             CurrentViewModel = homeViewModel;
+            IconLeftClickCommand = new Command(OnIconLeftClickCommandExecute);
             //notifyService.ChangeIconSource("/Icons/email.ico");
+            //notifyService.SetLeftClickCommand(IconLeftClickCommand);
+            
         }
 
         #endregion
@@ -55,6 +58,21 @@ namespace EmailInBox.ViewModels
 
         #region Commands
         // TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
+        /// <summary>
+        /// Gets the name command.
+        /// </summary>
+        public Command IconLeftClickCommand { get; private set; }
+
+        // TODO: Move code below to constructor
+        // TODO: Move code above to constructor
+
+        /// <summary>
+        /// Method to invoke when the name command is executed.
+        /// </summary>
+        private void OnIconLeftClickCommandExecute()
+        {
+            int t = 2;
+        }
         #endregion
 
         #region Methods
@@ -68,9 +86,11 @@ namespace EmailInBox.ViewModels
         /// <param name="commandParameter">The command parameter used during the execution.</param>
         protected override void OnViewModelCommandExecuted(IViewModel viewModel, ICatelCommand command, object commandParameter)
         {
-            int t = 2;
-            notifyService.ChangeIconSource(@"/Icons/new_email.ico");
-            notifyService.Notify("test");
+            if (command.Tag.Equals("FileCreatedCommand"))
+            {
+                notifyService.ChangeIconSource(@"/Icons/new_email.ico");
+                notifyService.NotifyNewMessage(homeViewModel.Messages.FirstOrDefault());
+            }
         }
         #endregion
     }

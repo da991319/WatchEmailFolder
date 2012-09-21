@@ -31,9 +31,9 @@ namespace EmailInBox.ViewModels
             FileNumber = Settings.Default.NumberOfEmails;
             LogManager.RegisterDebugListener();
             InitializeWatcher();
-            IconPath = "/Icons/email.ico";
+            //IconPath = "/Icons/email.ico";
             RowDoubleClick = new Command<MouseButtonEventArgs>(OnRowDoubleClickExecute, OnRowDoubleClickCanExecute);
-            OnFileCreatedCmd = new Command(OnFileCreatedCmdExecute);
+            OnFileCreatedCmd = new Command(OnFileCreatedCmdExecute,null,"FileCreatedCommand");
             //OnFileDeletedCmd = new Command(OnFileDeletedCmdExecute);
         }
 
