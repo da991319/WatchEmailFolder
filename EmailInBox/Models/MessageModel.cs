@@ -10,5 +10,6 @@ namespace EmailInBox.Models
         public string To { get; set; }
         public string Subject { get; set; }
         public string Path { get; set; }
+        public bool NewEmail { get; set; }
     }
 }

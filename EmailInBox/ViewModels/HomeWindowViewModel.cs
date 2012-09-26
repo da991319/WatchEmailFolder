@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -33,8 +34,10 @@ namespace EmailInBox.ViewModels
             InitializeWatcher();
             //IconPath = "/Icons/email.ico";
             RowDoubleClick = new Command<MouseButtonEventArgs>(OnRowDoubleClickExecute, OnRowDoubleClickCanExecute);
-            OnFileCreatedCmd = new Command(OnFileCreatedCmdExecute,null,"FileCreatedCommand");
+            OnFileCreatedCmd = new Command<FileSystemEventArgs>(OnFileCreatedCmdExecute,null,"FileCreatedCommand");
             //OnFileDeletedCmd = new Command(OnFileDeletedCmdExecute);
+            CheckMessagesCommand = new Command(OnCheckMessagesCommandExecute);
+            CheckMessagesCommand.Execute();
         }
 
         private void InitializeWatcher()
@@ -61,20 +64,12 @@ namespace EmailInBox.ViewModels
 
         private void OnFileDeleted(object sender, FileSystemEventArgs e)
         {
-            CheckMessages();
-            //OnFileDeletedCmd.Execute(); 
+            CheckMessagesCommand.Execute(); 
         }
 
         private void OnFileCreated(object sender, FileSystemEventArgs e)
         {
-            //CheckMessages();
-            //IconPath = "/Icons/new_email.ico";
-            OnFileCreatedCmd.Execute();
-        }
-
-        private void CheckMessages()
-        {
-            Messages = new ObservableCollection<MessageModel>(Utils.FilesRetrieve.RetrieveEmail(FolderToWatch, FileNumber));
+            OnFileCreatedCmd.Execute(e);
         }
 
         /// <summary>
@@ -111,11 +106,7 @@ namespace EmailInBox.ViewModels
         public int FileNumber
         {
             get { return GetValue<int>(FileNumberProperty); }
-            set
-            {
-                SetValue(FileNumberProperty, value);
-                Messages = new ObservableCollection<MessageModel>(Utils.FilesRetrieve.RetrieveEmail(FolderToWatch, FileNumber));
-            }
+            set { SetValue(FileNumberProperty, value); }
         }
 
         /// <summary>
@@ -143,29 +134,43 @@ namespace EmailInBox.ViewModels
         /// </summary>
         private void OnRowDoubleClickExecute(MouseButtonEventArgs e)
         {
-            DataGrid source = e.Source as DataGrid;
+            var source = e.Source as DataGrid;
 
             if (source.SelectedItem != null)
             {
                 MessageModel selectedMessage = source.SelectedItem as MessageModel;
                 Process.Start(selectedMessage.Path);
             }
-            
-
-            int t = 2;
         }
 
         /// <summary>
         /// Gets the name command.
         /// </summary>
-        public Command OnFileCreatedCmd { get; private set; }
+        public Command<FileSystemEventArgs> OnFileCreatedCmd { get; private set; }
 
         /// <summary>
         /// Method to invoke when the name command is executed.
         /// </summary>
-        private void OnFileCreatedCmdExecute()
+        private void OnFileCreatedCmdExecute(FileSystemEventArgs e)
         {
-            CheckMessages();
+            CheckMessagesCommand.Execute();
+        }
+
+        /// <summary>
+        /// Gets the name command.
+        /// </summary>
+        public Command CheckMessagesCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the name command is executed.
+        /// </summary>
+        private void OnCheckMessagesCommandExecute()
+        {
+            DateTime reference;
+            var message = (Messages ?? new ObservableCollection<MessageModel>()).FirstOrDefault();
+            reference = message != null ? message.DateReceived : DateTime.Now;
+
+            Messages = new ObservableCollection<MessageModel>(Utils.FilesRetrieve.RetrieveEmails(FolderToWatch, FileNumber, reference));
         }
 
         ///// <summary>

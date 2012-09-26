@@ -11,11 +11,16 @@ namespace EmailInBox.Utils
     {
         void NotifyNewMessage(MessageModel message);
         void ChangeIconSource(string path);
-        void SetLeftClickCommand(ICommand command);
     }
 
     public class NotifyService : INotifyService
     {
+        public NotifyService(RoutedEventHandler clickBalloonEvent, ICommand leftClickCommand)
+        {
+            icon.TrayBalloonTipClicked += clickBalloonEvent;
+            icon.LeftClickCommand = leftClickCommand;
+        }
+
         private TaskbarIcon icon = new TaskbarIcon
             {
                 Name = "NotifyIcon",
@@ -23,7 +28,6 @@ namespace EmailInBox.Utils
                     new System.Drawing.Icon(
                         Application.GetResourceStream(Utils.FileUtils.MakeUri("/Icons/email.ico")).Stream),
             };
-
 
         public void NotifyNewMessage(MessageModel message)
         {
@@ -37,15 +41,12 @@ namespace EmailInBox.Utils
             icon.ShowBalloonTip("Email Received", sb.ToString(), BalloonIcon.Info);
         }
 
+        
+
         public void ChangeIconSource(string path)
         {
             icon.Icon = new System.Drawing.Icon(
                         Application.GetResourceStream(Utils.FileUtils.MakeUri(path)).Stream);
-        }
-
-        public void SetLeftClickCommand(ICommand command)
-        {
-            icon.LeftClickCommand = command;
         }
     }
 }

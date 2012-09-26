@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace EmailInBox.Utils
 {
     public static class FilesRetrieve
     {
-        public static List<MessageModel> RetrieveEmail(string path, int numberOfFile)
+        public static List<MessageModel> RetrieveEmails(string path, int numberOfFile, DateTime referenceTime)
         {
             var files = Directory.GetFiles(path, "*.eml");
 
@@ -21,10 +22,24 @@ namespace EmailInBox.Utils
                                                From = message.From.Address,
                                                To = message.To.ToString(),
                                                Path = file,
-                                               Subject = message.Subject
+                                               Subject = message.Subject,
+                                               NewEmail = message.DeliveryDate > referenceTime
                                            }).OrderByDescending(f => f.DateReceived).Take(numberOfFile).ToList();
 
 
+        }
+
+        public static MessageModel RetreiveEmail(string path)
+        {
+            var mail = new MimeReader().GetEmail(path);
+            return new MessageModel
+                {
+                    DateReceived = mail.DeliveryDate,
+                    From = mail.From.Address,
+                    To = mail.To.ToString(),
+                    Path = path,
+                    Subject = mail.Subject
+                };
         }
     }
 }

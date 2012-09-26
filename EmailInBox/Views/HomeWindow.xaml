@@ -24,7 +24,13 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label>Number of emails to display</Label>
-                <TextBox Text="{Binding FileNumber, UpdateSourceTrigger=PropertyChanged}"/>
+                <TextBox Text="{Binding FileNumber, UpdateSourceTrigger=PropertyChanged}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="LostFocus">
+                            <catel:EventToCommand Command="{Binding CheckMessagesCommand}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </TextBox>
             </StackPanel>
         </StackPanel>
         <DataGrid ItemsSource="{Binding Messages}" AutoGenerateColumns="False" IsReadOnly="True">
@@ -41,6 +47,16 @@
                                          PassEventArgsToCommand="True"/>
                 </i:EventTrigger>
             </i:Interaction.Triggers>
+            <DataGrid.Resources>
+                <Style TargetType="{x:Type DataGridCell}" >
+                    <Setter Property="FontWeight" Value="Normal"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding NewEmail}" Value="True">
+                            <Setter Property="FontWeight" Value="ExtraBold"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.Resources>
         </DataGrid>
 
     </catel:StackGrid>
