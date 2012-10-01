@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using EmailInBox.Models;
 using Hardcodet.Wpf.TaskbarNotification;
@@ -15,10 +16,11 @@ namespace EmailInBox.Utils
 
     public class NotifyService : INotifyService
     {
-        public NotifyService(RoutedEventHandler clickBalloonEvent, ICommand leftClickCommand)
+        public NotifyService(RoutedEventHandler clickBalloonEvent, ICommand leftClickCommand, ContextMenu menu)
         {
             icon.TrayBalloonTipClicked += clickBalloonEvent;
             icon.LeftClickCommand = leftClickCommand;
+            icon.ContextMenu = menu;
         }
 
         private TaskbarIcon icon = new TaskbarIcon
@@ -27,6 +29,7 @@ namespace EmailInBox.Utils
                 Icon =
                     new System.Drawing.Icon(
                         Application.GetResourceStream(Utils.FileUtils.MakeUri("/Icons/email.ico")).Stream),
+                
             };
 
         public void NotifyNewMessage(MessageModel message)
