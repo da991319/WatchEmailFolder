@@ -32,10 +32,8 @@ namespace EmailInBox.ViewModels
             FileNumber = Settings.Default.NumberOfEmails;
             LogManager.RegisterDebugListener();
             InitializeWatcher();
-            //IconPath = "/Icons/email.ico";
             RowDoubleClick = new Command<MouseButtonEventArgs>(OnRowDoubleClickExecute, OnRowDoubleClickCanExecute);
             OnFileCreatedCmd = new Command<FileSystemEventArgs>(OnFileCreatedCmdExecute,null,"FileCreatedCommand");
-            //OnFileDeletedCmd = new Command(OnFileDeletedCmdExecute);
             CheckMessagesCommand = new Command(OnCheckMessagesCommandExecute);
             CheckMessagesCommand.Execute();
         }
@@ -72,66 +70,37 @@ namespace EmailInBox.ViewModels
             OnFileCreatedCmd.Execute(e);
         }
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
         public ObservableCollection<MessageModel> Messages
         {
             get { return GetValue<ObservableCollection<MessageModel>>(MessagesProperty); }
             set { SetValue(MessagesProperty, value); }
         }
 
-        /// <summary>
-        /// Register the name property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData MessagesProperty = RegisterProperty("Messages", typeof(ObservableCollection<MessageModel>), null);
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
         public string FolderToWatch
         {
             get { return GetValue<string>(FolderToWatchProperty); }
             set { SetValue(FolderToWatchProperty, value); }
         }
 
-        /// <summary>
-        /// Register the FolderToWatch property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData FolderToWatchProperty = RegisterProperty("FolderToWatch", typeof(string), null);
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
         public int FileNumber
         {
             get { return GetValue<int>(FileNumberProperty); }
             set { SetValue(FileNumberProperty, value); }
         }
 
-        /// <summary>
-        /// Register the FileNumber property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData FileNumberProperty = RegisterProperty("FileNumber", typeof(int), null);
-        // TODO: Register view model properties with the vmprop or vmpropviewmodeltomodel codesnippets
-        // TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
-        /// <summary>
-        /// Gets the name command.
-        /// </summary>
+        
         public Command<MouseButtonEventArgs> RowDoubleClick { get; private set; }
         
-        /// <summary>
-        /// Method to check whether the name command can be executed.
-        /// </summary>
-        /// <returns><c>true</c> if the command can be executed; otherwise <c>false</c></returns>
         private bool OnRowDoubleClickCanExecute(MouseButtonEventArgs e)
         {
             return true;
         }
 
-        /// <summary>
-        /// Method to invoke when the name command is executed.
-        /// </summary>
         private void OnRowDoubleClickExecute(MouseButtonEventArgs e)
         {
             var source = e.Source as DataGrid;
@@ -143,27 +112,15 @@ namespace EmailInBox.ViewModels
             }
         }
 
-        /// <summary>
-        /// Gets the name command.
-        /// </summary>
         public Command<FileSystemEventArgs> OnFileCreatedCmd { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the name command is executed.
-        /// </summary>
         private void OnFileCreatedCmdExecute(FileSystemEventArgs e)
         {
             CheckMessagesCommand.Execute();
         }
 
-        /// <summary>
-        /// Gets the name command.
-        /// </summary>
         public Command CheckMessagesCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the name command is executed.
-        /// </summary>
         private void OnCheckMessagesCommandExecute()
         {
             DateTime reference;
@@ -172,18 +129,5 @@ namespace EmailInBox.ViewModels
 
             Messages = new ObservableCollection<MessageModel>(Utils.FilesRetrieve.RetrieveEmails(FolderToWatch, FileNumber, reference));
         }
-
-        ///// <summary>
-        ///// Gets the name command.
-        ///// </summary>
-        //public Command OnFileDeletedCmd { get; private set; }
-
-        ///// <summary>
-        ///// Method to invoke when the name command is executed.
-        ///// </summary>
-        //private void OnFileDeletedCmdExecute()
-        //{
-        //    CheckMessages();
-        //}
     }
 }
