@@ -20,7 +20,7 @@
             Initializes the <see cref="T:Catel.Data.DispatcherObservableObject"/> class.
             </summary>
         </member>
-        <member name="M:Catel.Data.DispatcherObservableObject.RaisePropertyChanging(System.Object,System.ComponentModel.PropertyChangingEventArgs)">
+        <member name="M:Catel.Data.DispatcherObservableObject.RaisePropertyChanging(System.Object,Catel.Data.AdvancedPropertyChangingEventArgs)">
             <summary>
             Raises the <see cref="E:Catel.Data.ObservableObject.PropertyChanging"/> event.
             <para/>
@@ -29,7 +29,6 @@
             </summary>
             <param name="sender">The sender.</param>
             <param name="e">The <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance containing the event data.</param>
-            <remarks></remarks>
         </member>
         <member name="M:Catel.Data.DispatcherObservableObject.RaisePropertyChanged(System.Object,Catel.Data.AdvancedPropertyChangedEventArgs)">
             <summary>
@@ -40,7 +39,6 @@
             </summary>
             <param name="sender">The sender.</param>
             <param name="e">The <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance containing the event data.</param>
-            <remarks></remarks>
         </member>
         <member name="T:Catel.Environment">
             <summary>
@@ -91,6 +89,19 @@
             <summary>
             Gets the main window of the application. This is a convenience call to easily allow the retrieval of the main window
             for each target framework (WPF, SL, WP7).
+            </summary>
+        </member>
+        <member name="T:Catel.ModuleInitializer">
+            <summary>
+            Class that gets called as soon as the module is loaded.
+            </summary>
+            <remarks>
+            This is made possible thanks to Fody.
+            </remarks>
+        </member>
+        <member name="M:Catel.ModuleInitializer.Initialize">
+            <summary>
+            Initializes the module
             </summary>
         </member>
         <member name="T:Catel.MVVM.Auditing.AuditingManager">
@@ -385,6 +396,39 @@
             Gets a list of properties that should be ignored.
             </summary>
             <value>The list of properties to ignore.</value>
+        </member>
+        <member name="T:Catel.MVVM.Auditing.AuditingHelper">
+            <summary>
+            Helper for auditing which handles the complete subscription of an <see cref="T:Catel.MVVM.IViewModel"/> instance
+            to the current auditing manager.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.Auditing.AuditingHelper.RegisterViewModel(Catel.MVVM.IViewModel)">
+            <summary>
+            Registers the view model to the <see cref="T:Catel.MVVM.Auditing.AuditingManager"/>.
+            <para/>
+            This helper will automatically unsubscribe from all events when the view model is closed.
+            </summary>
+            <param name="viewModel">The view model to register.</param>
+            <remarks>
+            This helper will call the <see cref="M:Catel.MVVM.Auditing.AuditingManager.OnViewModelCreating(System.Type)"/> and <see cref="M:Catel.MVVM.Auditing.AuditingManager.OnViewModelCreated(System.Type)"/>
+            automatically.
+            </remarks>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="viewModel"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.Auditing.AuditingHelper.SubscribeEvents(Catel.MVVM.IViewModel)">
+            <summary>
+            Subscribes to all events of the view model.
+            </summary>
+            <param name="viewModel">The view model.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="viewModel"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.Auditing.AuditingHelper.UnsubscribeEvents(Catel.MVVM.IViewModel)">
+            <summary>
+            Unsubscribes from all events of the view model.
+            </summary>
+            <param name="viewModel">The view model.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="viewModel"/> is <c>null</c>.</exception>
         </member>
         <member name="T:Catel.MVVM.AsynchronousCommand`2">
             <summary>
@@ -770,12 +814,13 @@
             <see cref="T:System.EventArgs"/> implementation for the event when an <see cref="T:Catel.MVVM.ICatelCommand"/> has been executed.
             </summary>
         </member>
-        <member name="M:Catel.MVVM.CommandExecutedEventArgs.#ctor(Catel.MVVM.ICatelCommand,System.Object)">
+        <member name="M:Catel.MVVM.CommandExecutedEventArgs.#ctor(Catel.MVVM.ICatelCommand,System.Object,System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:Catel.MVVM.CommandExecutedEventArgs"/> class.
             </summary>
             <param name="command">The command that just has been executed.</param>
             <param name="commandParameter">The command parameter that was used for the execution.</param>
+            <param name="commandPropertyName">The property name under which the command is registered.</param>
             <exception cref="T:System.ArgumentNullException">The <paramref name="command"/> is <c>null</c>.</exception>
         </member>
         <member name="P:Catel.MVVM.CommandExecutedEventArgs.Command">
@@ -790,14 +835,15 @@
             </summary>
             <value>The command parameter.</value>
         </member>
+        <member name="P:Catel.MVVM.CommandExecutedEventArgs.CommandPropertyName">
+            <summary>
+            Gets the property name under which the command is registered
+            </summary>
+            <value>The name of the command property.</value>
+        </member>
         <member name="T:Catel.MVVM.CommandHelper">
             <summary>
             Helper class for the <see cref="T:Catel.MVVM.Command"/> class.
-            </summary>
-        </member>
-        <member name="F:Catel.MVVM.CommandHelper.Log">
-            <summary>
-            The log.
             </summary>
         </member>
         <member name="M:Catel.MVVM.CommandHelper.CreateCommand(System.Action,System.Linq.Expressions.Expression{System.Func{Catel.Data.IValidationSummary}})">
@@ -860,6 +906,119 @@
             <returns>
             	<c>true</c> if the user has access to the specified UI element; otherwise, <c>false</c>.
             </returns>
+        </member>
+        <member name="T:Catel.MVVM.IViewModelCommandManager">
+            <summary>
+            Command manager for view models.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.IViewModelCommandManager.AddHandler(System.Action{Catel.MVVM.IViewModel,System.String,System.Windows.Input.ICommand,System.Object})">
+            <summary>
+            Adds a new handler when a command is executed on the specified view model.
+            </summary>
+            <param name="handler">The handler to execute when a command is executed.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="handler"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.IViewModelCommandManager.InvalidateCommands(System.Boolean)">
+            <summary>
+            Invalidates all the commands that implement the <see cref="T:Catel.MVVM.ICatelCommand"/>.
+            </summary>
+            <param name="force">If <c>true</c>, the commands are re-initialized. The default value is <c>false</c>.</param>
+        </member>
+        <member name="T:Catel.MVVM.ViewModelCommandManager">
+            <summary>
+            Command manager that manages the execution state of all commands of a view model.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.ViewModelCommandManager.Log">
+            <summary>
+            The log.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.ViewModelCommandManager._instances">
+            <summary>
+            Dictionary containing all instances of all view model command managers.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.ViewModelCommandManager._lock">
+            <summary>
+            The lock object.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.ViewModelCommandManager._commandHandlers">
+            <summary>
+            A list of registered command handlers.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.ViewModelCommandManager._commands">
+            <summary>
+            A list of commands that implement the <see cref="T:Catel.MVVM.ICatelCommand"/> interface.
+            </summary>
+            <remarks>
+            Internal so the <see cref="T:Catel.MVVM.ViewModelManager"/> can subscribe to the commands. The string is the property name
+            the command is registered with.
+            </remarks>
+        </member>
+        <member name="F:Catel.MVVM.ViewModelCommandManager._viewModel">
+            <summary>
+            The view model.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.ViewModelCommandManager._viewModelType">
+            <summary>
+            The view model type;
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.ViewModelCommandManager._commandProperties">
+            <summary>
+            A list of reflection properties for the commands.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.ViewModelCommandManager.#ctor(Catel.MVVM.IViewModel)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Catel.MVVM.ViewModelCommandManager"/> class.
+            </summary>
+            <param name="viewModel">The view model.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="viewModel"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.ViewModelCommandManager.Create(Catel.MVVM.IViewModel)">
+            <summary>
+            Registers the commands in a specific <see cref="T:Catel.MVVM.IViewModel"/> instance. By subscribing
+            to all commands, the <see cref="E:Catel.MVVM.IViewModel.CommandExecuted"/> can be intercepted.
+            <para/>
+            This method will automatically subscribe to the <see cref="E:Catel.MVVM.IViewModel.Closed"/> event and unsubscribe all commands
+            at that time.
+            </summary>
+            <param name="viewModel">The view model.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="viewModel"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.ViewModelCommandManager.RegisterCommands(System.Boolean)">
+            <summary>
+            Registers the commands in a specific <see cref="T:Catel.MVVM.IViewModel"/> instance. By subscribing
+            to all commands, the <see cref="E:Catel.MVVM.IViewModel.CommandExecuted"/> can be intercepted.
+            <para/>
+            This method will automatically subscribe to the <see cref="E:Catel.MVVM.IViewModel.Closed"/> event and unsubscribe all commands
+            at that time.
+            </summary>
+            <param name="force">If <c>true</c>, the already registered commands are cleared and all are registered again.</param>
+        </member>
+        <member name="M:Catel.MVVM.ViewModelCommandManager.AddHandler(System.Action{Catel.MVVM.IViewModel,System.String,System.Windows.Input.ICommand,System.Object})">
+            <summary>
+            Adds a new handler when a command is executed on the specified view model.
+            </summary>
+            <param name="handler">The handler to execute when a command is executed.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="handler"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.ViewModelCommandManager.InvalidateCommands(System.Boolean)">
+            <summary>
+            Invalidates all the commands that implement the <see cref="T:Catel.MVVM.ICatelCommand"/>.
+            </summary>
+            <param name="force">If <c>true</c>, the commands are re-initialized. The default value is <c>false</c>.</param>
+        </member>
+        <member name="M:Catel.MVVM.ViewModelCommandManager.UnregisterCommands">
+            <summary>
+            Unregisters the commands in the <see cref="T:Catel.MVVM.IViewModel"/> instance.
+            </summary>
         </member>
         <member name="T:Catel.MVVM.InvalidViewModelException">
             <summary>
@@ -1214,7 +1373,7 @@
             <param name="fullTypeName">Full name of the type.</param>
             <returns>The resolved type or <c>null</c> if the type could not be resolved.</returns>
             <remarks>
-            Internally, this method uses <see cref="M:Catel.Reflection.TypeHelper.GetType(System.String)"/>.
+            Internally, this method uses <see cref="M:Catel.Reflection.TypeHelper.GetType(System.String,System.Boolean)"/>.
             </remarks>
         </member>
         <member name="M:Catel.MVVM.LocatorBase.ResolveNamingConvention(System.String,System.String,System.String)">
@@ -1445,6 +1604,29 @@
             </remarks>
             <exception cref="T:System.ArgumentNullException">The <paramref name="method"/> is <c>null</c>.</exception>
         </member>
+        <member name="M:Catel.MVVM.Services.IDispatcherService.BeginInvokeIfRequired(System.Action)">
+            <summary>
+            Executes the specified action asynchronously with the specified arguments on the thread that the Dispatcher was created on if required.
+            <para/>
+            To check whether this is necessary, it will check whether the current thread has access to the dispatcher.
+            </summary>
+            <param name="action">The action.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="action"/> is <c>null</c>.</exception>
+            <remarks>
+            For target frameworks where the <see cref="T:System.Windows.Threading.Dispatcher"/> class does not contain the <c>Invoke</c> method, the <c>BeginInvoke</c>
+            method will be used instead.
+            </remarks>
+        </member>
+        <member name="M:Catel.MVVM.Services.IDispatcherService.BeginInvokeIfRequired(System.Delegate,System.Object[])">
+            <summary>
+            Executes the specified delegate asynchronously with the specified arguments on the thread that the Dispatcher was created on if required.
+            <para/>
+            To check whether this is necessary, it will check whether the current thread has access to the dispatcher.
+            </summary>
+            <param name="method">A delegate to a method that takes parameters specified in args, which is pushed onto the Dispatcher event queue.</param>
+            <param name="args">An array of objects to pass as arguments to the given method. Can be <c>null</c>.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="method"/> is <c>null</c>.</exception>
+        </member>
         <member name="M:Catel.MVVM.Services.DispatcherService.Invoke(System.Action)">
             <summary>
             Executes the specified action with the specified arguments synchronously on the thread the Dispatcher is associated with.
@@ -1486,6 +1668,37 @@
             <param name="method">A delegate to a method that takes parameters specified in args, which is pushed onto the Dispatcher event queue.</param>
             <param name="args">An array of objects to pass as arguments to the given method. Can be <c>null</c>.</param>
             <exception cref="T:System.ArgumentNullException">The <paramref name="method"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.Services.DispatcherService.BeginInvokeIfRequired(System.Action)">
+            <summary>
+            Executes the specified action asynchronously with the specified arguments on the thread that the Dispatcher was created on if required.
+            <para/>
+            To check whether this is necessary, it will check whether the current thread has access to the dispatcher.
+            </summary>
+            <param name="action">The action.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="action"/> is <c>null</c>.</exception>
+            <remarks>
+            For target frameworks where the <see cref="T:System.Windows.Threading.Dispatcher"/> class does not contain the <c>Invoke</c> method, the <c>BeginInvoke</c>
+            method will be used instead.
+            </remarks>
+        </member>
+        <member name="M:Catel.MVVM.Services.DispatcherService.BeginInvokeIfRequired(System.Delegate,System.Object[])">
+            <summary>
+            Executes the specified delegate asynchronously with the specified arguments on the thread that the Dispatcher was created on if required.
+            <para/>
+            To check whether this is necessary, it will check whether the current thread has access to the dispatcher.
+            </summary>
+            <param name="method">A delegate to a method that takes parameters specified in args, which is pushed onto the Dispatcher event queue.</param>
+            <param name="args">An array of objects to pass as arguments to the given method. Can be <c>null</c>.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="method"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.Services.DispatcherService.BeginInvoke(System.Action,System.Boolean)">
+            <summary>
+            Executes the specified delegate asynchronously with the specified arguments on the thread that the Dispatcher was created on.
+            </summary>
+            <param name="action">The action.</param>
+            <param name="onlyBeginInvokeWhenNoAccess">if set to <c>true</c>, the action will be executed directly if possible. Otherwise, 
+            <c>Dispatcher.BeginInvoke</c> will be used.</param>
         </member>
         <member name="P:Catel.MVVM.Services.DispatcherService.CurrentDispatcher">
             <summary>
@@ -2307,6 +2520,21 @@
             	<c>true</c> if the view model is unregistered; otherwise <c>false</c>.
             </returns>
         </member>
+        <member name="M:Catel.MVVM.Services.INavigationService.GetBackStackCount">
+            <summary>
+            Returns the number of total back entries (which is the navigation history).
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.Services.INavigationService.RemoveBackEntry">
+            <summary>
+            Removes the last back entry from the navigation history.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.Services.INavigationService.RemoveAllBackEntries">
+            <summary>
+            Removes all the back entries from the navigation history.
+            </summary>
+        </member>
         <member name="P:Catel.MVVM.Services.INavigationService.CanGoBack">
             <summary>
             Gets a value indicating whether it is possible to navigate back.
@@ -2471,6 +2699,72 @@
             no changes will occur to the data of this object.
             </remarks>
         </member>
+        <member name="T:Catel.MVVM.Services.ISplashScreenService">
+            <summary>
+            The splash screen service interface.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.Services.ISplashScreenService.Enqueue(Catel.MVVM.Tasks.ITask)">
+            <summary>
+            The enqueue.
+            </summary>
+            <param name="task">
+            The task.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            The <paramref name="task"/> is <c>null</c>.
+            </exception>
+            <exception cref="T:System.InvalidOperationException">If the batch is already committed and the execution is in progress or committing via async way.</exception>
+        </member>
+        <member name="M:Catel.MVVM.Services.ISplashScreenService.CommitAsync(System.Action,System.Type)">
+            <summary>
+            The commit.
+            </summary>
+            <param name="completedCallback">
+            The completed callback.
+            </param>
+            <param name="viewModelType">
+            The view mode type.
+            </param>
+            <exception cref="T:System.InvalidOperationException">
+            If the batch is already commited and the execution is in progress or committing via async way.
+            </exception>
+        </member>
+        <member name="M:Catel.MVVM.Services.ISplashScreenService.CommitAsync``1(System.Action)">
+            <summary>
+            The commit.
+            </summary>
+            <typeparam name="TViewModel">
+            The view model type.
+            </typeparam>
+            <param name="completedCallback">
+            The completed callback.
+            </param>
+            <exception cref="T:System.InvalidOperationException">If the batch is already committed and the execution is in progress or committing via async way.</exception>
+        </member>
+        <member name="M:Catel.MVVM.Services.ISplashScreenService.Commit(System.Type)">
+            <summary>
+            Execute in batch mode the enqueued tasks
+            </summary>
+            <param name="viewModelType">
+            The view model type.
+            </param>
+            <exception cref="T:System.InvalidOperationException">If the batch is already committed and the execution is in progress or committing via async way.</exception>
+        </member>
+        <member name="M:Catel.MVVM.Services.ISplashScreenService.Commit``1">
+            <summary>
+            Execute in batch mode the enqueued tasks
+            </summary>
+            <typeparam name="TViewModel">
+            The view model type.
+            </typeparam>
+            <exception cref="T:System.InvalidOperationException">If the batch is already committed and the execution is in progress or committing via async way.</exception>
+        </member>
+        <member name="P:Catel.MVVM.Services.ISplashScreenService.IsRunning">
+            <summary>
+            Gets a value indicating whether is running.
+            </summary>
+        </member>
         <member name="T:Catel.MVVM.Services.IUIVisualizerService">
             <summary>
             This interface defines a UI controller which can be used to display dialogs
@@ -2590,12 +2884,6 @@
             Interface to declare services in a view model.
             </summary>
         </member>
-        <member name="P:Catel.MVVM.Services.IViewModelService.Name">
-            <summary>
-            Gets the name of the service.
-            </summary>
-            <value>The name of the service.</value>
-        </member>
         <member name="T:Catel.MVVM.Services.MessageService">
             <summary>
             Message service that implements the <see cref="T:Catel.MVVM.Services.IMessageService"/> by using the <see cref="T:System.Windows.MessageBox"/> class.
@@ -2605,12 +2893,6 @@
             <summary>
             Base class for all view model services.
             </summary>
-        </member>
-        <member name="P:Catel.MVVM.Services.ViewModelServiceBase.Name">
-            <summary>
-            Gets the name of the service.
-            </summary>
-            <value>The name of the service.</value>
         </member>
         <member name="P:Catel.MVVM.Services.ViewModelServiceBase.Dispatcher">
             <summary>
@@ -2926,6 +3208,20 @@
             Initializes a new instance of the <see cref="T:Catel.MVVM.Services.NavigationService"/> class.
             </summary>
         </member>
+        <member name="M:Catel.MVVM.Services.NavigationService.OnRootFrameNavigating(System.Object,System.Windows.Navigation.NavigatingCancelEventArgs)">
+            <summary>
+            Called when the root frame is about to navigate to a new uri.
+            </summary>
+            <param name="sender">The sender.</param>
+            <param name="e">The <see cref="T:System.Windows.Navigation.NavigatingCancelEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:Catel.MVVM.Services.NavigationService.OnRootFrameNavigated(System.Object,System.Windows.Navigation.NavigationEventArgs)">
+            <summary>
+            Called when the root frame has just navigated to a new uri.
+            </summary>
+            <param name="sender">The sender.</param>
+            <param name="e">The <see cref="T:System.Windows.Navigation.NavigationEventArgs"/> instance containing the event data.</param>
+        </member>
         <member name="M:Catel.MVVM.Services.NavigationService.CloseApplication">
             <summary>
             Closes the current application. The actual implementation depends on the final target framework.
@@ -3012,6 +3308,21 @@
             <returns>
             	<c>true</c> if the view model is unregistered; otherwise <c>false</c>.
             </returns>
+        </member>
+        <member name="M:Catel.MVVM.Services.NavigationService.GetBackStackCount">
+            <summary>
+            Returns the number of total back entries (which is the navigation history).
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.Services.NavigationService.RemoveBackEntry">
+            <summary>
+            Removes the last back entry from the navigation history.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.Services.NavigationService.RemoveAllBackEntries">
+            <summary>
+            Removes all the back entries from the navigation history.
+            </summary>
         </member>
         <member name="M:Catel.MVVM.Services.NavigationService.GetApplicationRootFrame">
             <summary>
@@ -3232,6 +3543,152 @@
             Gets or sets the filter to use when opening or saving the file.
             </summary>
             <value>The filter.</value>
+        </member>
+        <member name="T:Catel.MVVM.Services.SplashScreenService">
+            <summary>
+            The splash screen service.
+            </summary>
+            <returns>
+            This service depends on services <see cref="T:Catel.MVVM.Services.IPleaseWaitService"/> and <see cref="T:Catel.MVVM.Services.IMessageService"/>.
+            </returns>
+        </member>
+        <member name="F:Catel.MVVM.Services.SplashScreenService.ExecutionIsInProgressErrorMessage">
+            <summary>
+            The execution is in progress error message.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Services.SplashScreenService.TaskExecutionErrorMessagePattern">
+            <summary>
+            The error message pattern.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Services.SplashScreenService.AtLeastOneTaskShouldBeRegisteredErrorMessage">
+            <summary>
+            The at least one task should be registered error message.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Services.SplashScreenService.Log">
+            <summary>
+            The log.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Services.SplashScreenService._syncObj">
+            <summary>
+            The _sync obj.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Services.SplashScreenService._tasks">
+            <summary>
+            The tasks queue.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Services.SplashScreenService._completedCallback">
+            <summary>
+            The completed callback.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Services.SplashScreenService._progressNotifyableViewModel">
+            <summary>
+            The _progress notifyable view model.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Services.SplashScreenService._thread">
+            <summary>
+            The _thread.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Services.SplashScreenService._viewModelType">
+            <summary>
+            The view model type.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.Services.SplashScreenService.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Catel.MVVM.Services.SplashScreenService"/> class.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.Services.SplashScreenService.Commit``1">
+            <summary>
+            Execute in batch mode the enqueued tasks
+            </summary>
+            <typeparam name="TViewModel">
+            The view model type.
+            </typeparam>
+            <exception cref="T:System.InvalidOperationException">If the batch is already committed and the execution is in progress or committing via async way.</exception>
+        </member>
+        <member name="M:Catel.MVVM.Services.SplashScreenService.Enqueue(Catel.MVVM.Tasks.ITask)">
+            <summary>
+            Enqueue a task to be executed as batch.
+            </summary>
+            <param name="task">
+            The task to enqueue
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            The <paramref name="task"/> is <c>null</c>.
+            </exception>
+            <exception cref="T:System.InvalidOperationException">
+            If the batch is already committed and the execution is in progress.
+            </exception>
+        </member>
+        <member name="M:Catel.MVVM.Services.SplashScreenService.CommitAsync``1(System.Action)">
+            <summary>
+            The commit.
+            </summary>
+            <typeparam name="TViewModel">
+            The view model type.
+            </typeparam>
+            <param name="completedCallback">
+            The completed callback.
+            </param>
+            <exception cref="T:System.InvalidOperationException">
+            If the batch is already committed and the execution is in progress or committing via async way.
+            </exception>
+        </member>
+        <member name="M:Catel.MVVM.Services.SplashScreenService.CommitAsync(System.Action,System.Type)">
+            <summary>
+            Execute in batch mode the enqueued tasks asynchronously.
+            </summary>
+            <param name="completedCallback">
+            The completed callback.
+            </param>
+            <param name="viewModelType">
+            The vie model type.
+            </param>
+            <exception cref="T:System.InvalidOperationException">
+            If the batch is already committed and the execution is in progress or committing via async way.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+            The <paramref name="viewModelType"/> is not of type <see cref="T:Catel.MVVM.IProgressNotifyableViewModel"/>.
+            </exception>
+        </member>
+        <member name="M:Catel.MVVM.Services.SplashScreenService.Commit(System.Type)">
+            <summary>
+            Execute in batch mode the enqueued tasks
+            </summary>
+            <param name="viewModelType">
+            The view model type.
+            </param>
+            <exception cref="T:System.InvalidOperationException">
+            If the batch is already committed and the execution is in progress or committing via async way.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+            The <paramref name="viewModelType"/> is not of type <see cref="T:Catel.MVVM.IProgressNotifyableViewModel"/>.
+            </exception>
+        </member>
+        <member name="M:Catel.MVVM.Services.SplashScreenService.Execute">
+            <summary>
+            The execute.
+            </summary>
+        </member>
+        <member name="P:Catel.MVVM.Services.SplashScreenService.IsCommitting">
+            <summary>
+            Gets or sets a value indicating whether is committing.
+            </summary>
+        </member>
+        <member name="P:Catel.MVVM.Services.SplashScreenService.IsRunning">
+            <summary>
+            Gets a value indicating whether is running.
+            </summary>
         </member>
         <member name="T:Catel.MVVM.Services.Test.MessageService">
             <summary>
@@ -3906,342 +4363,169 @@
             The type of the window.
             </value>
         </member>
-        <member name="T:Catel.MVVM.UI.ViewToViewModelMappingType">
+        <member name="T:Catel.MVVM.Tasks.ActionTask">
             <summary>
-            Mapping types for the <see cref="T:Catel.MVVM.UI.ViewToViewModelAttribute"/>.
+            The action task.
             </summary>
         </member>
-        <member name="F:Catel.MVVM.UI.ViewToViewModelMappingType.TwoWayDoNothing">
+        <member name="T:Catel.MVVM.Tasks.TaskBase">
             <summary>
-            Two way, which means that either the view or the view model will update
-            the values of the other party as soon as they are updated.
-            <para />
-            When this value is used, nothing happens when the view model of the view
-            changes. This way, it might be possible that the values of the view and the
-            view model are different. The first one to update next will update the other.
+            The task base.
             </summary>
-        </member>
-        <member name="F:Catel.MVVM.UI.ViewToViewModelMappingType.TwoWayViewWins">
-            <summary>
-            Two way, which means that either the view or the view model will update
-            the values of the other party as soon as they are updated.
-            <para />
-            When this value is used, the value of the view is used when the view model 
-            of the view is changed, and is directly transferred to the view model value.
-            </summary>
-        </member>
-        <member name="F:Catel.MVVM.UI.ViewToViewModelMappingType.TwoWayViewModelWins">
-            <summary>
-            Two way, which means that either the view or the view model will update
-            the values of the other party as soon as they are updated.
-            <para />
-            When this value is used, the value of the view model is used when the view model 
-            of the view is changed, and is directly transferred to the view value.
-            </summary>
-        </member>
-        <member name="F:Catel.MVVM.UI.ViewToViewModelMappingType.ViewToViewModel">
-            <summary>
-            The mapping is from the view to the view model only.
-            </summary>
-        </member>
-        <member name="F:Catel.MVVM.UI.ViewToViewModelMappingType.ViewModelToView">
-            <summary>
-            The mapping is from the view model to the view only.
-            </summary>
-        </member>
-        <member name="T:Catel.MVVM.UI.ViewToViewModelAttribute">
-            <summary>
-            A mapper attribute to map a <see cref="T:System.Windows.FrameworkElement"/> (such as the UserControl or the DataWindow) 
-            property to a <see cref="T:Catel.MVVM.ViewModelBase"/> property.
-            <para/>
-            This class is very useful when creating custom user controls that need more parameterized settings than just the
-            <c>DataContext</c> property.
-            </summary>
-        </member>
-        <member name="M:Catel.MVVM.UI.ViewToViewModelAttribute.#ctor(System.String)">
-            <summary>
-            Initializes a new instance of the <see cref="T:Catel.MVVM.UI.ViewToViewModelAttribute"/> class.
-            </summary>
-            <param name="viewModelPropertyName">Name of the view model property.</param>
-        </member>
-        <member name="P:Catel.MVVM.UI.ViewToViewModelAttribute.ViewModelPropertyName">
-            <summary>
-            Gets or sets the view model property name.
-            </summary>
-            <value>The view model property name.</value>
-        </member>
-        <member name="P:Catel.MVVM.UI.ViewToViewModelAttribute.MappingType">
-            <summary>
-            Gets or sets the type of the mapping.
-            </summary>
-            <value>The type of the mapping.</value>
-        </member>
-        <member name="T:Catel.MVVM.UI.ViewToViewModelMapping">
-            <summary>
-            Holds the information for a view to viewmodel mapping. The information is based on the <see cref="T:Catel.MVVM.UI.ViewToViewModelAttribute"/>.
-            </summary>
-        </member>
-        <member name="F:Catel.MVVM.UI.ViewToViewModelMapping.Log">
-            <summary>
-            The log.
-            </summary>
-        </member>
-        <member name="M:Catel.MVVM.UI.ViewToViewModelMapping.#ctor(System.String,System.String,Catel.MVVM.UI.ViewToViewModelMappingType)">
-            <summary>
-            Initializes a new instance of the <see cref="T:Catel.MVVM.UI.ViewToViewModelMapping"/> class.
-            </summary>
-            <param name="viewPropertyName">Name of the view property.</param>
-            <param name="viewModelPropertyName">Name of the view model property.</param>
-            <param name="mapping">The mapping type.</param>
-            <exception cref="T:System.ArgumentException">The <paramref name="viewPropertyName"/> is <c>null</c> or whitespace.</exception>
-            <exception cref="T:System.ArgumentException">The <paramref name="viewModelPropertyName"/> is <c>null</c> or whitespace.</exception>
-        </member>
-        <member name="P:Catel.MVVM.UI.ViewToViewModelMapping.ViewPropertyName">
-            <summary>
-            Gets the name of the view property.
-            </summary>
-            <value>The name of the view property.</value>
-        </member>
-        <member name="P:Catel.MVVM.UI.ViewToViewModelMapping.ViewModelPropertyName">
-            <summary>
-            Gets the name of the view model property.
-            </summary>
-            <value>The name of the view model property.</value>
-        </member>
-        <member name="P:Catel.MVVM.UI.ViewToViewModelMapping.MappingType">
-            <summary>
-            Gets or sets the mapping type.
-            </summary>
-            <value>The mapping type.</value>
-        </member>
-        <member name="T:Catel.MVVM.UI.ViewToViewModelMappingContainer">
-            <summary>
-            Container class for <see cref="T:Catel.MVVM.UI.ViewToViewModelMapping"/> elements.
-            </summary>
-        </member>
-        <member name="F:Catel.MVVM.UI.ViewToViewModelMappingContainer.Log">
-            <summary>
-            The log.
-            </summary>
-        </member>
-        <member name="F:Catel.MVVM.UI.ViewToViewModelMappingContainer._viewToViewModelMappings">
-            <summary>
-            Dictionary containing all the view to view model mappings.
-            </summary>
-        </member>
-        <member name="F:Catel.MVVM.UI.ViewToViewModelMappingContainer._viewModelToViewMappings">
-            <summary>
-            Dictionary containing all the view model to view mappings.
-            </summary>
-        </member>
-        <member name="M:Catel.MVVM.UI.ViewToViewModelMappingContainer.#ctor(System.Windows.DependencyObject)">
-            <summary>
-            Initializes a new instance of the <see cref="T:Catel.MVVM.UI.ViewToViewModelMappingContainer"/> class.
-            </summary>
-            <param name="dependencyObject">The dependency object.</param>
-            <exception cref="T:System.ArgumentNullException">The <paramref name="dependencyObject"/> is <c>null</c>.</exception>
-        </member>
-        <member name="M:Catel.MVVM.UI.ViewToViewModelMappingContainer.GetAllViewToViewModelMappings">
-            <summary>
-            Gets all the <see cref="T:Catel.MVVM.UI.ViewToViewModelMapping"/> that are registered.
-            </summary>
-            <returns><see cref="T:System.Collections.Generic.IEnumerable`1"/> containing all registered <see cref="T:Catel.MVVM.UI.ViewToViewModelMapping"/>.</returns>
-        </member>
-        <member name="M:Catel.MVVM.UI.ViewToViewModelMappingContainer.ContainsViewToViewModelMapping(System.String)">
-            <summary>
-            Determines whether the manager contains a view to view model property mapping for the specified view property name.
-            </summary>
-            <param name="viewPropertyName">Name of the view property.</param>
-            <returns>
-            	<c>true</c> if the manager contains a view to view model property mapping for the specified view property name; otherwise, <c>false</c>.
-            </returns>
-        </member>
-        <member name="M:Catel.MVVM.UI.ViewToViewModelMappingContainer.GetViewToViewModelMapping(System.String)">
-            <summary>
-            Gets the <see cref="T:Catel.MVVM.UI.ViewToViewModelMapping"/> that is mapped to the specified view property name.
-            </summary>
-            <param name="viewPropertyName">Name of the view property.</param>
-            <returns><see cref="T:Catel.MVVM.UI.ViewToViewModelMapping"/>.</returns>
-        </member>
-        <member name="M:Catel.MVVM.UI.ViewToViewModelMappingContainer.ContainsViewModelToViewMapping(System.String)">
-            <summary>
-            Determines whether the manager contains a view model to view property mapping for the specified view model property name.
-            </summary>
-            <param name="viewModelPropertyName">Name of the view model property.</param>
-            <returns>
-            	<c>true</c> if the manager contains a view model to view property mapping for the specified view model property name; otherwise, <c>false</c>.
-            </returns>
-        </member>
-        <member name="M:Catel.MVVM.UI.ViewToViewModelMappingContainer.GetViewModelToViewMapping(System.String)">
-            <summary>
-            Gets the <see cref="T:Catel.MVVM.UI.ViewToViewModelMapping"/> that is mapped to the specified view model property name.
-            </summary>
-            <param name="viewModelPropertyName">Name of the view model property.</param>
-            <returns><see cref="T:Catel.MVVM.UI.ViewToViewModelMapping"/>.</returns>
-        </member>
-        <member name="T:Catel.MVVM.UI.ViewToViewModelMappingHelper">
-            <summary>
-            Helper class to fix <see cref="T:Catel.MVVM.UI.ViewToViewModelMapping"/> for <see cref="T:System.Windows.FrameworkElement"/>.
-            </summary>
-        </member>
-        <member name="F:Catel.MVVM.UI.ViewToViewModelMappingHelper.Log">
-            <summary>
-            The log.
-            </summary>
-        </member>
-        <member name="F:Catel.MVVM.UI.ViewToViewModelMappingHelper._viewModelContainers">
-            <summary>
-            Dictionary of <see cref="T:Catel.MVVM.IViewModelContainer"/> instances managed by this helper class.
-            </summary>
-        </member>
-        <member name="F:Catel.MVVM.UI.ViewToViewModelMappingHelper._viewToViewModelMappingContainers">
-            <summary>
-            Dictionary of <see cref="T:Catel.MVVM.UI.ViewToViewModelMappingContainer"/> instances per type (which should be a <see cref="T:System.Windows.DependencyObject"/>).
-            </summary>
-        </member>
-        <member name="F:Catel.MVVM.UI.ViewToViewModelMappingHelper._ignoredViewModelChanges">
-            <summary>
-            List of properties in the view model that should be ignored.
-            </summary>
-        </member>
-        <member name="F:Catel.MVVM.UI.ViewToViewModelMappingHelper._ignoredViewChanges">
-            <summary>
-            List of properties in the view that should be ignored.
-            </summary>
-        </member>
-        <member name="M:Catel.MVVM.UI.ViewToViewModelMappingHelper.#ctor(Catel.MVVM.IViewModelContainer)">
-            <summary>
-            Initializes a new instance of the <see cref="T:Catel.MVVM.UI.ViewToViewModelMappingHelper"/> class.
-            </summary>
-            <param name="viewModelContainer">The view model container.</param>
-            <exception cref="T:System.ArgumentNullException">The <paramref name="viewModelContainer"/> is <c>null</c>.</exception>
-            <exception cref="T:System.ArgumentException">The <paramref name="viewModelContainer"/> is not a <see cref="T:System.Windows.DependencyObject"/>.</exception>
-        </member>
-        <member name="M:Catel.MVVM.UI.ViewToViewModelMappingHelper.InitializeViewToViewModelMappings(Catel.MVVM.IViewModelContainer)">
-            <summary>
-            Initializes the <see cref="T:Catel.MVVM.UI.ViewToViewModelMapping"/> for the specified <see cref="T:Catel.MVVM.IViewModelContainer"/>.
-            </summary>
-            <param name="viewModelContainer">The view model container to initialize the mappings for.</param>
-            <exception cref="T:System.ArgumentNullException">The <paramref name="viewModelContainer"/> is <c>null</c>.</exception>
-            <exception cref="T:System.ArgumentException">The <paramref name="viewModelContainer"/> is not a <see cref="T:System.Windows.DependencyObject"/>.</exception>
-        </member>
-        <member name="M:Catel.MVVM.UI.ViewToViewModelMappingHelper.UninitializeViewToViewModelMappings(Catel.MVVM.IViewModelContainer)">
-            <summary>
-            Uninitializes the <see cref="T:Catel.MVVM.UI.ViewToViewModelMapping"/> for the specified <see cref="T:Catel.MVVM.IViewModelContainer"/>.
-            </summary>
-            <param name="viewModelContainer">The view model container the uninitialize the mappings for.</param>
-            <exception cref="T:System.ArgumentNullException">The <paramref name="viewModelContainer"/> is <c>null</c>.</exception>
-        </member>
-        <member name="M:Catel.MVVM.UI.ViewToViewModelMappingHelper.UninitializeViewToViewModelMappings">
-            <summary>
-            Uninitializes the <see cref="T:Catel.MVVM.UI.ViewToViewModelMapping"/> for the registered <see cref="T:Catel.MVVM.IViewModelContainer"/>.
-            </summary>
-        </member>
-        <member name="M:Catel.MVVM.UI.ViewToViewModelMappingHelper.InitializeViewModel(Catel.MVVM.IViewModel)">
-            <summary>
-            Initializes the specified view model.
-            </summary>
-            <param name="viewModel">The view model.</param>
-        </member>
-        <member name="M:Catel.MVVM.UI.ViewToViewModelMappingHelper.UninitializeViewModel(Catel.MVVM.IViewModel)">
-            <summary>
-            Uninitializes the specified view model.
-            </summary>
-            <param name="viewModel">The view model.</param>
-        </member>
-        <member name="M:Catel.MVVM.UI.ViewToViewModelMappingHelper.OnViewModelChanged(System.Object,System.EventArgs)">
-            <summary>
-            Called when the view model on the view model container has changed.
-            </summary>
-            <param name="sender">The view model container.</param>
-            <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
-        </member>
-        <member name="M:Catel.MVVM.UI.ViewToViewModelMappingHelper.OnViewModelPropertyChanged(System.Object,System.ComponentModel.PropertyChangedEventArgs)">
-            <summary>
-            Called when a property on the view model has changed.
-            </summary>
-            <param name="sender">The view model.</param>
-            <param name="e">The <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance containing the event data.</param>
-        </member>
-        <member name="M:Catel.MVVM.UI.ViewToViewModelMappingHelper.OnViewModelContainerPropertyChanged(System.Object,System.ComponentModel.PropertyChangedEventArgs)">
-            <summary>
-            Called when a property on the view model container has changed.
-            </summary>
-            <param name="sender">The view model container.</param>
-            <param name="e">The <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance containing the event data.</param>
-        </member>
-        <member name="M:Catel.MVVM.UI.ViewToViewModelMappingHelper.TransferValueFromViewToViewModel(Catel.MVVM.IViewModel,System.String,System.String)">
-            <summary>
-            Transfers the value from a view property to the view model property.
-            <para/>
-            This method does nothing when <paramref name="viewModel"/> is <c>null</c>.
-            </summary>
-            <param name="viewModel">The view model.</param>
-            <param name="viewPropertyName">Name of the view property.</param>
-            <param name="viewModelPropertyName">Name of the view model property.</param>
-            <exception cref="T:System.ArgumentException">The <paramref name="viewPropertyName"/> is <c>null</c> or whitespace.</exception>
-            <exception cref="T:System.ArgumentException">The <paramref name="viewModelPropertyName"/> is <c>null</c> or whitespace.</exception>
             <remarks>
-            This method does not check the type of the properties. If the types are incorrect, an exception will be thrown by
-            the .NET Framework.
+            This class inherits from <see cref="T:Catel.Data.DataObjectBase"/> in use it as model as part of the wizard view models.
             </remarks>
         </member>
-        <member name="M:Catel.MVVM.UI.ViewToViewModelMappingHelper.TransferValueFromViewModelToView(Catel.MVVM.IViewModel,System.String,System.String)">
+        <member name="T:Catel.MVVM.Tasks.ITask">
             <summary>
-            Transfers the value from a view model property to the view property.
-            <para/>
-            This method does nothing when <paramref name="viewModel"/> is <c>null</c>.
+            The TaskBase interface.
             </summary>
-            <param name="viewModel">The view model.</param>
-            <param name="viewPropertyName">Name of the view property.</param>
-            <param name="viewModelPropertyName">Name of the view model property.</param>
-            <exception cref="T:System.ArgumentException">The <paramref name="viewPropertyName"/> is <c>null</c> or whitespace.</exception>
-            <exception cref="T:System.ArgumentException">The <paramref name="viewModelPropertyName"/> is <c>null</c> or whitespace.</exception>
-            <remarks>
-            This method does not check the type of the properties. If the types are incorrect, an exception will be thrown by
-            the .NET Framework.
-            </remarks>
         </member>
-        <member name="M:Catel.MVVM.UI.ViewToViewModelMappingHelper.TransferValue(System.Object,System.String,System.Object,System.String)">
+        <member name="M:Catel.MVVM.Tasks.ITask.Execute">
             <summary>
-            Transfers a value from the source property to the target property.
+            The execute.
             </summary>
-            <param name="source">The source.</param>
-            <param name="sourcePropertyName">Name of the source property.</param>
-            <param name="target">The target.</param>
-            <param name="targetPropertyName">Name of the target property.</param>
-            <exception cref="T:System.ArgumentNullException">The <paramref name="source"/> is <c>null</c>.</exception>
-            <exception cref="T:System.ArgumentNullException">The <paramref name="target"/> is <c>null</c>.</exception>
-            <exception cref="T:System.ArgumentException">The <paramref name="sourcePropertyName"/> is <c>null</c> or whitespace.</exception>
-            <exception cref="T:System.ArgumentException">The <paramref name="targetPropertyName"/> is <c>null</c> or whitespace.</exception>
-            <remarks>
-            This method does not check the type of the properties. If the types are incorrect, an exception will be thrown by
-            the .NET Framework.
-            </remarks>
         </member>
-        <member name="P:Catel.MVVM.UI.ViewToViewModelMappingHelper.ViewModelContainer">
+        <member name="M:Catel.MVVM.Tasks.ITask.Rollback">
             <summary>
-            Gets the view model container.
+            The rollback.
             </summary>
-            <value>The view model container.</value>
         </member>
-        <member name="P:Catel.MVVM.UI.ViewToViewModelMappingHelper.ViewModelContainerType">
+        <member name="P:Catel.MVVM.Tasks.ITask.Name">
             <summary>
-            Gets the type of the view model container.
+            Gets the name.
             </summary>
-            <value>The type of the view model container.</value>
         </member>
-        <member name="P:Catel.MVVM.UI.ViewToViewModelMappingHelper.PreviousViewModel">
+        <member name="P:Catel.MVVM.Tasks.ITask.Message">
             <summary>
-            Gets or sets the previous view model.
+            Gets the message
             </summary>
-            <value>The previous view model.</value>
         </member>
-        <member name="P:Catel.MVVM.UI.ViewToViewModelMappingHelper.CurrentViewModel">
+        <member name="P:Catel.MVVM.Tasks.ITask.Percentage">
             <summary>
-            Gets the current view model.
+            Gets the percentage
             </summary>
-            <value>The current view model.</value>
+        </member>
+        <member name="E:Catel.MVVM.Tasks.ITask.PropertyChanged">
+            <summary>
+            Occurs when a property of this object has changed.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Tasks.TaskBase.MessageProperty">
+            <summary>Register the Message property so it is known in the class.</summary>
+        </member>
+        <member name="F:Catel.MVVM.Tasks.TaskBase.PercentageProperty">
+            <summary>Register the Percentage property so it is known in the class.</summary>
+        </member>
+        <member name="F:Catel.MVVM.Tasks.TaskBase.NameProperty">
+            <summary>
+            Register the Name property so it is known in the class.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.Tasks.TaskBase.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Catel.MVVM.Tasks.TaskBase"/> class.
+            </summary>
+            <param name="name">
+            The task name name.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            The <paramref name="name"/> is <c>null</c>.
+            </exception>
+        </member>
+        <member name="M:Catel.MVVM.Tasks.TaskBase.Execute">
+            <summary>
+            The execute.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.Tasks.TaskBase.Rollback">
+            <summary>
+            The rollback.
+            </summary>
+        </member>
+        <member name="P:Catel.MVVM.Tasks.TaskBase.Name">
+            <summary>
+            Gets the name.
+            </summary>
+        </member>
+        <member name="P:Catel.MVVM.Tasks.TaskBase.Message">
+            <summary>
+            Gets or sets the message.
+            </summary>
+        </member>
+        <member name="P:Catel.MVVM.Tasks.TaskBase.Percentage">
+            <summary>
+            Gets or sets the percentage.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Tasks.ActionTask._action">
+            <summary>
+            The _action.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.Tasks.ActionTask.#ctor(System.String,System.Action{Catel.MVVM.Tasks.ITaskProgressTracker})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Catel.MVVM.Tasks.ActionTask"/> class.
+            </summary>
+            <param name="name">
+            The name.
+            </param>
+            <param name="action">
+            The action.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            The <paramref name="action"/> is <c>null</c>.
+            </exception>
+        </member>
+        <member name="M:Catel.MVVM.Tasks.ActionTask.Execute">
+            <summary>
+            The execute.
+            </summary>
+        </member>
+        <member name="T:Catel.MVVM.Tasks.ActionTask.ActionTaskTaskProgressTracker">
+            <summary>
+            The action task progress log.
+            </summary>
+        </member>
+        <member name="T:Catel.MVVM.Tasks.ITaskProgressTracker">
+            <summary>
+            The progress log
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.Tasks.ITaskProgressTracker.UpdateStatus(System.Int32,System.String)">
+            <summary>
+            Update the task status.
+            </summary>
+            <param name="percentage">
+            The percentage.
+            </param>
+            <param name="message">
+            The message.
+            </param>
+        </member>
+        <member name="F:Catel.MVVM.Tasks.ActionTask.ActionTaskTaskProgressTracker._actionTask">
+            <summary>
+            The _action task.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.Tasks.ActionTask.ActionTaskTaskProgressTracker.#ctor(Catel.MVVM.Tasks.ActionTask)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Catel.MVVM.Tasks.ActionTask.ActionTaskTaskProgressTracker"/> class.
+            </summary>
+            <param name="actionTask">
+            The action task.
+            </param>
+        </member>
+        <member name="M:Catel.MVVM.Tasks.ActionTask.ActionTaskTaskProgressTracker.UpdateStatus(System.Int32,System.String)">
+            <summary>
+            The update.
+            </summary>
+            <param name="percentage">
+            The percentage.
+            </param>
+            <param name="message">
+            The message.
+            </param>
         </member>
         <member name="T:Catel.MVVM.ExposeAttribute">
             <summary>
@@ -4466,6 +4750,36 @@
             </summary>
             <value>The mode.</value>
         </member>
+        <member name="T:Catel.MVVM.CancelingEventArgs">
+            <summary>
+            EventArgs for the <see cref="E:Catel.MVVM.IViewModel.Canceling"/> event.
+            </summary>
+        </member>
+        <member name="T:Catel.MVVM.CancellableEventArgs">
+            <summary>
+            EventArgs base which implements the Cancel property.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.CancellableEventArgs.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Catel.MVVM.CancellableEventArgs"/> class.
+            </summary>
+        </member>
+        <member name="P:Catel.MVVM.CancellableEventArgs.Cancel">
+            <summary>
+            Gets or sets a value indicating whether the action should be canceled.
+            <para />
+            The default value is <c>false</c>.
+            </summary>
+            <value>
+              <c>true</c> if the action should be canceled; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="M:Catel.MVVM.CancelingEventArgs.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Catel.MVVM.CancelingEventArgs"/> class.
+            </summary>
+        </member>
         <member name="T:Catel.MVVM.SavingEventArgs">
             <summary>
             EventArgs for the <see cref="E:Catel.MVVM.IViewModel.Saving"/> event.
@@ -4475,14 +4789,6 @@
             <summary>
             Initializes a new instance of the <see cref="T:Catel.MVVM.SavingEventArgs"/> class.
             </summary>
-        </member>
-        <member name="P:Catel.MVVM.SavingEventArgs.Cancel">
-            <summary>
-            Gets or sets a value indicating whether the save should be canceled.
-            </summary>
-            <value>
-              <c>true</c> if the save should be canceled; otherwise, <c>false</c>.
-            </value>
         </member>
         <member name="T:Catel.MVVM.ViewModelClosedEventArgs">
             <summary>
@@ -4504,11 +4810,6 @@
         <member name="T:Catel.MVVM.ViewModelExtensions">
             <summary>
             Extension methods for view model classes.
-            </summary>
-        </member>
-        <member name="F:Catel.MVVM.ViewModelExtensions.Log">
-            <summary>
-            The log.
             </summary>
         </member>
         <member name="M:Catel.MVVM.ViewModelExtensions.GetValidationSummary(Catel.MVVM.ViewModelBase,System.Boolean)">
@@ -4576,32 +4877,10 @@
             <param name="viewModelEvent">The view model event.</param>
             <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
         </member>
-        <member name="T:Catel.MVVM.IRelationalViewModel">
+        <member name="T:Catel.MVVM.IProgressNotifyableViewModel">
             <summary>
-            Interface that allows a view model to be used in a nested user controls scenario.
+            The ProgressNotifyableViewModel interface.
             </summary>
-        </member>
-        <member name="M:Catel.MVVM.IRelationalViewModel.SetParentViewModel(Catel.MVVM.IViewModel)">
-            <summary>
-            Sets the new parent view model of this view model.
-            </summary>
-            <param name="parentViewModel">The parent view model.</param>
-        </member>
-        <member name="M:Catel.MVVM.IRelationalViewModel.RegisterChildViewModel(Catel.MVVM.IViewModel)">
-            <summary>
-            Registers a child view model to this view model. When a view model is registered as a child view model, it will
-            receive all notifications from this view model and be notified of any validation changes.
-            </summary>
-            <param name="childViewModel">The child view model.</param>
-            <exception cref="T:System.ArgumentNullException">The <paramref name="childViewModel"/> is <c>null</c>.</exception>
-        </member>
-        <member name="M:Catel.MVVM.IRelationalViewModel.UnregisterChildViewModel(Catel.MVVM.IViewModel)">
-            <summary>
-            Unregisters the child view model. This means that the child view model will no longer receive any notifications
-            from this view model as parent view model, nor will it be included in any validation calls in this view model.
-            </summary>
-            <param name="childViewModel">The child.</param>
-            <exception cref="T:System.ArgumentNullException">The <paramref name="childViewModel"/> is <c>null</c>.</exception>
         </member>
         <member name="T:Catel.MVVM.IViewModel">
             <summary>
@@ -4642,11 +4921,17 @@
             <summary>
             Cancels the editing of the data.
             </summary>
+            <returns>
+            	<c>true</c> if successful; otherwise <c>false</c>.
+            </returns>
         </member>
         <member name="M:Catel.MVVM.IViewModel.CancelAndCloseViewModel">
             <summary>
             Cancels the editing of the data, but also closes the view model in the same call.
             </summary>
+            <returns>
+            	<c>true</c> if successful; otherwise <c>false</c>.
+            </returns>
         </member>
         <member name="M:Catel.MVVM.IViewModel.SaveViewModel">
             <summary>
@@ -4718,6 +5003,16 @@
             </summary>
             <value>The view model construction time.</value>
         </member>
+        <member name="E:Catel.MVVM.IViewModel.Initialized">
+            <summary>
+            Occurs when the view model has been initialized.
+            </summary>
+        </member>
+        <member name="E:Catel.MVVM.IViewModel.CommandExecuted">
+            <summary>
+            Occurs when a command on the view model has been executed.
+            </summary>
+        </member>
         <member name="E:Catel.MVVM.IViewModel.Saving">
             <summary>
             Occurs when the view model is about to be saved.
@@ -4738,10 +5033,74 @@
             Occurrs when the view model is canceled.
             </summary>
         </member>
-        <member name="E:Catel.MVVM.IViewModel.Closed">
+        <member name="E:Catel.MVVM.IViewModel.Closing">
             <summary>
             Occurs when the view model is being closed.
             </summary>
+        </member>
+        <member name="E:Catel.MVVM.IViewModel.Closed">
+            <summary>
+            Occurs when the view model has been closed.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.IProgressNotifyableViewModel.UpdateStatus(System.Int32,System.Int32,Catel.MVVM.Tasks.ITask)">
+            <summary>
+            Update the progress status.
+            </summary>
+            <param name="currentItem">
+            The current item.
+            </param>
+            <param name="totalItems">
+            The total items.
+            </param>
+            <param name="task">
+            The task
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            The <paramref name="task"/> is <c>null</c>.
+            </exception>
+        </member>
+        <member name="P:Catel.MVVM.IProgressNotifyableViewModel.DetailedMessage">
+            <summary>
+            Gets the message.
+            </summary>
+        </member>
+        <member name="P:Catel.MVVM.IProgressNotifyableViewModel.Percentage">
+            <summary>
+            Gets the percent.
+            </summary>
+        </member>
+        <member name="P:Catel.MVVM.IProgressNotifyableViewModel.Task">
+            <summary>
+            Gets the task.
+            </summary>
+        </member>
+        <member name="T:Catel.MVVM.IRelationalViewModel">
+            <summary>
+            Interface that allows a view model to be used in a nested user controls scenario.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.IRelationalViewModel.SetParentViewModel(Catel.MVVM.IViewModel)">
+            <summary>
+            Sets the new parent view model of this view model.
+            </summary>
+            <param name="parentViewModel">The parent view model.</param>
+        </member>
+        <member name="M:Catel.MVVM.IRelationalViewModel.RegisterChildViewModel(Catel.MVVM.IViewModel)">
+            <summary>
+            Registers a child view model to this view model. When a view model is registered as a child view model, it will
+            receive all notifications from this view model and be notified of any validation changes.
+            </summary>
+            <param name="childViewModel">The child view model.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="childViewModel"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.IRelationalViewModel.UnregisterChildViewModel(Catel.MVVM.IViewModel)">
+            <summary>
+            Unregisters the child view model. This means that the child view model will no longer receive any notifications
+            from this view model as parent view model, nor will it be included in any validation calls in this view model.
+            </summary>
+            <param name="childViewModel">The child.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="childViewModel"/> is <c>null</c>.</exception>
         </member>
         <member name="T:Catel.MVVM.IViewModelContainer">
             <summary>
@@ -4763,15 +5122,6 @@
             <summary>
             Occurs when a property on the <see cref="P:Catel.MVVM.IViewModelContainer.ViewModel"/> has changed.
             </summary>
-        </member>
-        <member name="E:Catel.MVVM.IViewModelContainer.PropertyChanged">
-            <summary>
-            Occurs when a property on the container has changed.
-            </summary>
-            <remarks>
-            This event makes it possible to externally subscribe to property changes of a <see cref="T:System.Windows.DependencyObject"/>
-            (mostly the container of a view model) because the .NET Framework does not allows us to.
-            </remarks>
         </member>
         <member name="T:Catel.MVVM.IViewModelFactory">
             <summary>
@@ -4799,6 +5149,71 @@
             <param name="dataContext">The data context.</param>
             <returns>The newly created <see cref="T:Catel.MVVM.IViewModel"/> or <c>null</c> if no view model could be created.</returns>
             <exception cref="T:System.ArgumentException">The <c>TViewModel</c> does not implement the <see cref="T:Catel.MVVM.IViewModel"/> interface.</exception>
+        </member>
+        <member name="T:Catel.MVVM.IViewModelManager">
+            <summary>
+            Interface for the view model manager which allows the retrieval of currently alive view models.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.IViewModelManager.RegisterModel(Catel.MVVM.IViewModel,System.Object)">
+            <summary>
+            Registers the model of a view model.
+            </summary>
+            <param name="viewModel">The view model.</param>
+            <param name="model">The model.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="viewModel"/> is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="model"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.IViewModelManager.UnregisterModel(Catel.MVVM.IViewModel,System.Object)">
+            <summary>
+            Unregisters the model of a view model.
+            </summary>
+            <param name="viewModel">The view model.</param>
+            <param name="model">The model.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="viewModel"/> is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="model"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.IViewModelManager.UnregisterAllModels(Catel.MVVM.IViewModel)">
+            <summary>
+            Unregisters all models of a view model.
+            </summary>
+            <param name="viewModel">The view model.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="viewModel"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.IViewModelManager.GetViewModelsOfModel(System.Object)">
+            <summary>
+            Gets the view models of a model.
+            </summary>
+            <param name="model">The model to find the linked view models for.</param>
+            <returns>An array containing all the view models.</returns>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="model"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.IViewModelManager.GetViewModel(System.Int32)">
+            <summary>
+            Gets the view model by its unique identifier.
+            </summary>
+            <param name="uniqueIdentifier">The unique identifier.</param>
+            <returns>The <see cref="T:Catel.MVVM.IViewModel"/> or <c>null</c> if the view model is not registered.</returns>
+        </member>
+        <member name="M:Catel.MVVM.IViewModelManager.GetFirstOrDefaultInstance``1">
+            <summary>
+            Gets the first or default instance of the specified view model.
+            </summary>
+            <typeparam name="TViewModel">The type of the view model.</typeparam>
+            <returns>The <see cref="T:Catel.MVVM.IViewModel"/> or <c>null</c> if the view model is not registered.</returns>
+        </member>
+        <member name="M:Catel.MVVM.IViewModelManager.GetFirstOrDefaultInstance(System.Type)">
+            <summary>
+            Gets the first or default instance of the specified view model.
+            </summary>
+            <param name="viewModelType">Type of the view model.</param>
+            <returns>The <see cref="T:Catel.MVVM.IViewModel"/> or <c>null</c> if the view model is not registered.</returns>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="viewModelType"/> is <c>null</c>.</exception>
+        </member>
+        <member name="P:Catel.MVVM.IViewModelManager.ActiveViewModels">
+            <summary>
+            Gets the active view models presently registered.
+            </summary>
         </member>
         <member name="T:Catel.MVVM.ManagedViewModel">
             <summary>
@@ -4947,6 +5362,11 @@
             Gets the view model count.
             </summary>
             <value>The view model count.</value>
+        </member>
+        <member name="P:Catel.MVVM.ManagedViewModel.ViewModels">
+            <summary>
+            Gets all the currently registered view models managed by this view model manager.
+            </summary>
         </member>
         <member name="T:Catel.MVVM.ModelErrorInfo">
             <summary>
@@ -5112,39 +5532,14 @@
             	<c>true</c> if the <see cref="T:System.ComponentModel.IEditableObject"/> interface should be used on the model if possible; otherwise, <c>false</c>.
             </value>
         </member>
-        <member name="T:Catel.MVVM.ViewModelEvent">
+        <member name="T:Catel.MVVM.ViewModels.ProgressNotifyableViewModel">
             <summary>
-            Available view model events that can be retrieved via the <see cref="T:Catel.MVVM.InterestedInAttribute"/>.
-            </summary>
-        </member>
-        <member name="F:Catel.MVVM.ViewModelEvent.Saving">
-            <summary>
-            Saving event, invoked when a view model is about to be saved.
-            </summary>
-        </member>
-        <member name="F:Catel.MVVM.ViewModelEvent.Saved">
-            <summary>
-            Saved event, invoked when a view model has been saved successfully.
-            </summary>
-        </member>
-        <member name="F:Catel.MVVM.ViewModelEvent.Canceling">
-            <summary>
-            Canceling event, invoked when a view model is about to be canceled.
-            </summary>
-        </member>
-        <member name="F:Catel.MVVM.ViewModelEvent.Canceled">
-            <summary>
-            Canceled event, invoked when a view model has been canceled.
-            </summary>
-        </member>
-        <member name="F:Catel.MVVM.ViewModelEvent.Closed">
-            <summary>
-            Closed event, invoked when the view model is closed.
+            The progress notifyable view model base.
             </summary>
         </member>
         <member name="T:Catel.MVVM.ViewModelBase">
             <summary>
-            View model base for MVVM implementations. This class is based on the <see cref="T:Catel.Data.DataObjectBase"/>, and supports all
+            View model base for MVVM implementations. This class is based on the <see cref="T:Catel.Data.ModelBase"/>, and supports all
             common interfaces used by WPF.
             </summary>
             <remarks>This view model base does not add any services. The technique specific implementation should take care of that
@@ -5160,9 +5555,9 @@
             Dictionary containing the view model metadata of a view model type so it has to be calculated only once.
             </summary>
         </member>
-        <member name="F:Catel.MVVM.ViewModelBase._viewModelIdCounter">
+        <member name="F:Catel.MVVM.ViewModelBase._dispatcherService">
             <summary>
-            Counter for unique identifiers of a view model.
+            The dispatcher service used to dispatch all calls.
             </summary>
         </member>
         <member name="F:Catel.MVVM.ViewModelBase._ignoreMultipleModelsWarning">
@@ -5177,7 +5572,12 @@
         </member>
         <member name="F:Catel.MVVM.ViewModelBase._areViewModelAttributesIntialized">
             <summary>
-            Value indicating whher 
+            Value indicating whether the view model attributes are initialized. 
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.ViewModelBase._modelsDirtyFlags">
+            <summary>
+            Value indicating whether the specified models are dirty.
             </summary>
         </member>
         <member name="F:Catel.MVVM.ViewModelBase._modelObjects">
@@ -5222,19 +5622,15 @@
             updated after each validation sequence.
             </summary>
         </member>
-        <member name="F:Catel.MVVM.ViewModelBase.RegisteredCommands">
-            <summary>
-            A list of commands that implement the <see cref="T:Catel.MVVM.ICatelCommand"/> interface.
-            </summary>
-            <remarks>
-            Internal so the <see cref="F:Catel.MVVM.ViewModelBase.ViewModelManager"/> can subscribe to the commands. The string is the property name
-            the command is registered with.
-            </remarks>
-        </member>
         <member name="F:Catel.MVVM.ViewModelBase._propertyDescriptors">
             <summary>
             The cached property descriptors. If the property is empty, the property descriptors are yet to be built. Otherwise
             this list can be used to return the cached property descriptors.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.ViewModelBase.#cctor">
+            <summary>
+            Initializes static members of the <see cref="T:Catel.MVVM.ViewModelBase"/> class.
             </summary>
         </member>
         <member name="M:Catel.MVVM.ViewModelBase.#ctor(System.Boolean,System.Boolean,System.Boolean)">
@@ -5256,7 +5652,7 @@
             <para/>
             This constructor allows the injection of a custom <see cref="T:Catel.IoC.IServiceLocator"/>.
             </summary>
-            <param name="serviceLocator">The service locator to inject. If <c>null</c>, the <see cref="P:Catel.IoC.ServiceLocator.Instance"/> will be used.</param>
+            <param name="serviceLocator">The service locator to inject. If <c>null</c>, the <see cref="P:Catel.IoC.ServiceLocator.Default"/> will be used.</param>
             <param name="supportIEditableObject">if set to <c>true</c>, the view model will natively support models that
             implement the <see cref="T:System.ComponentModel.IEditableObject"/> interface.</param>
             <param name="ignoreMultipleModelsWarning">if set to <c>true</c>, the warning when using multiple models is ignored.</param>
@@ -5334,24 +5730,21 @@
             Updates the view model to model mappings that are defined as <see cref="F:Catel.MVVM.ViewModelToModelMode.Explicit"/>.
             </summary>
         </member>
-        <member name="M:Catel.MVVM.ViewModelBase.OnPropertyChanging(System.ComponentModel.PropertyChangingEventArgs)">
+        <member name="M:Catel.MVVM.ViewModelBase.RaisePropertyChanged(System.Object,Catel.Data.AdvancedPropertyChangedEventArgs)">
             <summary>
-            Called when a property value is changing.
+            Raises the <see cref="E:Catel.Data.ObservableObject.PropertyChanged"/> event.
+            <para/>
+            This is the one and only method that actually raises the <see cref="E:Catel.Data.ObservableObject.PropertyChanged"/> event. All other
+            methods are (and should be) just overloads that eventually call this method.
             </summary>
-            <param name="e">The <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance containing the event data.</param>
+            <param name="sender">The sender.</param>
+            <param name="e">The <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance containing the event data.</param>
         </member>
         <member name="M:Catel.MVVM.ViewModelBase.OnPropertyChanged(Catel.Data.AdvancedPropertyChangedEventArgs)">
             <summary>
             Called when a property value has changed.
             </summary>
             <param name="e">The <see cref="T:Catel.Data.AdvancedPropertyChangedEventArgs"/> instance containing the event data.</param>
-        </member>
-        <member name="M:Catel.MVVM.ViewModelBase.OnCommandExecuted(System.Object,Catel.MVVM.CommandExecutedEventArgs)">
-            <summary>
-            Called when an <see cref="T:Catel.MVVM.ICatelCommand"/> implementation has just been executed.
-            </summary>
-            <param name="sender">The sender.</param>
-            <param name="e">The <see cref="T:Catel.MVVM.CommandExecutedEventArgs"/> instance containing the event data.</param>
         </member>
         <member name="M:Catel.MVVM.ViewModelBase.Catel#MVVM#INotifyableViewModel#ViewModelPropertyChanged(Catel.MVVM.IViewModel,System.String)">
             <summary>
@@ -5479,6 +5872,9 @@
             <summary>
             Cancels the editing of the data.
             </summary>
+            <returns>
+            	<c>true</c> if successful; otherwise <c>false</c>.
+            </returns>
         </member>
         <member name="M:Catel.MVVM.ViewModelBase.Save">
             <summary>
@@ -5502,35 +5898,12 @@
             	<c>true</c> if a specific property is registered as a model; otherwise, <c>false</c>.
             </returns>
         </member>
-        <member name="M:Catel.MVVM.ViewModelBase.RegisterCommands(System.Boolean)">
-            <summary>
-            Registers all the commands that implement the <see cref="T:Catel.MVVM.ICatelCommand"/>.
-            </summary>
-            <param name="force">if set to <c>true</c>, all existing commands will be removed and re-registered.</param>
-        </member>
-        <member name="M:Catel.MVVM.ViewModelBase.UnregisterCommands">
-            <summary>
-            Unregisters all the commands that implement the <see cref="T:Catel.MVVM.ICatelCommand"/>.
-            </summary>
-        </member>
-        <member name="M:Catel.MVVM.ViewModelBase.InvalidateCommands">
-            <summary>
-            Invalidates all the commands that implement the <see cref="T:Catel.MVVM.ICatelCommand"/>.
-            </summary>
-        </member>
-        <member name="M:Catel.MVVM.ViewModelBase.GetService(System.Type)">
-            <summary>
-            Gets the service of the specified type. Keep in mind that injected services always take precedence
-            over services registered in the <see cref="P:Catel.MVVM.ViewModelBase.ServiceLocator"/>.
-            </summary>
-            <param name="serviceType">Type of the service.</param>
-            <returns>Service object or <c>null</c> if the service is not found.</returns>
-        </member>
-        <member name="M:Catel.MVVM.ViewModelBase.GetService``1">
+        <member name="M:Catel.MVVM.ViewModelBase.GetService``1(System.Object)">
             <summary>
             Gets the service of the specified type.
             </summary>
             <typeparam name="T">Type of the service.</typeparam>
+            <param name="tag">The tag.</param>
             <returns>Service object or <c>null</c> if the service is not found.</returns>
         </member>
         <member name="M:Catel.MVVM.ViewModelBase.RegisterViewModelServices(Catel.IoC.IServiceLocator)">
@@ -5738,6 +6111,11 @@
             It is also possible to use the <see cref="E:Catel.MVVM.ViewModelBase.NavigationCompleted"/> event.
             </remarks>
         </member>
+        <member name="E:Catel.MVVM.ViewModelBase.Initialized">
+            <summary>
+            Occurs when the view model has been initialized.
+            </summary>
+        </member>
         <member name="E:Catel.MVVM.ViewModelBase.CommandExecuted">
             <summary>
             Occurs when a command on the view model has been executed.
@@ -5763,9 +6141,14 @@
             Occurrs when the view model is canceled.
             </summary>
         </member>
-        <member name="E:Catel.MVVM.ViewModelBase.Closed">
+        <member name="E:Catel.MVVM.ViewModelBase.Closing">
             <summary>
             Occurs when the view model is being closed.
+            </summary>
+        </member>
+        <member name="E:Catel.MVVM.ViewModelBase.Closed">
+            <summary>
+            Occurs when the view model has just been closed.
             </summary>
         </member>
         <member name="P:Catel.MVVM.ViewModelBase.UniqueIdentifier">
@@ -5786,12 +6169,18 @@
             </summary>
             <value>The parent view model.</value>
         </member>
+        <member name="P:Catel.MVVM.ViewModelBase.ViewModelCommandManager">
+            <summary>
+            Gets the <see cref="P:Catel.MVVM.ViewModelBase.ViewModelCommandManager"/> of this view model.
+            </summary>
+            <value>The <see cref="P:Catel.MVVM.ViewModelBase.ViewModelCommandManager"/>.</value>
+        </member>
         <member name="P:Catel.MVVM.ViewModelBase.InvalidateCommandsOnPropertyChanged">
             <summary>
             Gets a value indicating whether the commands should automatically be invalidated on a property change.
             <para/>
             If this property is <c>false</c>, properties should either be invalidated by the .NET Framework or by a manual
-            call to the <see cref="M:Catel.MVVM.ViewModelBase.InvalidateCommands"/> method.
+            call to the <see cref="M:Catel.MVVM.IViewModelCommandManager.InvalidateCommands(System.Boolean)"/> method.
             </summary>
             <value>
             	<c>true</c> if the commands should automatically be invalidated on a property change; otherwise, <c>false</c>.
@@ -5835,6 +6224,19 @@
             <value>
             	<c>true</c> if models that implement <see cref="T:System.ComponentModel.IEditableObject"/> are supported correctly; otherwise, <c>false</c>.
             </value>
+        </member>
+        <member name="P:Catel.MVVM.ViewModelBase.IsSaving">
+            <summary>
+            Gets a value indicating whether this instance is currently saving.
+            </summary>
+        </member>
+        <member name="P:Catel.MVVM.ViewModelBase.DispatchPropertyChangedEvent">
+            <summary>
+            Gets a value indicating whether the <see cref="M:Catel.MVVM.ViewModelBase.RaisePropertyChanged(System.Object,Catel.Data.AdvancedPropertyChangedEventArgs)"/> will be dispatched using
+            the <see cref="T:Catel.MVVM.Services.IDispatcherService"/>.
+            <para/>
+            The default value is <c>false</c>.
+            </summary>
         </member>
         <member name="P:Catel.MVVM.ViewModelBase.IsClosed">
             <summary>
@@ -5910,6 +6312,114 @@
             Call <see cref="M:System.ComponentModel.IEditableObject.EndEdit"/>.
             </summary>
         </member>
+        <member name="F:Catel.MVVM.ViewModels.ProgressNotifyableViewModel.TaskProperty">
+            <summary>Register the Task property so it is known in the class.</summary>
+        </member>
+        <member name="F:Catel.MVVM.ViewModels.ProgressNotifyableViewModel.TaskMessageProperty">
+            <summary>Register the TaskMessage property so it is known in the class.</summary>
+        </member>
+        <member name="F:Catel.MVVM.ViewModels.ProgressNotifyableViewModel.TaskNameProperty">
+            <summary>Register the TaskName property so it is known in the class.</summary>
+        </member>
+        <member name="F:Catel.MVVM.ViewModels.ProgressNotifyableViewModel.TaskPercentageProperty">
+            <summary>Register the TaskPercentage property so it is known in the class.</summary>
+        </member>
+        <member name="F:Catel.MVVM.ViewModels.ProgressNotifyableViewModel.DetailedMessageProperty">
+            <summary>Register the DetailedMessage property so it is known in the class.</summary>
+        </member>
+        <member name="F:Catel.MVVM.ViewModels.ProgressNotifyableViewModel._currentItem">
+            <summary>
+            The _current item.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.ViewModels.ProgressNotifyableViewModel._totalItems">
+            <summary>
+            The _total items.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.ViewModels.ProgressNotifyableViewModel.UpdateStatus(System.Int32,System.Int32,Catel.MVVM.Tasks.ITask)">
+            <summary>
+            The update status.
+            </summary>
+            <param name="currentItem">
+            The current item.
+            </param>
+            <param name="totalItems">
+            The total items.
+            </param>
+            <param name="task">
+            The task
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            The <paramref name="task"/> is <c>null</c>. 
+            </exception>
+        </member>
+        <member name="M:Catel.MVVM.ViewModels.ProgressNotifyableViewModel.OnTaskMessageChanged">
+            <summary>Occurs when the value of the TaskMessage property is changed.</summary>
+        </member>
+        <member name="M:Catel.MVVM.ViewModels.ProgressNotifyableViewModel.OnTaskPercentageChanged">
+            <summary>Occurs when the value of the TaskPercentage property is changed.</summary>
+        </member>
+        <member name="P:Catel.MVVM.ViewModels.ProgressNotifyableViewModel.TaskMessage">
+            <summary>
+            Gets or sets the task message.
+            </summary>
+        </member>
+        <member name="P:Catel.MVVM.ViewModels.ProgressNotifyableViewModel.TaskName">
+            <summary>
+            Gets or sets the task name.
+            </summary>
+        </member>
+        <member name="P:Catel.MVVM.ViewModels.ProgressNotifyableViewModel.TaskPercentage">
+            <summary>
+            Gets or sets the task percentage.
+            </summary>
+        </member>
+        <member name="P:Catel.MVVM.ViewModels.ProgressNotifyableViewModel.Task">
+            <summary>
+            Gets the task.
+            </summary>
+        </member>
+        <member name="P:Catel.MVVM.ViewModels.ProgressNotifyableViewModel.DetailedMessage">
+            <summary>
+            Gets the detailed message.
+            </summary>
+        </member>
+        <member name="P:Catel.MVVM.ViewModels.ProgressNotifyableViewModel.Percentage">
+            <summary>
+            Gets the percentage.
+            </summary>
+        </member>
+        <member name="T:Catel.MVVM.ViewModelEvent">
+            <summary>
+            Available view model events that can be retrieved via the <see cref="T:Catel.MVVM.InterestedInAttribute"/>.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.ViewModelEvent.Saving">
+            <summary>
+            Saving event, invoked when a view model is about to be saved.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.ViewModelEvent.Saved">
+            <summary>
+            Saved event, invoked when a view model has been saved successfully.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.ViewModelEvent.Canceling">
+            <summary>
+            Canceling event, invoked when a view model is about to be canceled.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.ViewModelEvent.Canceled">
+            <summary>
+            Canceled event, invoked when a view model has been canceled.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.ViewModelEvent.Closed">
+            <summary>
+            Closed event, invoked when the view model is closed.
+            </summary>
+        </member>
         <member name="T:Catel.MVVM.ViewModelFactory">
             <summary>
             Default implementation of the <see cref="T:Catel.MVVM.IViewModelFactory"/> which allows custom instantation of view models. This way,
@@ -5923,6 +6433,18 @@
             <summary>
             The log.
             </summary>
+        </member>
+        <member name="F:Catel.MVVM.ViewModelFactory._typeFactory">
+            <summary>
+            The type factory to use.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.ViewModelFactory.#ctor(Catel.IoC.ITypeFactory)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Catel.MVVM.ViewModelFactory"/> class.
+            </summary>
+            <param name="typeFactory">The type factory.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="typeFactory"/> is <c>null</c>.</exception>
         </member>
         <member name="M:Catel.MVVM.ViewModelFactory.CreateViewModel(System.Type,System.Object)">
             <summary>
@@ -5961,9 +6483,24 @@
             List of all live instances of the view model managers.
             </summary>
         </member>
+        <member name="F:Catel.MVVM.ViewModelManager._managedViewModelsLock">
+            <summary>
+            The lock for the _managedViewModels dictionary.
+            </summary>
+        </member>
         <member name="F:Catel.MVVM.ViewModelManager._managedViewModels">
             <summary>
             Dictionary containing all the managed view models by this view model manager.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.ViewModelManager._viewModelModelsLock">
+            <summary>
+            The lock for the _viewModelModels dictionary.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.ViewModelManager._viewModelModels">
+            <summary>
+            Dictionary containing the unique identifiers of a all view models and their registered models.
             </summary>
         </member>
         <member name="M:Catel.MVVM.ViewModelManager.#ctor">
@@ -5973,6 +6510,65 @@
             <remarks>
             The constructor is private because this is a singleton class.
             </remarks>
+        </member>
+        <member name="M:Catel.MVVM.ViewModelManager.RegisterModel(Catel.MVVM.IViewModel,System.Object)">
+            <summary>
+            Registers the model of a view model.
+            </summary>
+            <param name="viewModel">The view model.</param>
+            <param name="model">The model.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="viewModel"/> is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="model"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.ViewModelManager.UnregisterModel(Catel.MVVM.IViewModel,System.Object)">
+            <summary>
+            Unregisters the model of a view model.
+            </summary>
+            <param name="viewModel">The view model.</param>
+            <param name="model">The model.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="viewModel"/> is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="model"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.ViewModelManager.UnregisterAllModels(Catel.MVVM.IViewModel)">
+            <summary>
+            Unregisters all models of a view model.
+            </summary>
+            <param name="viewModel">The view model.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="viewModel"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.ViewModelManager.GetViewModelsOfModel(System.Object)">
+            <summary>
+            Gets the view models of a model.
+            </summary>
+            <param name="model">The model to find the linked view models for.</param>
+            <returns>An array containing all the view models.</returns>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="model"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.ViewModelManager.GetViewModel(System.Int32)">
+            <summary>
+            Gets the view model by its unique identifier.
+            </summary>
+            <param name="uniqueIdentifier">The unique identifier.</param>
+            <returns>The <see cref="T:Catel.MVVM.IViewModel"/> or <c>null</c> if the view model is not registered.</returns>
+        </member>
+        <member name="M:Catel.MVVM.ViewModelManager.GetFirstOrDefaultInstance``1">
+            <summary>
+            Gets the first or default instance of the specified view model.
+            </summary>
+            <typeparam name="TViewModel">The type of the view model.</typeparam>
+            <returns>
+            The <see cref="T:Catel.MVVM.IViewModel"/> or <c>null</c> if the view model is not registered.
+            </returns>
+        </member>
+        <member name="M:Catel.MVVM.ViewModelManager.GetFirstOrDefaultInstance(System.Type)">
+            <summary>
+            Gets the first or default instance of the specified view model.
+            </summary>
+            <param name="viewModelType">Type of the view mode.</param>
+            <returns>
+            The <see cref="T:Catel.MVVM.IViewModel"/> or <c>null</c> if the view model is not registered.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="viewModelType"/> is <c>null</c>.</exception>
         </member>
         <member name="M:Catel.MVVM.ViewModelManager.ClearAll">
             <summary>
@@ -6070,6 +6666,11 @@
             Gets the view model count.
             </summary>
             <value>The view model count.</value>
+        </member>
+        <member name="P:Catel.MVVM.ViewModelManager.ActiveViewModels">
+            <summary>
+            Gets the active view models presently registered.
+            </summary>
         </member>
         <member name="T:Catel.MVVM.ViewModelMetadata">
             <summary>
@@ -6278,6 +6879,421 @@
             Gets or sets the mode.
             </summary>
             <value>The mode.</value>
+        </member>
+        <member name="T:Catel.MVVM.Views.ViewToViewModelMappingType">
+            <summary>
+            Mapping types for the <see cref="T:Catel.MVVM.Views.ViewToViewModelAttribute"/>.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Views.ViewToViewModelMappingType.TwoWayDoNothing">
+            <summary>
+            Two way, which means that either the view or the view model will update
+            the values of the other party as soon as they are updated.
+            <para />
+            When this value is used, nothing happens when the view model of the view
+            changes. This way, it might be possible that the values of the view and the
+            view model are different. The first one to update next will update the other.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Views.ViewToViewModelMappingType.TwoWayViewWins">
+            <summary>
+            Two way, which means that either the view or the view model will update
+            the values of the other party as soon as they are updated.
+            <para />
+            When this value is used, the value of the view is used when the view model 
+            of the view is changed, and is directly transferred to the view model value.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Views.ViewToViewModelMappingType.TwoWayViewModelWins">
+            <summary>
+            Two way, which means that either the view or the view model will update
+            the values of the other party as soon as they are updated.
+            <para />
+            When this value is used, the value of the view model is used when the view model 
+            of the view is changed, and is directly transferred to the view value.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Views.ViewToViewModelMappingType.ViewToViewModel">
+            <summary>
+            The mapping is from the view to the view model only.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Views.ViewToViewModelMappingType.ViewModelToView">
+            <summary>
+            The mapping is from the view model to the view only.
+            </summary>
+        </member>
+        <member name="T:Catel.MVVM.Views.ViewToViewModelAttribute">
+            <summary>
+            A mapper attribute to map a <see cref="T:System.Windows.FrameworkElement"/> (such as the UserControl or the DataWindow) 
+            property to a view model property.
+            <para/>
+            This class is very useful when creating custom user controls that need more parameterized settings than just the
+            <c>DataContext</c> property.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewToViewModelAttribute.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Catel.MVVM.Views.ViewToViewModelAttribute"/> class.
+            </summary>
+            <param name="viewModelPropertyName">Name of the view model property.</param>
+        </member>
+        <member name="P:Catel.MVVM.Views.ViewToViewModelAttribute.ViewModelPropertyName">
+            <summary>
+            Gets or sets the view model property name.
+            </summary>
+            <value>The view model property name.</value>
+        </member>
+        <member name="P:Catel.MVVM.Views.ViewToViewModelAttribute.MappingType">
+            <summary>
+            Gets or sets the type of the mapping.
+            </summary>
+            <value>The type of the mapping.</value>
+        </member>
+        <member name="T:Catel.MVVM.Views.ViewToViewModelMappingHelper">
+            <summary>
+            Helper class to fix <see cref="T:Catel.MVVM.Views.ViewToViewModelMapping"/> for <see cref="T:System.Windows.FrameworkElement"/>.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Views.ViewToViewModelMappingHelper.Log">
+            <summary>
+            The log.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Views.ViewToViewModelMappingHelper._viewModelContainers">
+            <summary>
+            Dictionary of <see cref="T:Catel.MVVM.IViewModelContainer"/> instances managed by this helper class.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Views.ViewToViewModelMappingHelper._viewToViewModelMappingContainers">
+            <summary>
+            Dictionary of <see cref="T:Catel.MVVM.Views.ViewToViewModelMappingContainer"/> instances per type (which should be a <see cref="T:System.Windows.DependencyObject"/>).
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Views.ViewToViewModelMappingHelper._ignoredViewModelChanges">
+            <summary>
+            List of properties in the view model that should be ignored.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Views.ViewToViewModelMappingHelper._ignoredViewChanges">
+            <summary>
+            List of properties in the view that should be ignored.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewToViewModelMappingHelper.#ctor(Catel.MVVM.IViewModelContainer)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Catel.MVVM.Views.ViewToViewModelMappingHelper"/> class.
+            </summary>
+            <param name="viewModelContainer">The view model container.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="viewModelContainer"/> is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentException">The <paramref name="viewModelContainer"/> is not a <see cref="T:System.Windows.DependencyObject"/>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewToViewModelMappingHelper.InitializeViewToViewModelMappings(Catel.MVVM.IViewModelContainer)">
+            <summary>
+            Initializes the <see cref="T:Catel.MVVM.Views.ViewToViewModelMapping"/> for the specified <see cref="T:Catel.MVVM.IViewModelContainer"/>.
+            </summary>
+            <param name="viewModelContainer">The view model container to initialize the mappings for.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="viewModelContainer"/> is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentException">The <paramref name="viewModelContainer"/> is not a <see cref="T:System.Windows.DependencyObject"/>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewToViewModelMappingHelper.UninitializeViewToViewModelMappings(Catel.MVVM.IViewModelContainer)">
+            <summary>
+            Uninitializes the <see cref="T:Catel.MVVM.Views.ViewToViewModelMapping"/> for the specified <see cref="T:Catel.MVVM.IViewModelContainer"/>.
+            </summary>
+            <param name="viewModelContainer">The view model container the uninitialize the mappings for.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="viewModelContainer"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewToViewModelMappingHelper.UninitializeViewToViewModelMappings">
+            <summary>
+            Uninitializes the <see cref="T:Catel.MVVM.Views.ViewToViewModelMapping"/> for the registered <see cref="T:Catel.MVVM.IViewModelContainer"/>.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewToViewModelMappingHelper.InitializeViewModel(Catel.MVVM.IViewModel)">
+            <summary>
+            Initializes the specified view model.
+            </summary>
+            <param name="viewModel">The view model.</param>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewToViewModelMappingHelper.UninitializeViewModel(Catel.MVVM.IViewModel)">
+            <summary>
+            Uninitializes the specified view model.
+            </summary>
+            <param name="viewModel">The view model.</param>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewToViewModelMappingHelper.OnViewModelChanged(System.Object,System.EventArgs)">
+            <summary>
+            Called when the view model on the view model container has changed.
+            </summary>
+            <param name="sender">The view model container.</param>
+            <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewToViewModelMappingHelper.OnViewModelPropertyChanged(System.Object,System.ComponentModel.PropertyChangedEventArgs)">
+            <summary>
+            Called when a property on the view model has changed.
+            </summary>
+            <param name="sender">The view model.</param>
+            <param name="e">The <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewToViewModelMappingHelper.OnViewModelContainerPropertyChanged(System.Object,System.ComponentModel.PropertyChangedEventArgs)">
+            <summary>
+            Called when a property on the view model container has changed.
+            </summary>
+            <param name="sender">The view model container.</param>
+            <param name="e">The <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewToViewModelMappingHelper.TransferValueFromViewToViewModel(Catel.MVVM.IViewModel,System.String,System.String)">
+            <summary>
+            Transfers the value from a view property to the view model property.
+            <para/>
+            This method does nothing when <paramref name="viewModel"/> is <c>null</c>.
+            </summary>
+            <param name="viewModel">The view model.</param>
+            <param name="viewPropertyName">Name of the view property.</param>
+            <param name="viewModelPropertyName">Name of the view model property.</param>
+            <exception cref="T:System.ArgumentException">The <paramref name="viewPropertyName"/> is <c>null</c> or whitespace.</exception>
+            <exception cref="T:System.ArgumentException">The <paramref name="viewModelPropertyName"/> is <c>null</c> or whitespace.</exception>
+            <remarks>
+            This method does not check the type of the properties. If the types are incorrect, an exception will be thrown by
+            the .NET Framework.
+            </remarks>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewToViewModelMappingHelper.TransferValueFromViewModelToView(Catel.MVVM.IViewModel,System.String,System.String)">
+            <summary>
+            Transfers the value from a view model property to the view property.
+            <para/>
+            This method does nothing when <paramref name="viewModel"/> is <c>null</c>.
+            </summary>
+            <param name="viewModel">The view model.</param>
+            <param name="viewPropertyName">Name of the view property.</param>
+            <param name="viewModelPropertyName">Name of the view model property.</param>
+            <exception cref="T:System.ArgumentException">The <paramref name="viewPropertyName"/> is <c>null</c> or whitespace.</exception>
+            <exception cref="T:System.ArgumentException">The <paramref name="viewModelPropertyName"/> is <c>null</c> or whitespace.</exception>
+            <remarks>
+            This method does not check the type of the properties. If the types are incorrect, an exception will be thrown by
+            the .NET Framework.
+            </remarks>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewToViewModelMappingHelper.TransferValue(System.Object,System.String,System.Object,System.String)">
+            <summary>
+            Transfers a value from the source property to the target property.
+            </summary>
+            <param name="source">The source.</param>
+            <param name="sourcePropertyName">Name of the source property.</param>
+            <param name="target">The target.</param>
+            <param name="targetPropertyName">Name of the target property.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="source"/> is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="target"/> is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentException">The <paramref name="sourcePropertyName"/> is <c>null</c> or whitespace.</exception>
+            <exception cref="T:System.ArgumentException">The <paramref name="targetPropertyName"/> is <c>null</c> or whitespace.</exception>
+            <remarks>
+            This method does not check the type of the properties. If the types are incorrect, an exception will be thrown by
+            the .NET Framework.
+            </remarks>
+        </member>
+        <member name="P:Catel.MVVM.Views.ViewToViewModelMappingHelper.ViewModelContainer">
+            <summary>
+            Gets the view model container.
+            </summary>
+            <value>The view model container.</value>
+        </member>
+        <member name="P:Catel.MVVM.Views.ViewToViewModelMappingHelper.ViewModelContainerType">
+            <summary>
+            Gets the type of the view model container.
+            </summary>
+            <value>The type of the view model container.</value>
+        </member>
+        <member name="P:Catel.MVVM.Views.ViewToViewModelMappingHelper.PreviousViewModel">
+            <summary>
+            Gets or sets the previous view model.
+            </summary>
+            <value>The previous view model.</value>
+        </member>
+        <member name="P:Catel.MVVM.Views.ViewToViewModelMappingHelper.CurrentViewModel">
+            <summary>
+            Gets the current view model.
+            </summary>
+            <value>The current view model.</value>
+        </member>
+        <member name="T:Catel.MVVM.Views.IViewManager">
+            <summary>
+            Manager that can search for views belonging to a view model.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.Views.IViewManager.RegisterView(Catel.Windows.Controls.IView)">
+            <summary>
+            Registers a view so it can be linked to a view model instance.
+            </summary>
+            <param name="view">The view to register.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="view"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.Views.IViewManager.UnregisterView(Catel.Windows.Controls.IView)">
+            <summary>
+            Unregisters a view so it can no longer be linked to a view model instance.
+            </summary>
+            <param name="view">The view to unregister.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="view"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.Views.IViewManager.GetViewsOfViewModel(Catel.MVVM.IViewModel)">
+            <summary>
+            Gets the views of view model.
+            </summary>
+            <param name="viewModel">The view model.</param>
+            <returns>An array containing all the views that are linked to the view.</returns>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="viewModel"/> is <c>null</c>.</exception>
+        </member>
+        <member name="T:Catel.MVVM.Views.ViewManager">
+            <summary>
+            Manager that can search for views belonging to a view model.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Views.ViewManager.Log">
+            <summary>
+            The log.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Views.ViewManager._registeredViews">
+            <summary>
+            List of views and the unique identifyer of the view models they own.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewManager.RegisterView(Catel.Windows.Controls.IView)">
+            <summary>
+            Registers a view so it can be linked to a view model instance.
+            </summary>
+            <param name="view">The view to register.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="view"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewManager.UnregisterView(Catel.Windows.Controls.IView)">
+            <summary>
+            Unregisters a view so it can no longer be linked to a view model instance.
+            </summary>
+            <param name="view">The view to unregister.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="view"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewManager.GetViewsOfViewModel(Catel.MVVM.IViewModel)">
+            <summary>
+            Gets the views of view model.
+            </summary>
+            <param name="viewModel">The view model.</param>
+            <returns>An array containing all the views that are linked to the view.</returns>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="viewModel"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewManager.OnViewModelChanged(System.Object,System.EventArgs)">
+            <summary>
+            Called when the view model of a view has changed.
+            </summary>
+            <param name="sender">The sender.</param>
+            <param name="eventArgs">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewManager.SyncViewModelOfView(Catel.Windows.Controls.IView)">
+            <summary>
+            Synchronizes the view model of view.
+            </summary>
+            <param name="view">The view.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="view"/> is <c>null</c>.</exception>
+        </member>
+        <member name="T:Catel.MVVM.Views.ViewToViewModelMapping">
+            <summary>
+            Holds the information for a view to viewmodel mapping. The information is based on the <see cref="T:Catel.MVVM.Views.ViewToViewModelAttribute"/>.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Views.ViewToViewModelMapping.Log">
+            <summary>
+            The log.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewToViewModelMapping.#ctor(System.String,System.String,Catel.MVVM.Views.ViewToViewModelMappingType)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Catel.MVVM.Views.ViewToViewModelMapping"/> class.
+            </summary>
+            <param name="viewPropertyName">Name of the view property.</param>
+            <param name="viewModelPropertyName">Name of the view model property.</param>
+            <param name="mapping">The mapping type.</param>
+            <exception cref="T:System.ArgumentException">The <paramref name="viewPropertyName"/> is <c>null</c> or whitespace.</exception>
+            <exception cref="T:System.ArgumentException">The <paramref name="viewModelPropertyName"/> is <c>null</c> or whitespace.</exception>
+        </member>
+        <member name="P:Catel.MVVM.Views.ViewToViewModelMapping.ViewPropertyName">
+            <summary>
+            Gets the name of the view property.
+            </summary>
+            <value>The name of the view property.</value>
+        </member>
+        <member name="P:Catel.MVVM.Views.ViewToViewModelMapping.ViewModelPropertyName">
+            <summary>
+            Gets the name of the view model property.
+            </summary>
+            <value>The name of the view model property.</value>
+        </member>
+        <member name="P:Catel.MVVM.Views.ViewToViewModelMapping.MappingType">
+            <summary>
+            Gets or sets the mapping type.
+            </summary>
+            <value>The mapping type.</value>
+        </member>
+        <member name="T:Catel.MVVM.Views.ViewToViewModelMappingContainer">
+            <summary>
+            Container class for <see cref="T:Catel.MVVM.Views.ViewToViewModelMapping"/> elements.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Views.ViewToViewModelMappingContainer.Log">
+            <summary>
+            The log.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Views.ViewToViewModelMappingContainer._viewToViewModelMappings">
+            <summary>
+            Dictionary containing all the view to view model mappings.
+            </summary>
+        </member>
+        <member name="F:Catel.MVVM.Views.ViewToViewModelMappingContainer._viewModelToViewMappings">
+            <summary>
+            Dictionary containing all the view model to view mappings.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewToViewModelMappingContainer.#ctor(System.Windows.DependencyObject)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Catel.MVVM.Views.ViewToViewModelMappingContainer"/> class.
+            </summary>
+            <param name="dependencyObject">The dependency object.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="dependencyObject"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewToViewModelMappingContainer.GetAllViewToViewModelMappings">
+            <summary>
+            Gets all the <see cref="T:Catel.MVVM.Views.ViewToViewModelMapping"/> that are registered.
+            </summary>
+            <returns><see cref="T:System.Collections.Generic.IEnumerable`1"/> containing all registered <see cref="T:Catel.MVVM.Views.ViewToViewModelMapping"/>.</returns>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewToViewModelMappingContainer.ContainsViewToViewModelMapping(System.String)">
+            <summary>
+            Determines whether the manager contains a view to view model property mapping for the specified view property name.
+            </summary>
+            <param name="viewPropertyName">Name of the view property.</param>
+            <returns>
+            	<c>true</c> if the manager contains a view to view model property mapping for the specified view property name; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewToViewModelMappingContainer.GetViewToViewModelMapping(System.String)">
+            <summary>
+            Gets the <see cref="T:Catel.MVVM.Views.ViewToViewModelMapping"/> that is mapped to the specified view property name.
+            </summary>
+            <param name="viewPropertyName">Name of the view property.</param>
+            <returns><see cref="T:Catel.MVVM.Views.ViewToViewModelMapping"/>.</returns>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewToViewModelMappingContainer.ContainsViewModelToViewMapping(System.String)">
+            <summary>
+            Determines whether the manager contains a view model to view property mapping for the specified view model property name.
+            </summary>
+            <param name="viewModelPropertyName">Name of the view model property.</param>
+            <returns>
+            	<c>true</c> if the manager contains a view model to view property mapping for the specified view model property name; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:Catel.MVVM.Views.ViewToViewModelMappingContainer.GetViewModelToViewMapping(System.String)">
+            <summary>
+            Gets the <see cref="T:Catel.MVVM.Views.ViewToViewModelMapping"/> that is mapped to the specified view model property name.
+            </summary>
+            <param name="viewModelPropertyName">Name of the view model property.</param>
+            <returns><see cref="T:Catel.MVVM.Views.ViewToViewModelMapping"/>.</returns>
         </member>
         <member name="T:Catel.MVVM.Properties.Exceptions">
             <summary>
@@ -6547,6 +7563,20 @@
             <summary>
             Called when the <see cref="P:Catel.Windows.Controls.InfoBarMessageControl.Mode"/> property has changed.
             </summary>
+        </member>
+        <member name="M:Catel.Windows.Controls.InfoBarMessageControl.SubscribeWarningAndErrorValidator(Catel.Windows.Controls.WarningAndErrorValidator)">
+            <summary>
+            Subscribes an instance of the <see cref="T:Catel.Windows.Controls.WarningAndErrorValidator"/> class.
+            </summary>
+            <param name="validator">The validator.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="validator"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.Windows.Controls.InfoBarMessageControl.UnsubscribeWarningAndErrorValidator(Catel.Windows.Controls.WarningAndErrorValidator)">
+            <summary>
+            Unsubscribes the warning and error validator.
+            </summary>
+            <param name="validator">The validator.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="validator"/> is <c>null</c>.</exception>
         </member>
         <member name="M:Catel.Windows.Controls.InfoBarMessageControl.SubscribeToEvents">
             <summary>
@@ -6856,6 +7886,11 @@
             <see cref="P:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.ViewModel"/> property.
             </summary>
         </member>
+        <member name="F:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase._viewManager">
+            <summary>
+            The view manager.
+            </summary>
+        </member>
         <member name="F:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase._isFirstValidationAfterLoaded">
             <summary>
             Boolean representing whether this is the first validation after the control has been loaded.
@@ -6864,6 +7899,11 @@
         <member name="F:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase._viewModelFactory">
             <summary>
             The view model factory used to create the view model instances.
+            </summary>
+        </member>
+        <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.#cctor">
+            <summary>
+            Initializes static members of the <see cref="T:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase"/> class.
             </summary>
         </member>
         <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.#ctor(System.Windows.FrameworkElement,System.Type,Catel.MVVM.IViewModel)">
@@ -6876,6 +7916,15 @@
             <exception cref="T:System.ArgumentNullException">The <paramref name="targetControl"/> is <c>null</c>.</exception>
             <exception cref="T:System.ArgumentNullException">The <paramref name="viewModelType"/> is <c>null</c>.</exception>
             <exception cref="T:System.ArgumentNullException">The <paramref name="viewModelType"/> does not implement interface <see cref="T:Catel.MVVM.IViewModel"/>.</exception>
+        </member>
+        <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.SetDataContext(System.Object)">
+            <summary>
+            Sets the data context of the target control.
+            <para />
+            This method is abstract because the real logic implementation knows how to set the data context (for example,
+            by using an additional data context grid).
+            </summary>
+            <param name="newDataContext">The new data context.</param>
         </member>
         <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.CreateViewModelByUsingDataContextOrConstructor">
             <summary>
@@ -6939,19 +7988,26 @@
             <param name="sender">The sender.</param>
             <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
         </member>
-        <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.OnTargetControlDataContextChanged(System.Object,System.Windows.DependencyPropertyChangedEventArgs)">
+        <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.OnTargetControlDataContextChanged(System.Object,Catel.Windows.Data.DependencyPropertyValueChangedEventArgs)">
             <summary>
             Called when the <c>DataContext</c> property of the <see cref="P:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.TargetControl"/> has changed.
             </summary>
             <param name="sender">The sender.</param>
             <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
         </member>
-        <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.OnTargetControlPropertyChanged(System.Object,System.Windows.DependencyPropertyChangedEventArgs)">
+        <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.OnTargetControlPropertyChangedInternal(System.Object,Catel.Windows.Data.DependencyPropertyValueChangedEventArgs)">
             <summary>
             Called when a property on the <see cref="P:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.TargetControl"/> has changed.
             </summary>
             <param name="sender">The sender.</param>
-            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+            <param name="e">The <see cref="T:Catel.Windows.Data.DependencyPropertyValueChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.OnTargetControlPropertyChanged(System.Object,Catel.Windows.Data.DependencyPropertyValueChangedEventArgs)">
+            <summary>
+            Called when a property on the <see cref="P:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.TargetControl"/> has changed.
+            </summary>
+            <param name="sender">The sender.</param>
+            <param name="e">The <see cref="T:Catel.Windows.Data.DependencyPropertyValueChangedEventArgs"/> instance containing the event data.</param>
         </member>
         <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.OnViewModelPropertyChanged(System.Object,System.ComponentModel.PropertyChangedEventArgs)">
             <summary>
@@ -6991,11 +8047,13 @@
             <summary>
             Cancels the view model.
             </summary>
+            <returns><c>true</c> if the view model is successfully canceled; otherwise <c>false</c>.</returns>
         </member>
         <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.CancelAndCloseViewModel">
             <summary>
             Cancels and closes the view model.
             </summary>
+            <returns><c>true</c> if the view model is successfully canceled; otherwise <c>false</c>.</returns>
         </member>
         <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.SaveViewModel">
             <summary>
@@ -7244,6 +8302,15 @@
             <exception cref="T:System.ArgumentNullException">The <paramref name="viewModelType"/> is <c>null</c>.</exception>
             <exception cref="T:System.ArgumentNullException">The <paramref name="viewModelType"/> does not implement interface <see cref="T:Catel.MVVM.IViewModel"/>.</exception>
         </member>
+        <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.NavigationPageLogic.SetDataContext(System.Object)">
+            <summary>
+            Sets the data context of the target control.
+            <para />
+            This method is abstract because the real logic implementation knows how to set the data context (for example,
+            by using an additional data context grid).
+            </summary>
+            <param name="newDataContext">The new data context.</param>
+        </member>
         <member name="T:Catel.Windows.Controls.MVVMProviders.Logic.UserControlLogic">
             <summary>
             MVVM Provider behavior implementation for a user control.
@@ -7271,6 +8338,15 @@
             <exception cref="T:System.ArgumentNullException">The <paramref name="viewModelType"/> is <c>null</c>.</exception>
             <exception cref="T:System.ArgumentNullException">The <paramref name="viewModelType"/> does not implement interface <see cref="T:Catel.MVVM.IViewModel"/>.</exception>
         </member>
+        <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.UserControlLogic.SetDataContext(System.Object)">
+            <summary>
+            Sets the data context of the target control.
+            <para />
+            This method is abstract because the real logic implementation knows how to set the data context (for example,
+            by using an additional data context grid).
+            </summary>
+            <param name="newDataContext">The new data context.</param>
+        </member>
         <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.UserControlLogic.OnTargetControlContentChanged(System.Object,Catel.Windows.Data.DependencyPropertyValueChangedEventArgs)">
             <summary>
             Called when the content of the target control has changed.
@@ -7297,13 +8373,6 @@
             <param name="sender">The sender.</param>
             <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
         </member>
-        <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.UserControlLogic.OnTargetControlPropertyChanged(System.Object,System.Windows.DependencyPropertyChangedEventArgs)">
-            <summary>
-            Called when a property on the <see cref="P:Catel.Windows.Controls.MVVMProviders.Logic.UserControlLogic.TargetControl"/> has changed.
-            </summary>
-            <param name="sender">The sender.</param>
-            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
-        </member>
         <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.UserControlLogic.OnViewModelChanging">
             <summary>
             Called when the <see cref="P:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.ViewModel"/> property is about to change.
@@ -7314,7 +8383,7 @@
             Called when the <see cref="P:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.ViewModel"/> property has just been changed.
             </summary>
         </member>
-        <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.UserControlLogic.OnTargetControlDataContextChanged(System.Object,System.Windows.DependencyPropertyChangedEventArgs)">
+        <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.UserControlLogic.OnTargetControlDataContextChanged(System.Object,Catel.Windows.Data.DependencyPropertyValueChangedEventArgs)">
             <summary>
             Called when the <c>DataContext</c> property of the <see cref="P:Catel.Windows.Controls.MVVMProviders.Logic.UserControlLogic.TargetControl"/> has changed.
             </summary>
@@ -7370,12 +8439,12 @@
             <param name="sender">The source of the event.</param>
             <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
         </member>
-        <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.UserControlLogic.OnParentViewModelCanceling(System.Object,System.EventArgs)">
+        <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.UserControlLogic.OnParentViewModelCanceling(System.Object,Catel.MVVM.CancelingEventArgs)">
             <summary>
             Handles the Canceling event of the parent ViewModel.
             </summary>
             <param name="sender">The source of the event.</param>
-            <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
+            <param name="e">The <see cref="T:Catel.MVVM.CancelingEventArgs"/> instance containing the event data.</param>
         </member>
         <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.UserControlLogic.OnParentViewModelSaving(System.Object,Catel.MVVM.SavingEventArgs)">
             <summary>
@@ -7548,6 +8617,15 @@
             <exception cref="T:System.ArgumentNullException">The <paramref name="viewModelType"/> is <c>null</c>.</exception>
             <exception cref="T:System.ArgumentNullException">The <paramref name="viewModelType"/> does not implement interface <see cref="T:Catel.MVVM.IViewModel"/>.</exception>
         </member>
+        <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.WindowLogic.SetDataContext(System.Object)">
+            <summary>
+            Sets the data context of the target control.
+            <para />
+            This method is abstract because the real logic implementation knows how to set the data context (for example,
+            by using an additional data context grid).
+            </summary>
+            <param name="newDataContext">The new data context.</param>
+        </member>
         <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.WindowLogic.OnTargetControlUnloaded(System.Object,System.EventArgs)">
             <summary>
             Called when <see cref="P:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.TargetControl"/> has just been unloaded.
@@ -7616,13 +8694,11 @@
             <summary>
             Called after the behavior is attached to an AssociatedObject.
             </summary>
-            <remarks>Override this to hook up functionality to the AssociatedObject.</remarks>
         </member>
         <member name="M:Catel.Windows.Interactivity.BehaviorBase`1.OnDetaching">
             <summary>
             Called when the behavior is being detached from its AssociatedObject, but before it has actually occurred.
             </summary>
-            <remarks>Override this to unhook functionality from the AssociatedObject.</remarks>
         </member>
         <member name="M:Catel.Windows.Interactivity.BehaviorBase`1.ValidateRequiredProperties">
             <summary>
@@ -8629,7 +9705,7 @@
         <member name="T:Catel.Windows.Controls.WarningAndErrorValidator">
             <summary>
             Control for adding business rule validation to the form. Assign a value or binding to source for the business object or 
-            collection of bussiness objects to validate.
+            collection of business objects to validate.
             </summary>
         </member>
         <member name="F:Catel.Windows.Controls.WarningAndErrorValidator._objectValidation">
@@ -8645,6 +9721,11 @@
         <member name="F:Catel.Windows.Controls.WarningAndErrorValidator.SourceProperty">
             <summary>
             DependencyProperty definition as the backing store for Source.
+            </summary>
+        </member>
+        <member name="F:Catel.Windows.Controls.WarningAndErrorValidator.AutomaticallyRegisterToInfoBarMessageControlProperty">
+            <summary>
+            DependencyProperty definition as the backing store for AutomaticallyRegisterToInfoBarMessageControl.
             </summary>
         </member>
         <member name="M:Catel.Windows.Controls.WarningAndErrorValidator.OnLoaded(System.Object,System.EventArgs)">
@@ -8663,7 +9744,7 @@
         </member>
         <member name="M:Catel.Windows.Controls.WarningAndErrorValidator.Initialize">
             <summary>
-            Initializes this instance. Loads all the errors and warnings that were added when the control was not yet loaded.s
+            Initializes this instance. Loads all the errors and warnings that were added when the control was not yet loaded.
             </summary>
         </member>
         <member name="M:Catel.Windows.Controls.WarningAndErrorValidator.CleanUp">
@@ -8804,6 +9885,18 @@
             <remarks>
             Wrapper for the Source dependency property.
             </remarks>
+        </member>
+        <member name="P:Catel.Windows.Controls.WarningAndErrorValidator.AutomaticallyRegisterToInfoBarMessageControl">
+            <summary>
+            Gets or sets a value indicating whether this warning and error validator should automatically register to the first <see cref="T:Catel.Windows.Controls.InfoBarMessageControl"/> it can find.
+            </summary>
+            <value><c>true</c> if this warning and error validator should automatically register to the first <see cref="T:Catel.Windows.Controls.InfoBarMessageControl"/> it can find; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:Catel.Windows.Controls.WarningAndErrorValidator.UniqueIdentifier">
+            <summary>
+            Gets the unique identifier.
+            </summary>
+            <value>The unique identifier.</value>
         </member>
         <member name="E:Catel.Windows.Controls.WarningAndErrorValidator.Validation">
             <summary>
@@ -9080,11 +10173,23 @@
             to be overridden when it is actually used.
             </remarks>
         </member>
+        <member name="M:Catel.Windows.Data.Converters.ValueConverterBase.ProvideValue(System.IServiceProvider)">
+            <summary>
+            When implemented in a derived class, returns an object that is set as the value of the target property for this markup extension.
+            </summary>
+            <param name="serviceProvider">Object that can provide services for the markup extension.</param>
+            <returns>The object value to set on the property where the extension is applied.</returns>
+        </member>
         <member name="P:Catel.Windows.Data.Converters.ValueConverterBase.CurrentCulture">
             <summary>
             Gets the current culture.
             </summary>
             <value>The current culture.</value>
+        </member>
+        <member name="M:Catel.Windows.Data.Converters.BooleanToGrayscaleConverter.#ctor">
+            <summary>
+            Initialzies the <see cref="T:Catel.Windows.Data.Converters.BooleanToGrayscaleConverter"/>.
+            </summary>
         </member>
         <member name="M:Catel.Windows.Data.Converters.BooleanToGrayscaleConverter.Convert(System.Object,System.Type,System.Object)">
             <summary>
@@ -9094,6 +10199,20 @@
             <param name="targetType">The <see cref="T:System.Type" /> of data expected by the target dependency property.</param>
             <param name="parameter">An optional parameter to be used in the converter logic.</param>
             <returns>The value to be passed to the target dependency property.</returns>
+        </member>
+        <member name="P:Catel.Windows.Data.Converters.BooleanToGrayscaleConverter.FalseResult">
+            <summary>
+            The value a input value of false will be converted to.
+            <para />
+            The default value is <c>0</c>.
+            </summary>
+        </member>
+        <member name="P:Catel.Windows.Data.Converters.BooleanToGrayscaleConverter.TrueResult">
+            <summary>
+            The value a input value of true will be converted to.<br />
+            <para />
+            The default value is <c>1</c>.
+            </summary>
         </member>
         <member name="T:Catel.Windows.Data.Converters.BooleanToOppositeBooleanConverter">
             <summary>
@@ -9803,6 +10922,21 @@
             Returns the list of IValueConverters contained in this converter.
             </summary>
         </member>
+        <member name="T:Catel.Windows.Data.Converters.ViewModelToViewConverter">
+            <summary>
+            Converts a view model to a view. This converter is very useful to dynamically load 
+            view content.
+            </summary>
+        </member>
+        <member name="M:Catel.Windows.Data.Converters.ViewModelToViewConverter.Convert(System.Object,System.Type,System.Object)">
+            <summary>
+            Modifies the source data before passing it to the target for display in the UI.
+            </summary>
+            <param name="value">The source data being passed to the target.</param>
+            <param name="targetType">The <see cref="T:System.Type" /> of data expected by the target dependency property.</param>
+            <param name="parameter">An optional parameter to be used in the converter logic.</param>
+            <returns>The value to be passed to the target dependency property.</returns>
+        </member>
         <member name="T:Catel.Windows.Data.Converters.CollapsingVisibilityConverterBase">
             <summary>
             A base class that makes it easier to create values to visibility converters.
@@ -9941,6 +11075,15 @@
             Binding helper class.
             </summary>
         </member>
+        <member name="M:Catel.Windows.Data.BindingHelper.IsSentinelObject(System.Object)">
+            <summary>
+            Determines whether the specified data context is a sentinel.
+            <para />
+            For more information, see http://stackoverflow.com/questions/3868786/wpf-sentinel-objects-and-how-to-check-for-an-internal-type.
+            </summary>
+            <param name="dataContext">The data context.</param>
+            <returns><c>true</c> if the data context is a sentinel; otherwise, <c>false</c>.</returns>
+        </member>
         <member name="M:Catel.Windows.Data.BindingHelper.GetBindingValue(System.Windows.FrameworkElement,System.Windows.Data.BindingBase)">
             <summary>
             Gets the binding value.
@@ -9962,11 +11105,6 @@
             <summary>
             Dependency property changed helper. This helper class allows to subscribe to any dependency property
             changed of any framework element element.
-            </summary>
-        </member>
-        <member name="F:Catel.Windows.Data.DependencyPropertyChangedHelper.Log">
-            <summary>
-            The log.
             </summary>
         </member>
         <member name="F:Catel.Windows.Data.DependencyPropertyChangedHelper._dependencyProperties">
@@ -10174,6 +11312,14 @@
             </summary>
             <param name="startElement">The start element.</param>
             <returns>object or <c>null</c> if the ancestor is not found.</returns>
+        </member>
+        <member name="M:Catel.Windows.DependencyObjectExtensions.GetParent(System.Windows.DependencyObject)">
+            <summary>
+            Gets the parent of the specified dependency object.
+            </summary>
+            <param name="element">The element to retrieve the parent from.</param>
+            <returns>The parent or <c>null</c> if the parent could not be found.</returns>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="element"/> is <c>null</c>.</exception>
         </member>
         <member name="M:Catel.Windows.DependencyObjectExtensions.FindVisualAncestor(System.Windows.DependencyObject,System.Predicate{System.Object},System.Int32)">
             <summary>
@@ -12587,6 +13733,21 @@
             	<c>true</c> if the mouse is currently over the associated object; otherwise, <c>false</c>.
             </value>
         </member>
+        <member name="T:Catel.Windows.Interactivity.Navigate">
+            <summary>
+            Navigate behavior to allow the execution of an url in non-pages for WPF.
+            </summary>
+        </member>
+        <member name="M:Catel.Windows.Interactivity.Navigate.OnAttached">
+            <summary>
+            Called after the behavior is attached to an AssociatedObject.
+            </summary>
+        </member>
+        <member name="M:Catel.Windows.Interactivity.Navigate.OnDetaching">
+            <summary>
+            Called when the behavior is being detached from its AssociatedObject, but before it has actually occurred.
+            </summary>
+        </member>
         <member name="T:Catel.Windows.Interactivity.NumericTextBox">
             <summary>
             Behavior to only allow numeric input on a <see cref="T:System.Windows.Controls.TextBox"/>.
@@ -12777,6 +13938,52 @@
             This property can only be used when the associated object is attached.
             </summary>
         </member>
+        <member name="T:Catel.Windows.Interactivity.UpdateBindingOnPasswordChanged">
+            <summary>
+            This behavior automatically updates the binding of a <see cref="T:System.Windows.Controls.PasswordBox"/> when the
+            <c>PasswordChanged</c> event occurs.
+            </summary>
+        </member>
+        <member name="F:Catel.Windows.Interactivity.UpdateBindingOnPasswordChanged.PasswordProperty">
+            <summary>
+            The Password Property
+            </summary>
+        </member>
+        <member name="M:Catel.Windows.Interactivity.UpdateBindingOnPasswordChanged.OnPasswordChanged(System.Windows.DependencyPropertyChangedEventArgs)">
+            <summary>
+            Called when the password has been changed.
+            </summary>
+            <param name="e">The <see cref="T:System.Windows.DependencyPropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:Catel.Windows.Interactivity.UpdateBindingOnPasswordChanged.OnAssociatedObjectLoaded(System.Object,System.EventArgs)">
+            <summary>
+            Called when the associated object is loaded.
+            </summary>
+            <param name="sender">The sender.</param>
+            <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:Catel.Windows.Interactivity.UpdateBindingOnPasswordChanged.OnAssociatedObjectUnloaded(System.Object,System.EventArgs)">
+            <summary>
+            Called when the associated object is unloaded.
+            </summary>
+            <param name="sender">The sender.</param>
+            <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:Catel.Windows.Interactivity.UpdateBindingOnPasswordChanged.OnPasswordChanged(System.Object,System.Windows.RoutedEventArgs)">
+            <summary>
+            Passwords the box password changed.
+            </summary>
+            <param name="sender">The sender.</param>
+            <param name="e">The <see cref="T:System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="P:Catel.Windows.Interactivity.UpdateBindingOnPasswordChanged.Password">
+            <summary>
+            Gets or sets the password.
+            </summary>
+            <value>
+            The password.
+            </value>
+        </member>
         <member name="T:Catel.Windows.Interactivity.UpdateBindingOnTextChanged">
             <summary>
             This behavior automatically updates the binding of a <see cref="T:System.Windows.Controls.TextBox"/> when the
@@ -12867,6 +14074,12 @@
             <summary>
             Processes all UI messages currently in the message queue.
             </summary>
+        </member>
+        <member name="M:Catel.Windows.Threading.DispatcherHelper.GetCurrentDispatcher">
+            <summary>
+            Gets the current dispatcher.
+            </summary>
+            <returns></returns>
         </member>
         <member name="P:Catel.Windows.Threading.DispatcherHelper.CurrentDispatcher">
             <summary>

@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using Catel.Data;
 using Catel.Logging;
+using Catel.Messaging;
 using EmailInBox.Models;
 using EmailInBox.Properties;
 using Catel.MVVM;
@@ -23,6 +24,8 @@ namespace EmailInBox.ViewModels
     public class HomeWindowViewModel : WindowViewModelBase
     {
         private FileSystemWatcher watcher;
+        private IMessageMediator mediator = MessageMediator.Default;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeWindowViewModel"/> class.
         /// </summary>
@@ -36,6 +39,7 @@ namespace EmailInBox.ViewModels
             OnFileCreatedCmd = new Command<FileSystemEventArgs>(OnFileCreatedCmdExecute,null,"FileCreatedCommand");
             CheckMessagesCommand = new Command(OnCheckMessagesCommandExecute);
             CheckMessagesCommand.Execute();
+            
         }
 
         private void InitializeWatcher()
@@ -124,9 +128,14 @@ namespace EmailInBox.ViewModels
         private void OnCheckMessagesCommandExecute()
         {
             DateTime reference;
-            var message = (Messages ?? new ObservableCollection<MessageModel>()).FirstOrDefault();
+            MessageModel message = (Messages ?? new ObservableCollection<MessageModel>()).FirstOrDefault();
             reference = message != null ? message.DateReceived : DateTime.Now;
-
+            //var mediator = GetService<IMessageMediator>();
+            if (message != null)
+            {
+                mediator.SendMessage<MessageModel>(message, "New Message");
+            }
+            
             Messages = new ObservableCollection<MessageModel>(Utils.FilesRetrieve.RetrieveEmails(FolderToWatch, FileNumber, reference));
         }
     }

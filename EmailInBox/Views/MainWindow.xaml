@@ -5,6 +5,7 @@
                   xmlns:vm="clr-namespace:EmailInBox.ViewModels"
                   xmlns:views="clr-namespace:EmailInBox.Views"
                   xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                  xmlns:tb="http://www.hardcodet.net/taskbar"
                   ShowInTaskbar="True" ResizeMode="CanResize" SizeToContent="Manual" WindowStartupLocation="Manual"
                   Visibility="{Binding Visibility, Mode=TwoWay}">
     
@@ -28,6 +29,8 @@
 		<catel:StackGrid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 		</catel:StackGrid.RowDefinitions>
+        <tb:TaskbarIcon Name="TaskIcon"
+      IconSource="/Icons/email.ico" TrayBalloonTipClicked="TaskIcon_TrayBalloonTipClicked"  />
         <ContentControl Content="{Binding CurrentViewModel}" />
     </catel:StackGrid>
 </catel:DataWindow>

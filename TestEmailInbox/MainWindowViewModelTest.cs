@@ -1,6 +1,5 @@
-﻿using EmailInBox.ViewModels;
-using System;
-using Catel.MVVM;
+﻿
+
 using NUnit.Framework;
 
 namespace TestEmailInbox
