@@ -37,7 +37,7 @@ namespace EmailInBox.ViewModels
             CurrentViewModel = homeViewModel;
             IconLeftClickCommand = new Command(OnIconLeftClickCommandExecute);
             //notifyService.ChangeIconSource("/Icons/email.ico");
-            notifyService = new NotifyService(new RoutedEventHandler(SetBallonClickWrapper), IconLeftClickCommand, CreateContextMenu());
+            //notifyService = new NotifyService(new RoutedEventHandler(SetBallonClickWrapper), IconLeftClickCommand, CreateContextMenu());
             ClickBalloonCommand = new Command<RoutedEventArgs>(OnClickBalloonCommandExecute, OnClickBalloonCommandCanExecute);
             HiddenAppCommand = new Command<CancelEventArgs>(OnHiddenAppCommandExecute);
         }

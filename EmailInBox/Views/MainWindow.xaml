@@ -30,7 +30,7 @@
 			<RowDefinition Height="Auto" />
 		</catel:StackGrid.RowDefinitions>
         <tb:TaskbarIcon Name="TaskIcon"
-      IconSource="/Icons/email.ico" TrayBalloonTipClicked="TaskIcon_TrayBalloonTipClicked"  /> 
+      IconSource="/Icons/email.ico" TrayBalloonTipClicked="TaskIcon_TrayBalloonTipClicked"  />
         <ContentControl Content="{Binding CurrentViewModel}" />
     </catel:StackGrid>
 </catel:DataWindow>

@@ -1,4 +1,7 @@
-﻿namespace EmailInBox
+﻿
+using Catel.Messaging;
+
+namespace EmailInBox
 {
     using System.Windows;
 
@@ -19,7 +22,7 @@
 
             // TODO: Using a custom IoC container like Unity? Register it here:
             // Catel.IoC.ServiceLocator.Instance.RegisterExternalContainer(MyUnityContainer);
-
+            //Catel.IoC.ServiceLocator.Instance.RegisterType<IMessageMediator, MessageMediator>();
             base.OnStartup(e);
         }
     }

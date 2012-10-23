@@ -1,0 +1,16 @@
+<<<<<<< HEAD
+<<<<<<< master
+﻿<?xml version="1.0" encoding="utf-8"?>
+<repositories>
+  <repository path="..\TestEmailInbox\packages.config" />
+=======
+﻿<?xml version="1.0" encoding="utf-8"?>
+<repositories>
+  <repository path="..\TestEmailInbox\packages.config" />
+>>>>>>> local
+=======
+﻿<?xml version="1.0" encoding="utf-8"?>
+<repositories>
+  <repository path="..\EmailInBox\packages.config" />
+>>>>>>> 1845341
+</repositories>
