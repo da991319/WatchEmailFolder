@@ -4,6 +4,19 @@
         <name>Catel.Extensions.Controls</name>
     </assembly>
     <members>
+        <member name="T:Catel.ModuleInitializer">
+            <summary>
+            Class that gets called as soon as the module is loaded.
+            </summary>
+            <remarks>
+            This is made possible thanks to Fody.
+            </remarks>
+        </member>
+        <member name="M:Catel.ModuleInitializer.Initialize">
+            <summary>
+            Initializes the module
+            </summary>
+        </member>
         <member name="T:Catel.Extensions.Controls.Properties.Exceptions">
             <summary>
               A strongly-typed resource class, for looking up localized strings, etc.
@@ -1162,6 +1175,16 @@
         <member name="F:Catel.Windows.Controls.TraceOutputViewModel._traceListener">
             <summary>
             The trace listener.
+            </summary>
+        </member>
+        <member name="F:Catel.Windows.Controls.TraceOutputViewModel._traceEntries">
+            <summary>
+            The trace entries with all trace items.
+            </summary>
+        </member>
+        <member name="F:Catel.Windows.Controls.TraceOutputViewModel._dispatcherService">
+            <summary>
+            The dispatcher service.
             </summary>
         </member>
         <member name="M:Catel.Windows.Controls.TraceOutputViewModel.#ctor">
@@ -2465,6 +2488,7 @@
             <summary>
             Discards all changes made by this window.
             </summary>
+            <returns>True if successful, otherwise false.</returns>
         </member>
         <member name="M:Catel.Windows.MultipleChoiceWindow.InitializeComponent">
             <summary>

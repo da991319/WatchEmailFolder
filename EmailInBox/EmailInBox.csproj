@@ -34,9 +34,18 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Catel.Core, Version=3.2.0.0, Culture=neutral, PublicKeyToken=1c8163524cbe02e6, processorArchitecture=MSIL" />
-    <Reference Include="Catel.Extensions.Controls, Version=3.2.0.0, Culture=neutral, PublicKeyToken=1c8163524cbe02e6, processorArchitecture=MSIL" />
-    <Reference Include="Catel.MVVM, Version=3.2.0.0, Culture=neutral, PublicKeyToken=1c8163524cbe02e6, processorArchitecture=MSIL" />
+    <Reference Include="Catel.Core, Version=3.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Users\rcastaing\Downloads\catel_c373b2da6143\output\debug\NET40\Catel.Extensions.Controls\Catel.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Catel.Extensions.Controls, Version=3.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Users\rcastaing\Downloads\catel_c373b2da6143\output\debug\NET40\Catel.Extensions.Controls\Catel.Extensions.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="Catel.MVVM, Version=3.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Users\rcastaing\Downloads\catel_c373b2da6143\output\debug\NET40\Catel.Extensions.Controls\Catel.MVVM.dll</HintPath>
+    </Reference>
     <Reference Include="Hardcodet.Wpf.TaskbarNotification">
       <HintPath>..\..\wpf-notifyicon\Sample Project\bin\Release\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
     </Reference>
