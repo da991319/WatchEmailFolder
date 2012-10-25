@@ -1,4 +1,10 @@
-﻿using System;
+﻿using Catel.Data;
+using Catel.Logging;
+using Catel.Messaging;
+using Catel.MVVM;
+using EmailInBox.Models;
+using EmailInBox.Properties;
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -7,13 +13,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
-using Catel.Data;
-using Catel.Logging;
-using Catel.Messaging;
-using EmailInBox.Models;
-using EmailInBox.Properties;
-using Catel.MVVM;
-using EmailInBox.Utils;
 
 namespace EmailInBox.ViewModels
 {

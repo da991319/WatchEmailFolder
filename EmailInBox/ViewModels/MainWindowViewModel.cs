@@ -20,9 +20,8 @@ namespace EmailInBox.ViewModels
     [InterestedIn(typeof(HomeWindowViewModel))]
     public class MainWindowViewModel : WindowViewModelBase
     {
-        private readonly INotifyService notifyService;
-        private MessageModel newMessage;
         private bool trueExit;
+
         #region Fields
         private static HomeWindowViewModel homeViewModel = new HomeWindowViewModel();
         #endregion
@@ -36,9 +35,6 @@ namespace EmailInBox.ViewModels
             Visibility = Visibility.Visible;
             CurrentViewModel = homeViewModel;
             IconLeftClickCommand = new Command(OnIconLeftClickCommandExecute);
-            //notifyService.ChangeIconSource("/Icons/email.ico");
-            //notifyService = new NotifyService(new RoutedEventHandler(SetBallonClickWrapper), IconLeftClickCommand, CreateContextMenu());
-            ClickBalloonCommand = new Command<RoutedEventArgs>(OnClickBalloonCommandExecute, OnClickBalloonCommandCanExecute);
             HiddenAppCommand = new Command<CancelEventArgs>(OnHiddenAppCommandExecute);
         }
 
@@ -84,39 +80,17 @@ namespace EmailInBox.ViewModels
             Visibility = Visibility.Visible;
         }
 
-        public Command<RoutedEventArgs> ClickBalloonCommand { get; private set; }
         
-        private bool OnClickBalloonCommandCanExecute(RoutedEventArgs e)
-        {
-            return true;
-        }
-
-        private void OnClickBalloonCommandExecute(RoutedEventArgs args)
-        {
-            Process.Start(newMessage.Path);
-        }
         #endregion
         #region Methods
 
         protected override void OnViewModelCommandExecuted(IViewModel viewModel, ICatelCommand command, object commandParameter)
         {
-            if (command.Tag.Equals("FileCreatedCommand"))
-            {
-                newMessage =
-                    Utils.FilesRetrieve.RetreiveEmail((commandParameter as FileSystemEventArgs).FullPath);
-                notifyService.ChangeIconSource(@"/Icons/new_email.ico");
-                notifyService.NotifyNewMessage(newMessage);
-            }
+            
         }
-
-        private void SetBallonClickWrapper(object sender, RoutedEventArgs e)
-        {
-            ClickBalloonCommand.Execute(e);
-        }
-
+        
         private void ExitAppWrapper(object sender, EventArgs e)
         {
-            int t = 2;
             trueExit = true;
             Application.Current.MainWindow.Close();
         }
