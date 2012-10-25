@@ -35,6 +35,7 @@ namespace EmailInBox.ViewModels
             Visibility = Visibility.Visible;
             CurrentViewModel = homeViewModel;
             IconLeftClickCommand = new Command(OnIconLeftClickCommandExecute);
+            QuitMenuItemClickCommand = new Command(OnQuitMenuItemClickCommandExecute);
             HiddenAppCommand = new Command<CancelEventArgs>(OnHiddenAppCommandExecute);
         }
 
@@ -80,6 +81,14 @@ namespace EmailInBox.ViewModels
             Visibility = Visibility.Visible;
         }
 
+        public Command QuitMenuItemClickCommand { get; private set; }
+
+        private void OnQuitMenuItemClickCommandExecute()
+        {
+            trueExit = true;
+            Application.Current.MainWindow.Close();
+        }
+        
         
         #endregion
         #region Methods

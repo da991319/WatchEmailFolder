@@ -31,7 +31,13 @@
 		</catel:StackGrid.RowDefinitions>
         <tb:TaskbarIcon Name="TaskIcon"
       IconSource="/Icons/email.ico" TrayBalloonTipClicked="TaskIcon_TrayBalloonTipClicked"
-      LeftClickCommand="{Binding IconLeftClickCommand}"                  />
-        <ContentControl Content="{Binding CurrentViewModel}" />
+      LeftClickCommand="{Binding IconLeftClickCommand}">
+            <ContextMenuService.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Quit" Command="{Binding QuitMenuItemClickCommand}"/>
+                </ContextMenu>
+            </ContextMenuService.ContextMenu>
+        </tb:TaskbarIcon>
+                <ContentControl Content="{Binding CurrentViewModel}"/>
     </catel:StackGrid>
 </catel:DataWindow>
