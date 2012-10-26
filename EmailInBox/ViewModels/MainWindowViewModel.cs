@@ -1,13 +1,9 @@
 ﻿
+using Catel.Data;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using Catel.Data;
-using EmailInBox.Models;
-using EmailInBox.Utils;
 
 namespace EmailInBox.ViewModels
 {
@@ -20,7 +16,7 @@ namespace EmailInBox.ViewModels
     [InterestedIn(typeof(HomeWindowViewModel))]
     public class MainWindowViewModel : WindowViewModelBase
     {
-        private bool trueExit;
+        public bool trueExit;
 
         #region Fields
         private static HomeWindowViewModel homeViewModel = new HomeWindowViewModel();
