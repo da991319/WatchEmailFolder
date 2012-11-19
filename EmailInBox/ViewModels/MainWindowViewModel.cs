@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using EmailInBox.Task.Emails;
 
 namespace EmailInBox.ViewModels
 {
@@ -82,6 +83,7 @@ namespace EmailInBox.ViewModels
         private void OnQuitMenuItemClickCommandExecute()
         {
             trueExit = true;
+            EmailListToFileTask.SaveEmailListToFile(homeViewModel.Messages);
             Application.Current.MainWindow.Close();
         }
         

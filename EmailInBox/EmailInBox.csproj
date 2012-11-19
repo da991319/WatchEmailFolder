@@ -88,8 +88,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Models\MessageModel.cs" />
+    <Compile Include="Task\Emails\SaveEmailListToFileCommand.cs" />
     <Compile Include="Utils\File.cs" />
     <Compile Include="Utils\FilesRetrieve.cs" />
+    <Compile Include="Utils\InitialLoadCommand.cs" />
     <Compile Include="Utils\MimeReader.cs" />
     <Compile Include="Utils\NotifyService.cs" />
     <Compile Include="Utils\QuotedPrintable.cs" />

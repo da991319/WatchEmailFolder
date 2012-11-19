@@ -13,6 +13,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using EmailInBox.Utils;
 
 namespace EmailInBox.ViewModels
 {
@@ -32,13 +33,12 @@ namespace EmailInBox.ViewModels
         {
             FolderToWatch = Settings.Default.FolderToWatch;
             FileNumber = Settings.Default.NumberOfEmails;
-            LogManager.RegisterDebugListener();
+            //LogManager.RegisterDebugListener();
             InitializeWatcher();
             RowDoubleClick = new Command<MouseButtonEventArgs>(OnRowDoubleClickExecute, OnRowDoubleClickCanExecute);
             OnFileCreatedCmd = new Command<FileSystemEventArgs>(OnFileCreatedCmdExecute,null,"FileCreatedCommand");
             CheckMessagesCommand = new Command(OnCheckMessagesCommandExecute);
-            CheckMessagesCommand.Execute();
-            
+            Messages = new InitialLoadCommand().Load();
         }
 
         private void InitializeWatcher()

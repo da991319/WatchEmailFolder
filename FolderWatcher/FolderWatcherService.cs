@@ -16,7 +16,7 @@ namespace FolderWatcher
 
         public FolderWatcherService(string folderPath)
         {
-            folderPath = folderPath;
+            this.folderPath = folderPath;
         }
 
         protected override void OnStart(string[] args)
