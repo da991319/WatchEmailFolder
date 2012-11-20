@@ -111,6 +111,7 @@ namespace EmailInBox.ViewModels
             if (source.SelectedItem != null)
             {
                 MessageModel selectedMessage = source.SelectedItem as MessageModel;
+                Messages.ToList().Find(m => m == selectedMessage).NewEmail = false;
                 Process.Start(selectedMessage.Path);
             }
         }
@@ -126,16 +127,14 @@ namespace EmailInBox.ViewModels
 
         private void OnCheckMessagesCommandExecute()
         {
-            DateTime reference;
-            MessageModel message = (Messages ?? new ObservableCollection<MessageModel>()).FirstOrDefault();
-            reference = message != null ? message.DateReceived : DateTime.Now;
-            //var mediator = GetService<IMessageMediator>();
+            Messages = new ObservableCollection<MessageModel>(new UpdateMessagesListTask().UpdateMessageList(Messages.ToList(), FolderToWatch, FileNumber));
+
+            MessageModel message = Messages.FirstOrDefault(m => m.NewEmail);
+            
             if (message != null)
             {
                 mediator.SendMessage<MessageModel>(message, "New Message");
             }
-            
-            Messages = new ObservableCollection<MessageModel>(Utils.FilesRetrieve.RetrieveEmails(FolderToWatch, FileNumber, reference)); 
         }
     }
 }

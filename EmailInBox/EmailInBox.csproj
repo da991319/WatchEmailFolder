@@ -96,6 +96,7 @@
     <Compile Include="Utils\NotifyService.cs" />
     <Compile Include="Utils\QuotedPrintable.cs" />
     <Compile Include="Utils\RxMailMessage.cs" />
+    <Compile Include="Utils\UpdateMessagesListTask.cs" />
     <Compile Include="Utils\WatchingFolder.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -10,7 +10,7 @@ namespace EmailInBox.Utils
 {
     public static class FilesRetrieve
     {
-        public static List<MessageModel> RetrieveEmails(string path, int numberOfFile, DateTime referenceTime)
+        public static List<MessageModel> RetrieveEmails(string path, int numberOfFile)
         {
             var files = Directory.GetFiles(path, "*.eml");
 
@@ -22,8 +22,7 @@ namespace EmailInBox.Utils
                                                From = message.From.Address,
                                                To = message.To.ToString(),
                                                Path = file,
-                                               Subject = message.Subject,
-                                               NewEmail = message.DeliveryDate > referenceTime
+                                               Subject = message.Subject
                                            }).OrderByDescending(f => f.DateReceived).Take(numberOfFile).ToList();
 
 
