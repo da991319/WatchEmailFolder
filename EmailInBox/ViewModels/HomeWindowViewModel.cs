@@ -108,12 +108,10 @@ namespace EmailInBox.ViewModels
         {
             var source = e.Source as DataGrid;
 
-            if (source.SelectedItem != null)
-            {
-                MessageModel selectedMessage = source.SelectedItem as MessageModel;
-                Messages.ToList().Find(m => m == selectedMessage).NewEmail = false;
-                Process.Start(selectedMessage.Path);
-            }
+            if (source.SelectedItem == null) return;
+            MessageModel selectedMessage = source.SelectedItem as MessageModel;
+            Messages.ToList().Find(m => m == selectedMessage).NewEmail = false;
+            Process.Start(selectedMessage.Path);
         }
 
         public Command<FileSystemEventArgs> OnFileCreatedCmd { get; private set; }

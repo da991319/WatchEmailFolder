@@ -75,6 +75,7 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HomeWindowViewModelTest.cs" />
     <Compile Include="MainWindowViewModelTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\Bail.cs" />

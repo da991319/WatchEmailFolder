@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="FolderToWatch" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\\Email</Value>
+      <Value Profile="(Default)">C:\Email</Value>
     </Setting>
     <Setting Name="NumberOfEmails" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">5</Value>

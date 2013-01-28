@@ -57,7 +57,7 @@ namespace EmailInBox.Task.Emails
                                                                                           : DateTime
                                                                                                 .
                                                                                                 MinValue,
-                                                                                  NewEmail =
+                                                                                  NewEmail = 
                                                                                       Convert.ToBoolean(m.Element("newemail").Value),
                                                                                   Subject =
                                                                                       m.Element(

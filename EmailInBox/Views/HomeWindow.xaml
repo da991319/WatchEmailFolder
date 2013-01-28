@@ -15,22 +15,25 @@
             <RowDefinition/>
 			<RowDefinition Height="Auto" />
 		</catel:StackGrid.RowDefinitions>
-        
+
         <StackPanel>
             <Label>Folder To Watch</Label>
             <StackPanel Orientation="Horizontal">
-                <TextBox Text="{Binding FolderToWatch, UpdateSourceTrigger=PropertyChanged}"/>
-                <Button Content="Browse"/>
+                <TextBox Text="{Binding FolderToWatch, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch"/>
+                <Button Content="Browse" HorizontalAlignment="Right"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" >
                 <Label>Number of emails to display</Label>
-                <TextBox Text="{Binding FileNumber, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox Text="{Binding FileNumber, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="LostFocus">
                             <catel:EventToCommand Command="{Binding CheckMessagesCommand}"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </TextBox>
+            </StackPanel>
+            <StackPanel>
+                <Button Content="Refresh" Command="{Binding CheckMessagesCommand}"/>
             </StackPanel>
         </StackPanel>
         <DataGrid ItemsSource="{Binding Messages}" AutoGenerateColumns="False" IsReadOnly="True">
@@ -40,6 +43,7 @@
                 <DataGridTextColumn Header="To" Binding="{Binding To}"/>
                 <DataGridTextColumn Header="Subject" Binding="{Binding Subject}" Width="*"/>
                 <DataGridTextColumn Header="File" Binding="{Binding Path}"/>
+                <DataGridTextColumn Header="new email" Binding="{Binding NewEmail}"/>
             </DataGrid.Columns>
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseDoubleClick">
@@ -51,7 +55,7 @@
                 <Style TargetType="{x:Type DataGridCell}" >
                     <Setter Property="FontWeight" Value="Normal"/>
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding NewEmail}" Value="True">
+                        <DataTrigger Binding="{Binding NewEmail}" Value="true">
                             <Setter Property="FontWeight" Value="ExtraBold"/>
                         </DataTrigger>
                     </Style.Triggers>
