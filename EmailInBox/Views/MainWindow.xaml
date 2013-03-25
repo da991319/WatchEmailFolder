@@ -11,9 +11,8 @@
     
     <!-- Resources -->
     <catel:DataWindow.Resources>
-        <DataTemplate DataType="{x:Type vm:HomeWindowViewModel}">
-            <views:HomeWindow/>
-        </DataTemplate>
+       
+        
     </catel:DataWindow.Resources>
     
     <i:Interaction.Triggers>
@@ -24,7 +23,7 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <!-- Content -->
-
+    
     <catel:StackGrid x:Name="LayoutRoot">
 		<catel:StackGrid.RowDefinitions>
 			<RowDefinition Height="Auto" />
@@ -38,6 +37,26 @@
                 </ContextMenu>
             </ContextMenuService.ContextMenu>
         </tb:TaskbarIcon>
-                <ContentControl Content="{Binding CurrentViewModel}"/>
+        <TabControl ItemsSource="{Binding Tabs}" SelectedItem="{Binding CurrentViewModel}">
+            <TabControl.Resources>
+                <DataTemplate DataType="{x:Type vm:HomeWindowViewModel}">
+                    <views:HomeWindow/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vm:SettingsWindowViewModel}">
+                    <views:SettingsWindow/>
+                </DataTemplate>
+            </TabControl.Resources>
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Title}"></TextBlock>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SelectionChanged">
+                    <catel:EventToCommand Command="{Binding SelectedTabChanged}" DisableAssociatedObjectOnCannotExecute="False"
+                                  PassEventArgsToCommand="True"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </TabControl>
     </catel:StackGrid>
 </catel:DataWindow>

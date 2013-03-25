@@ -41,6 +41,8 @@ namespace EmailInBox.ViewModels
             Messages = new InitialLoadCommand().Load();
         }
 
+        public override string Title { get { return "Home"; } }
+
         private void InitializeWatcher()
         {
             watcher = new FileSystemWatcher(FolderToWatch, "*.eml")

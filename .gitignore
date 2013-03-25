@@ -8,3 +8,6 @@ _ReSharper*
 obj/
 bin/
 App_Data/
+WindowsInstallerEmailInBox
+output
+output/

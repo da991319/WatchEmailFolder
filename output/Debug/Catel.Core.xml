@@ -545,6 +545,12 @@
             <returns>The value associated with the specified key, or default value for the type of the value if the key do not exists.</returns>
             <exception cref="T:System.ArgumentNullException">The <paramref name="key"/> is <c>null</c>.</exception>
         </member>
+        <member name="P:Catel.Caching.ICacheStorage`2.Keys">
+            <summary>
+            Gets the keys so it is possible to enumerate the cache.
+            </summary>
+            <value>The keys.</value>
+        </member>
         <member name="F:Catel.Caching.CacheStorage`2._allowNullValues">
             <summary>
             The _allow null values.
@@ -637,6 +643,12 @@
             <param name="key">The key.</param>
             <returns>The value associated with the specified key, or default value for the type of the value if the key do not exists.</returns>
             <exception cref="T:System.ArgumentNullException">The <paramref name="key"/> is <c>null</c>.</exception>
+        </member>
+        <member name="P:Catel.Caching.CacheStorage`2.Keys">
+            <summary>
+            Gets the keys so it is possible to enumerate the cache.
+            </summary>
+            <value>The keys.</value>
         </member>
         <member name="T:Catel.Caching.CacheStorageValueInfo`1">
             <summary>
@@ -785,6 +797,17 @@
             <param name="overwriteExisting">if set to <c>true</c>, existing items in the target dictionary will be overwritten.</param>
             <exception cref="T:System.ArgumentNullException">The <paramref name="target"/> is <c>null</c>.</exception>
             <exception cref="T:System.ArgumentNullException">The <paramref name="source"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.Collections.DictionaryExtensions.AddItemIfNotEmpty``1(System.Collections.Generic.Dictionary{``0,System.String},``0,System.String)">
+            <summary>
+            Adds the specified value using the key if the value is not <c>null</c> or whitespace.
+            </summary>
+            <typeparam name="TKey">The type of the key.</typeparam>
+            <param name="dictionary">The dictionary.</param>
+            <param name="key">The key.</param>
+            <param name="value">The value to check and to add.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="dictionary"/> is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="key"/> is <c>null</c>.</exception>
         </member>
         <member name="T:Catel.Collections.CollectionHelper">
             <summary>
@@ -1445,6 +1468,15 @@
             interface still supports the "old" way, so this can perfectly be used by any other class.
             </summary>
         </member>
+        <member name="M:Catel.Data.ObservableObject.GetObservableObjectXmlSchema(System.Xml.Schema.XmlSchemaSet)">
+            <summary>
+            Gets XML schema for this class.
+            <para />
+            Implemented to support WCF serialization for all types deriving from this type.
+            </summary>
+            <param name="schemaSet">The schema set.</param>
+            <returns>System.Xml.XmlQualifiedName.</returns>
+        </member>
         <member name="M:Catel.Data.ObservableObject.RaisePropertyChanging``1(System.Linq.Expressions.Expression{System.Func{``0}})">
             <summary>
             Raises the <see cref="E:Catel.Data.ObservableObject.PropertyChanging"/> event.
@@ -1766,6 +1798,11 @@
             The parent object of the current object.
             </summary>
         </member>
+        <member name="F:Catel.Data.ModelBase._leanAndMeanModel">
+            <summary>
+            Backing field for the <see cref="P:Catel.Data.ModelBase.LeanAndMeanModel"/> property. Because it has custom logic, it needs a backing field.
+            </summary>
+        </member>
         <member name="M:Catel.Data.ModelBase.#cctor">
             <summary>
             Initializes static members of the <see cref="T:Catel.Data.ModelBase"/> class.
@@ -1884,16 +1921,6 @@
             <exception cref="T:Catel.Data.PropertyNotNullableException">The property is not nullable, but <paramref name="value"/> is <c>null</c>.</exception>
             <exception cref="T:Catel.Data.PropertyNotRegisteredException">The property is not registered.</exception>
         </member>
-        <member name="M:Catel.Data.ModelBase.ValidatePropertyUsingAnnotations(System.String,System.Object)">
-            <summary>
-            Validates the property using data annotations.
-            </summary>
-            <param name="propertyName">Name of the property.</param>
-            <param name="value">The value to validate.</param>
-            <returns>
-            	<c>true</c> if no errors using data annotations are found; otherwise <c>false</c>.
-            </returns>
-        </member>
         <member name="M:Catel.Data.ModelBase.SetValue(Catel.Data.PropertyData,System.Object)">
             <summary>
             Sets the value of a specific property.
@@ -1902,6 +1929,17 @@
             <param name="value">Value of the property</param>
             <exception cref="T:System.ArgumentNullException">The <paramref name="property"/> is <c>null</c>.</exception>
             <exception cref="T:Catel.Data.PropertyNotRegisteredException">The property is not registered.</exception>
+        </member>
+        <member name="M:Catel.Data.ModelBase.SetValue(Catel.Data.PropertyData,System.Object,System.Boolean,System.Boolean)">
+            <summary>
+            Sets the value of a specific property.
+            </summary>
+            <param name="property">The property to set.</param>
+            <param name="value">Value of the property</param>
+            <param name="notifyOnChange">If <c>true</c>, the <see cref="E:System.ComponentModel.INotifyPropertyChanged.PropertyChanged"/> event will be invoked.</param>
+            <param name="validateAttributes">if set to <c>true</c>, the validation attributes on the property will be validated.</param>
+            <exception cref="T:Catel.Data.PropertyNotNullableException">The property is not nullable, but <paramref name="value"/> is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="property"/> is <c>null</c>.</exception>
         </member>
         <member name="M:Catel.Data.ModelBase.GetValue(System.String)">
             <summary>
@@ -2338,6 +2376,15 @@
             Pushes changes since the last <see cref="M:System.ComponentModel.IEditableObject.BeginEdit"/> call.
             </summary>
         </member>
+        <member name="M:Catel.Data.ModelBase.GetModelBaseXmlSchema(System.Xml.Schema.XmlSchemaSet)">
+            <summary>
+            Gets XML schema for this class.
+            <para />
+            Implemented to support WCF serialization for all types deriving from this type.
+            </summary>
+            <param name="schemaSet">The schema set.</param>
+            <returns>System.Xml.XmlQualifiedName.</returns>
+        </member>
         <member name="M:Catel.Data.ModelBase.System#Xml#Serialization#IXmlSerializable#GetSchema">
             <summary>
             This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null (Nothing in Visual Basic) from this method, and instead, if specifying a custom schema is required, apply the <see cref="T:System.Xml.Serialization.XmlSchemaProviderAttribute"/> to the class.
@@ -2548,30 +2595,10 @@
             This method is required because Dictionary can't be serialized.
             </remarks>
         </member>
-        <member name="M:Catel.Data.ModelBase.ConvertKeyValuePairsToPropertyValues(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.Object}})">
-            <summary>
-            Converts a list of <see cref="T:System.Collections.Generic.KeyValuePair`2"/> objects to a list of <see cref="T:Catel.Data.PropertyValue"/> objects.
-            <para/>
-            This method is intended to provide backwards compatibility for older objects that are serialized using KeyValuePair instead
-            of PropertyValue.
-            </summary>
-            <param name="list">The list.</param>
-            <returns><see cref="T:System.Collections.Generic.IEnumerable`1"/> of property values.</returns>
-        </member>
         <member name="M:Catel.Data.ModelBase.ConvertListToDictionary(System.Collections.Generic.IEnumerable{Catel.Data.PropertyValue})">
             <summary>
             Converts a list to a dictionary for serialization purposes.
             </summary>
-            <param name="list">List to convert.</param>
-            <returns>
-            Dictionary that contains all the values of the list.
-            </returns>
-        </member>
-        <member name="M:Catel.Data.ModelBase.ConvertListToDictionary``1(System.Collections.Generic.IEnumerable{Catel.Data.PropertyValue})">
-            <summary>
-            Converts a list to a dictionary for serialization purposes.
-            </summary>
-            <typeparam name="T">The type of the object.</typeparam>
             <param name="list">List to convert.</param>
             <returns>
             Dictionary that contains all the values of the list.
@@ -2587,6 +2614,31 @@
             Dictionary that contains all the values of the list.
             </returns>
         </member>
+        <member name="M:Catel.Data.ModelBase.GetPropertyValueForSerialization(Catel.Data.PropertyData,System.Object)">
+            <summary>
+            Gets the property value to use during serialization.
+            <para />
+            This method allows the customization of property value serialization.
+            </summary>
+            <param name="property">The property.</param>
+            <param name="propertyValue">The actual value of the property.</param>
+            <returns>The value to serialize.</returns>
+        </member>
+        <member name="M:Catel.Data.ModelBase.GetPropertyValueForDeserialization(Catel.Data.PropertyData,System.Object)">
+            <summary>
+            Gets the property value to use during deserialization.
+            <para />
+            This method allows the customization of the property value deserialization.
+            </summary>
+            <param name="property">The property.</param>
+            <param name="serializedValue">The value that was serialized.</param>
+            <returns>The value to deserialize.</returns>
+        </member>
+        <member name="F:Catel.Data.ModelBase._suspendValidation">
+            <summary>
+            Backing field for the <see cref="P:Catel.Data.ModelBase.SuspendValidation"/> property. Because it has custom logic, it needs a backing field.
+            </summary>
+        </member>
         <member name="F:Catel.Data.ModelBase._validationLock">
             <summary>
             Lock object to make sure that multiple validations at the same time are not allowed.
@@ -2595,6 +2647,14 @@
         <member name="F:Catel.Data.ModelBase._internalValidationContext">
             <summary>
             The internal validation context, which can contain in-between validaftion info.
+            </summary>
+        </member>
+        <member name="F:Catel.Data.ModelBase._propertiesNotCheckedDuringDisabledValidation">
+            <summary>
+            List of property names that were changed, but not checked for validation because validation was suspended at that
+            time.
+            <para />
+            As soon as validation is activated again, these properties should be validated.
             </summary>
         </member>
         <member name="F:Catel.Data.ModelBase._propertyValuesFailedForValidation">
@@ -2607,6 +2667,24 @@
             <summary>
             A dictionary containing the annotation (attribute) validation results of properties of this class.
             </summary>
+        </member>
+        <member name="M:Catel.Data.ModelBase.CatchUpWithSuspendedAnnotationsValidation">
+            <summary>
+            Catches up with suspended annotations validation.
+            <para />
+            This method will take care of unvalidated properties that have been changed during
+            the suspended validation state of this model.
+            </summary>
+        </member>
+        <member name="M:Catel.Data.ModelBase.ValidatePropertyUsingAnnotations(System.String,System.Object)">
+            <summary>
+            Validates the property using data annotations.
+            </summary>
+            <param name="propertyName">Name of the property.</param>
+            <param name="value">The value to validate.</param>
+            <returns>
+            	<c>true</c> if no errors using data annotations are found; otherwise <c>false</c>.
+            </returns>
         </member>
         <member name="M:Catel.Data.ModelBase.ValidateFields(System.Collections.Generic.List{Catel.Data.IFieldValidationResult})">
             <summary>
@@ -2759,6 +2837,22 @@
             <summary>
             Occurs when the object is initialized.
             </summary>
+        </member>
+        <member name="P:Catel.Data.ModelBase.GlobalLeanAndMeanModel">
+            <summary>
+            Gets or sets a value indicating whether all models should behave as a lean and mean model.
+            <para/>
+            To find out what lean and mean means, see <see cref="P:Catel.Data.ModelBase.LeanAndMeanModel"/>.
+            </summary>
+            <value><c>true</c> if [global lean and mean model]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:Catel.Data.ModelBase.LeanAndMeanModel">
+            <summary>
+            Gets or sets a value indicating whether this model should behave as a lean and mean model.
+            <para />
+            A lean and mean model will not handle any validation code, nor will it raise any change notification events.
+            </summary>
+            <value><c>true</c> if this is a lean and mean model; otherwise, <c>false</c>.</value>
         </member>
         <member name="P:Catel.Data.ModelBase.DisablePropertyChangeNotifications">
             <summary>
@@ -2947,6 +3041,14 @@
             and the ability to query results, but simply hide the validation results, use the <see cref="P:Catel.Data.ModelBase.HideValidationResults"/> property.
             </remarks>
         </member>
+        <member name="P:Catel.Data.ModelBase.SuspendValidationForAllModels">
+            <summary>
+            Gets or sets a value indicating whether the validation for all classes deriving from <see cref="T:Catel.Data.ModelBase"/> should be suspended.
+            <para/>
+            This is a good way to improve performance for a specific operation where validation only causes overhead.
+            </summary>
+            <value><c>true</c> if validation should be suspended for all models; otherwise, <c>false</c>.</value>
+        </member>
         <member name="P:Catel.Data.ModelBase.HideValidationResults">
             <summary>
             Gets or sets a value indicating whether the validation results should be hidden. This means that 
@@ -3112,15 +3214,6 @@
             </summary>
             <typeparam name="TModel">Type that the class should hold (same as the defined type).</typeparam>
         </member>
-        <member name="T:Catel.Data.IModel`1">
-            <summary>
-            IModelBase that the <see cref="T:Catel.Data.ModelBase`1"/> must implement to easily mock objects.
-            </summary>
-            <typeparam name="TModel">Type that the class should hold (same as the defined type).</typeparam>
-            <remarks>
-            This interface defines all the generic interfaces that the <see cref="T:Catel.Data.ModelBase`1"/> class implements.
-            </remarks>
-        </member>
         <member name="M:Catel.Data.ModelBase`1.#ctor">
             <summary>
             Initializes a new instance of the <see cref="T:Catel.Data.ModelBase`1"/> class.
@@ -3137,6 +3230,15 @@
             <remarks>
             Call this method, even when constructing the object for the first time (thus not deserializing).
             </remarks>
+        </member>
+        <member name="M:Catel.Data.ModelBase`1.GetGenericModelBaseXmlSchema(System.Xml.Schema.XmlSchemaSet)">
+            <summary>
+            Gets XML schema for this class.
+            <para />
+            Implemented to support WCF serialization for all types deriving from this type.
+            </summary>
+            <param name="schemaSet">The schema set.</param>
+            <returns>System.Xml.XmlQualifiedName.</returns>
         </member>
         <member name="M:Catel.Data.ModelBase`1.Equals(`0)">
             <summary>
@@ -4332,6 +4434,11 @@
             Property data manager.
             </summary>
         </member>
+        <member name="F:Catel.Data.PropertyDataManager.Log">
+            <summary>
+            The log.
+            </summary>
+        </member>
         <member name="F:Catel.Data.PropertyDataManager._propertyData">
             <summary>
             Dictionary containing all the properties per type.
@@ -4340,6 +4447,11 @@
         <member name="F:Catel.Data.PropertyDataManager._propertyDataLock">
             <summary>
             Lock object for the <see cref="F:Catel.Data.PropertyDataManager._propertyData"/> field.
+            </summary>
+        </member>
+        <member name="M:Catel.Data.PropertyDataManager.#cctor">
+            <summary>
+            Initializes static members of the <see cref="T:Catel.Data.PropertyDataManager"/> class.
             </summary>
         </member>
         <member name="M:Catel.Data.PropertyDataManager.#ctor">
@@ -4354,6 +4466,34 @@
             <param name="type">The type for which the properties to return.</param>
             <returns>Dictionary with the properties.</returns>
             <exception cref="T:System.ArgumentNullException">The <paramref name="type"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.Data.PropertyDataManager.RegisterProperties(System.Type)">
+            <summary>
+            Registers all the properties for the specified type.
+            <para/>
+            This method can only be called once per type. The <see cref="T:Catel.Data.PropertyDataManager"/> caches
+            whether it has already registered the properties once.
+            </summary>
+            <param name="type">The type to register the properties for.</param>
+            <returns>The list of properties found on the type.</returns>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="type"/> is <c>null</c>.</exception>
+            <exception cref="T:System.InvalidOperationException">The properties are not declared correctly.</exception>
+        </member>
+        <member name="M:Catel.Data.PropertyDataManager.FindProperties(System.Type)">
+            <summary>
+            Finds the properties that represent a <see cref="T:Catel.Data.PropertyData"/>.
+            </summary>
+            <param name="type">The type.</param>
+            <returns>The list of <see cref="T:Catel.Data.PropertyData"/> elements found as properties.</returns>
+            <exception cref="T:System.InvalidOperationException">One ore more properties are not declared correctly.</exception>
+        </member>
+        <member name="M:Catel.Data.PropertyDataManager.FindFields(System.Type)">
+            <summary>
+            Finds the fields that represent a <see cref="T:Catel.Data.PropertyData"/>.
+            </summary>
+            <param name="type">The type.</param>
+            <returns>The list of <see cref="T:Catel.Data.PropertyData"/> elements found as fields.</returns>
+            <exception cref="T:System.InvalidOperationException">One ore more fields are not declared correctly.</exception>
         </member>
         <member name="M:Catel.Data.PropertyDataManager.RegisterProperty(System.Type,System.String,Catel.Data.PropertyData)">
             <summary>
@@ -4481,6 +4621,12 @@
             <returns>
             Name of the XML element that represents the property value.
             </returns>
+        </member>
+        <member name="P:Catel.Data.PropertyDataManager.Default">
+            <summary>
+            Gets the default instance of the property data manager.
+            </summary>
+            <value>The default.</value>
         </member>
         <member name="T:Catel.Data.PropertyValue">
             <summary>
@@ -6936,6 +7082,32 @@
             <param name = "object2">The second object.</param>
             <returns><c>true</c> if the objects are equal; otherwise <c>false</c>.</returns>
         </member>
+        <member name="M:Catel.ObjectHelper.AreEqualReferences(System.Object,System.Object)">
+            <summary>
+              Checks whether the 2 specified objects are equal references. This method is better, simple because it also checks boxing so
+              2 integers with the same values that are boxed are equal.
+            <para/>
+              Two objects are considered equal if one of the following expressions returns true:
+            <list type="bullet">
+              <item><description>Both values are <c>null</c>.</description></item>
+              <item><description>Both values have the same reference, checked by <see cref="M:System.Object.ReferenceEquals(System.Object,System.Object)"/>.</description></item>
+              <item><description>Both values are value types and have the same value.</description></item>
+              <item><description>Both values are string type and have the same value.</description></item>
+            </list>
+            </summary>
+            <param name="object1">The first object.</param>
+            <param name="object2">The second object.</param>
+            <returns><c>true</c> if the objects are equal references; otherwise <c>false</c>.</returns>
+        </member>
+        <member name="M:Catel.ObjectHelper.IsNull(System.Object)">
+            <summary>
+            Determines whether the specified object is <c>null</c> or <c>DBNull.Value</c>.
+            </summary>
+            <param name="obj">The object to chec..</param>
+            <returns>
+              <c>true</c> if the specified object is <c>null</c> or <c>DBNull.Value</c>; otherwise, <c>false</c>.
+            </returns>
+        </member>
         <member name="T:Catel.ObjectToStringHelper">
             <summary>
             Simple static class that turns an object to string.
@@ -8691,7 +8863,7 @@
             <para/>
             This method will not throw an exception when the invocation fails.
             </summary>
-            <param name="serviceType">Type of the service.</param>
+            <param name="typeToConstruct">Type of the service.</param>
             <param name="constructorInfo">The constructor info.</param>
             <returns>The instantiated service or <c>null</c> if the instantiation fails.</returns>
         </member>
@@ -9715,6 +9887,60 @@
             <summary>
             Occurs when a log message is written to one of the logs.
             </summary>
+        </member>
+        <member name="T:Catel.Logging.LogManager.LogInfo">
+            <summary>
+            Class containing log info.
+            </summary>
+        </member>
+        <member name="M:Catel.Logging.LogManager.LogInfo.UpdateLogInfo">
+            <summary>
+            Updates the log info.
+            </summary>
+        </member>
+        <member name="P:Catel.Logging.LogManager.LogInfo.IsEnabled">
+            <summary>
+            Gets a value indicating whether any logging is enabled, which means there is at least one listener.
+            </summary>
+            <value>
+            <c>true</c> if this instance is enabled; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:Catel.Logging.LogManager.LogInfo.IsDebugEnabled">
+            <summary>
+            Gets a value indicating whether debug logging is enabled. This means that there is at least one listener 
+            that is interested in debug logging.
+            </summary>
+            <value>
+            <c>true</c> if debug logging is enabled; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:Catel.Logging.LogManager.LogInfo.IsInfoEnabled">
+            <summary>
+            Gets a value indicating whether info logging is enabled. This means that there is at least one listener 
+            that is interested in info logging.
+            </summary>
+            <value>
+            <c>true</c> if info logging is enabled; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:Catel.Logging.LogManager.LogInfo.IsWarningEnabled">
+            <summary>
+            Gets a value indicating whether warning logging is enabled. This means that there is at least one listener 
+            that is interested in warning logging.
+            </summary>
+            <value>
+            <c>true</c> if warning logging is enabled; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:Catel.Logging.LogManager.LogInfo.IsErrorEnabled">
+            <summary>
+            Gets a value indicating whether error logging is enabled. This means that there is at least one listener 
+            that is interested in error logging.
+            </summary>
+            <value>
+            <c>true</c> if error logging is enabled; otherwise, <c>false</c>.
+            </value>
         </member>
         <member name="T:Catel.Memento.ActionUndo">
             <summary>
@@ -10820,7 +11046,7 @@
         </member>
         <member name="M:Catel.ModuleInitializer.Initialize">
             <summary>
-            Initializes the module
+            Initializes the module.
             </summary>
         </member>
         <member name="T:Catel.Properties.Exceptions">
@@ -10944,6 +11170,11 @@
             <see cref="T:System.AppDomain"/> extensions.
             </summary>
         </member>
+        <member name="F:Catel.Reflection.AppDomainExtensions.Log">
+            <summary>
+            The log.
+            </summary>
+        </member>
         <member name="M:Catel.Reflection.AppDomainExtensions.GetTypes(System.AppDomain)">
             <summary>
             Gets a list of all types inside the <see cref="T:System.AppDomain"/>.
@@ -10954,6 +11185,12 @@
             This class must only be used by Catel. To make sure that an application performs, make sure to use
             <see cref="M:Catel.Reflection.TypeHelper.GetTypes"/> instead.
             </remarks>
+        </member>
+        <member name="M:Catel.Reflection.AppDomainExtensions.PreloadAssemblies(System.String)">
+            <summary>
+            Preloads all the assemblies inside the specified directory into the current <see cref="T:System.AppDomain"/>.
+            </summary>
+            <param name="directory">The directory.</param>
         </member>
         <member name="T:Catel.Reflection.AssemblyExtensions">
             <summary>
@@ -11017,6 +11254,14 @@
             <param name="assembly">The assembly.</param>
             <returns>The path of the assembly.</returns>
         </member>
+        <member name="M:Catel.Reflection.AssemblyExtensions.GetDirectory(System.Reflection.Assembly)">
+            <summary>
+            Gets the directory of a specific assembly.
+            </summary>
+            <param name="assembly">The assembly.</param>
+            <returns>The directory of the assembly.</returns>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="assembly"/> is <c>null</c>.</exception>
+        </member>
         <member name="M:Catel.Reflection.AssemblyExtensions.GetAssemblyAttribute``1(System.Reflection.Assembly)">
             <summary>
             Gets the assembly attribute.
@@ -11073,6 +11318,9 @@
             Reflection extension class.
             </summary>
             <summary>
+            Reflection extensions cache info.
+            </summary>
+            <summary>
             Reflection extension class.
             </summary>
             <summary>
@@ -11109,6 +11357,56 @@
             <returns>
             <see cref="T:System.Reflection.MethodInfo"/> of the method or <c>null</c> if the method is not found.
             </returns>
+        </member>
+        <member name="F:Catel.Reflection.ReflectionExtensions._constructorsCache">
+            <summary>
+            The _constructors cache.
+            </summary>
+        </member>
+        <member name="F:Catel.Reflection.ReflectionExtensions._constructorCache">
+            <summary>
+            The _constructor cache.
+            </summary>
+        </member>
+        <member name="F:Catel.Reflection.ReflectionExtensions._fieldsCache">
+            <summary>
+            The _fields cache.
+            </summary>
+        </member>
+        <member name="F:Catel.Reflection.ReflectionExtensions._fieldCache">
+            <summary>
+            The _field cache.
+            </summary>
+        </member>
+        <member name="F:Catel.Reflection.ReflectionExtensions._propertiesCache">
+            <summary>
+            The _properties cache.
+            </summary>
+        </member>
+        <member name="F:Catel.Reflection.ReflectionExtensions._propertyCache">
+            <summary>
+            The _property cache.
+            </summary>
+        </member>
+        <member name="F:Catel.Reflection.ReflectionExtensions._eventsCache">
+            <summary>
+            The _events cache.
+            </summary>
+        </member>
+        <member name="F:Catel.Reflection.ReflectionExtensions._eventCache">
+            <summary>
+            The _event cache.
+            </summary>
+        </member>
+        <member name="F:Catel.Reflection.ReflectionExtensions._methodsCache">
+            <summary>
+            The _methods cache.
+            </summary>
+        </member>
+        <member name="F:Catel.Reflection.ReflectionExtensions._methodCache">
+            <summary>
+            The _method cache.
+            </summary>
         </member>
         <member name="F:Catel.Reflection.ReflectionExtensions._convertableDictionary">
             <summary>
@@ -11814,6 +12112,116 @@
             The <paramref name="this"/> is <c>null</c>.
             </exception>
         </member>
+        <member name="T:Catel.Reflection.ReflectionExtensions.ReflectionTypes">
+            <summary>
+            The reflection types.
+            </summary>
+        </member>
+        <member name="F:Catel.Reflection.ReflectionExtensions.ReflectionTypes.Constructor">
+            <summary>
+            The constructor.
+            </summary>
+        </member>
+        <member name="F:Catel.Reflection.ReflectionExtensions.ReflectionTypes.Field">
+            <summary>
+            The field.
+            </summary>
+        </member>
+        <member name="F:Catel.Reflection.ReflectionExtensions.ReflectionTypes.Property">
+            <summary>
+            The property.
+            </summary>
+        </member>
+        <member name="F:Catel.Reflection.ReflectionExtensions.ReflectionTypes.Event">
+            <summary>
+            The event.
+            </summary>
+        </member>
+        <member name="F:Catel.Reflection.ReflectionExtensions.ReflectionTypes.Method">
+            <summary>
+            The method.
+            </summary>
+        </member>
+        <member name="T:Catel.Reflection.ReflectionExtensions.ReflectionCacheKey">
+            <summary>
+            The reflection cache key.
+            </summary>
+        </member>
+        <member name="M:Catel.Reflection.ReflectionExtensions.ReflectionCacheKey.#ctor(System.Type,Catel.Reflection.ReflectionExtensions.ReflectionTypes,System.Reflection.BindingFlags,System.Object)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Catel.Reflection.ReflectionExtensions.ReflectionCacheKey"/> class. 
+            </summary>
+            <param name="type">
+            The type.
+            </param>
+            <param name="reflectionType">
+            The reflection type.
+            </param>
+            <param name="bindingFlags">
+            The binding flags.
+            </param>
+            <param name="additionalInfo">
+            The additional info.
+            </param>
+        </member>
+        <member name="M:Catel.Reflection.ReflectionExtensions.ReflectionCacheKey.Equals(Catel.Reflection.ReflectionExtensions.ReflectionCacheKey)">
+            <summary>
+            Equalses the specified other.
+            </summary>
+            <param name="other">The other.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Catel.Reflection.ReflectionExtensions.ReflectionCacheKey.CalculateHashCode">
+            <summary>
+            Calculates the hash code.
+            </summary>
+            <returns>The hash code.</returns>
+        </member>
+        <member name="M:Catel.Reflection.ReflectionExtensions.ReflectionCacheKey.GetHashCode">
+            <summary>
+            Returns a hash code for this instance.
+            </summary>
+            <returns>
+            A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+            </returns>
+        </member>
+        <member name="M:Catel.Reflection.ReflectionExtensions.ReflectionCacheKey.Equals(System.Object)">
+            <summary>
+            Determines whether the specified <see cref="T:System.Object"/> is equal to this instance.
+            </summary>
+            <param name="obj">The <see cref="T:System.Object"/> to compare with this instance.</param>
+            <returns>
+              <c>true</c> if the specified <see cref="T:System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:Catel.Reflection.ReflectionExtensions.ReflectionCacheKey.ToString">
+            <summary>
+            The to string.
+            </summary>
+            <returns>
+            The to string.
+            </returns>
+        </member>
+        <member name="P:Catel.Reflection.ReflectionExtensions.ReflectionCacheKey.Type">
+            <summary>
+            Gets Type.
+            </summary>
+        </member>
+        <member name="P:Catel.Reflection.ReflectionExtensions.ReflectionCacheKey.ReflectionType">
+            <summary>
+            Gets ReflectionType.
+            </summary>
+        </member>
+        <member name="P:Catel.Reflection.ReflectionExtensions.ReflectionCacheKey.BindingFlags">
+            <summary>
+            Gets BindingFlags.
+            </summary>
+        </member>
+        <member name="P:Catel.Reflection.ReflectionExtensions.ReflectionCacheKey.AdditionalInfo">
+            <summary>
+            Gets AdditionalInfo.
+            </summary>
+        </member>
         <member name="T:Catel.Reflection.AssemblyHelper">
             <summary>
             Assembly helper class.
@@ -11934,7 +12342,6 @@
             If this value is <c>null</c>, the default of the framework will be used. Also see <see cref="F:Catel.Reflection.BindingFlagsHelper.DefaultBindingFlags"/>.
             </param>
             <returns>The final binding flags.</returns>
-            <remarks></remarks>
         </member>
         <member name="T:Catel.Reflection.DelegateHelper">
             <summary>
@@ -11995,11 +12402,6 @@
         <member name="F:Catel.Reflection.PropertyHelper.Log">
             <summary>
             The <see cref="T:Catel.Logging.ILog">log</see> object.
-            </summary>
-        </member>
-        <member name="F:Catel.Reflection.PropertyHelper._reflectionCache">
-            <summary>
-            Dictionary that serves as a cache for all properties.
             </summary>
         </member>
         <member name="M:Catel.Reflection.PropertyHelper.IsPropertyAvailable(System.Object,System.String)">
@@ -12178,27 +12580,6 @@
             The the property value cannot be written.
             </exception>
         </member>
-        <member name="M:Catel.Reflection.PropertyHelper.GetCachedPropertyInfo(System.Object,System.String)">
-            <summary>
-            Gets the cached property info. If the property is already cached, the result from the cache
-            will be returned. Otherwise the property info will be added to the cache and then returned.
-            </summary>
-            <param name="obj">
-            The object.
-            </param>
-            <param name="property">
-            The property.
-            </param>
-            <returns>
-            The <see cref="T:System.Reflection.PropertyInfo"/> or <c>null</c> if the property does not exist.
-            </returns>
-            <exception cref="T:System.ArgumentNullException">
-            The <paramref name="obj"/> is <c>null</c>.
-            </exception>
-            <exception cref="T:System.ArgumentException">
-            The <paramref name="property"/> is <c>null</c> or whitespace.
-            </exception>
-        </member>
         <member name="M:Catel.Reflection.PropertyHelper.GetHiddenPropertyValue``1(System.Object,System.String,System.Type)">
             <summary>
             Gets hidden property value.
@@ -12226,6 +12607,17 @@
             <exception cref="T:System.ArgumentNullException">
             The <paramref name="baseType"/> is <c>null</c>.
             </exception>
+        </member>
+        <member name="T:Catel.Reflection.StaticHelper">
+            <summary>
+            Helper class for static classes and members.
+            </summary>
+        </member>
+        <member name="M:Catel.Reflection.StaticHelper.GetCallingType">
+            <summary>
+            Gets the type which is calling the current method which might be static. 
+            </summary>
+            <returns>The type calling the method.</returns>
         </member>
         <member name="T:Catel.Reflection.TypeHelper">
             <summary>
@@ -12352,6 +12744,17 @@
             </summary>
             <param name="forceFullInitialization">If <c>true</c>, the types are initialized, even when the types are already initialized.</param>
             <param name="assemblyName">Name of the assembly. If <c>null</c>, all assemblies will be checked.</param>
+            <exception cref="T:System.ArgumentException">The <paramref name="assemblyName"/> is <c>null</c> or whitespace.</exception>
+        </member>
+        <member name="M:Catel.Reflection.TypeHelper.InitializeTypes(System.Boolean,System.Reflection.Assembly)">
+            <summary>
+            Initializes the types in the specified assembly. It does this by looping through all loaded assemblies and
+            registering the type by type name and assembly name.
+            <para/>
+            The types initialized by this method are used by <see cref="M:System.Object.GetType"/>.
+            </summary>
+            <param name="forceFullInitialization">If <c>true</c>, the types are initialized, even when the types are already initialized.</param>
+            <param name="assembly">The assembly to initialize the types from. If <c>null</c>, all assemblies will be checked.</param>
         </member>
         <member name="M:Catel.Reflection.TypeHelper.IsSubclassOfRawGeneric(System.Type,System.Type)">
             <summary>
@@ -15054,6 +15457,130 @@
             <exception cref="T:System.ArgumentNullException">The <param ref="fileStream"/> is <c>null</c>.</exception>
             <exception cref="T:System.ArgumentNullException">The <param ref="obj"/> is <c>null</c>.</exception>
         </member>
+        <member name="T:Catel.Runtime.Serialization.XmlSchemaHelper">
+            <summary>
+            Helper class to generic 
+            </summary>
+        </member>
+        <member name="F:Catel.Runtime.Serialization.XmlSchemaHelper.DefaultNs">
+            <summary>
+            The default catel xml namespace.
+            </summary>
+        </member>
+        <member name="F:Catel.Runtime.Serialization.XmlSchemaHelper.Xmlns">
+            <summary>
+            Default xml schema.
+            </summary>
+        </member>
+        <member name="F:Catel.Runtime.Serialization.XmlSchemaHelper.Log">
+            <summary>
+            The log.
+            </summary>
+        </member>
+        <member name="M:Catel.Runtime.Serialization.XmlSchemaHelper.GetXmlSchema(System.Type,System.Xml.Schema.XmlSchemaSet,System.Boolean)">
+            <summary>
+            Gets the XML schema.
+            </summary>
+            <param name="type">The type.</param>
+            <param name="schemaSet">The schema set.</param>
+            <param name="generateFlatSchema">A value indicating whether the schema should be generated as flat schema.</param>
+            <returns>The qualified name of the type.</returns>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="schemaSet"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.Runtime.Serialization.XmlSchemaHelper.AddTypeToSchemaSet(System.Type,System.Xml.Schema.XmlSchemaSet)">
+            <summary>
+            Adds the type to schema set by reading the <see cref="T:System.Xml.Serialization.XmlSchemaProviderAttribute"/> or by 
+            using the known schema sets information.
+            </summary>
+            <param name="type">The type.</param>
+            <param name="schemaSet">The schema set.</param>
+            <returns>The xml qualified name.</returns>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="type"/> is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="schemaSet"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.Runtime.Serialization.XmlSchemaHelper.GetPropertiesSequence(System.Type,System.Xml.Schema.XmlSchema,System.Xml.Schema.XmlSchemaSet)">
+            <summary>
+            Returns the sequence of properties of the specified type.
+            </summary>
+            <param name="type">The type.</param>
+            <param name="schema">The schema.</param>
+            <param name="schemaSet">The schema set.</param>
+            <returns>Sequence containing all properties.</returns>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="type"/> is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="schema"/> is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="schemaSet"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.Runtime.Serialization.XmlSchemaHelper.CreateSchemaComplexType(System.Type,System.Xml.Schema.XmlSchema,System.Xml.Schema.XmlSchemaSet,System.Boolean)">
+            <summary>
+            Creates the an xml schema for a complex type. This method automatically takes care of
+            any base classes that must be added.
+            <para/>
+            This method already adds the <see cref="T:System.Xml.Schema.XmlSchemaComplexType"/> to the <see cref="T:System.Xml.Schema.XmlSchemaSet"/>.
+            </summary>
+            <param name="type">The type to create the complex schema for.</param>
+            <param name="schema">The schema.</param>
+            <param name="schemaSet">The schema set.</param>
+            <param name="generateFlatSchema">A value indicating whether the schema should be generated as flat schema.</param>
+            <returns>The complex schema for the specified type.</returns>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="type"/> is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="schema"/> is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="schemaSet"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.Runtime.Serialization.XmlSchemaHelper.GetOrCreateSchema(System.String,System.Xml.Schema.XmlSchemaSet)">
+            <summary>
+            Gets the or create schema from the schema set.
+            <para/>
+            If the namespace does not yet exists, it is created and added. Otherwise the existing
+            one is returned.
+            </summary>
+            <param name="xmlns">The xml namespace.</param>
+            <param name="schemaSet">The schema set.</param>
+            <returns>The xml schema to use.</returns>
+            <exception cref="T:System.ArgumentException">The <paramref name="xmlns"/> is <c>null</c> or whitespace.</exception>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="schemaSet"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.Runtime.Serialization.XmlSchemaHelper.GetTypeNameForSchema(System.Type)">
+            <summary>
+            Gets the name of the type to be used inside an xml schema.
+            </summary>
+            <param name="type">The type to determine the name for.</param>
+            <returns>The name.</returns>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="type"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.Runtime.Serialization.XmlSchemaHelper.GetTypeNamespaceForSchema(System.Type)">
+            <summary>
+            Gets the type namespace to be used inside an xml schema.
+            </summary>
+            <param name="type">The type to determine the namespace for.</param>
+            <returns>The namespace.</returns>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="type"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.Runtime.Serialization.XmlSchemaHelper.IsBasicType(System.Type)">
+            <summary>
+            Determines whether the specified type is a basic type. A basic type is one that can be wholly expressed
+            as an XML attribute. All primitive data types and <see cref="T:System.String"/> and <see cref="T:System.DateTime"/> are basic types.
+            </summary>
+            <param name="type">The type to check.</param>
+            <returns><c>true</c> if the specified type is a basic type; otherwise, <c>false</c>.</returns>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="type"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.Runtime.Serialization.XmlSchemaHelper.IsNullableType(System.Type)">
+            <summary>
+            Determines whether the specified type is a nullable type.
+            </summary>
+            <param name="type">The type to check.</param>
+            <returns><c>true</c> if the specified type is a nullable; otherwise, <c>false</c>.</returns>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="type"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.Runtime.Serialization.XmlSchemaHelper.IsNullable(System.Type,System.Type@)">
+            <summary>
+            Determines whether the specified type is nullable.
+            </summary>
+            <param name="type">The type to check.</param>
+            <param name="valueType">The value type of the corresponding nullable type.</param>
+            <returns><c>true</c> if the specified type is nullable; otherwise, <c>false</c>.</returns>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="valueType"/> is <c>null</c>.</exception>
+        </member>
         <member name="T:Catel.Runtime.Serialization.RedirectDeserializationBinder">
             <summary>
             <see cref="T:System.Runtime.Serialization.SerializationBinder"/> class that supports backwards compatible serialization.
@@ -15118,6 +15645,32 @@
             </summary>
             <param name="type">Type to convert.</param>
             <returns>String representing the type that represents the redirected type.</returns>
+        </member>
+        <member name="T:Catel.Runtime.Serialization.XmlSchemaManager">
+            <summary>
+            Xml schema manager to create xml schemas for models in Catel.
+            </summary>
+        </member>
+        <member name="M:Catel.Runtime.Serialization.XmlSchemaManager.GetXmlSchema(System.Type,System.Xml.Schema.XmlSchemaSet)">
+            <summary>
+            Gets the XML schema.
+            </summary>
+            <param name="type">The type.</param>
+            <param name="schemaSet">The schema set.</param>
+            <returns>XmlSchemaComplexType.</returns>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="schemaSet"/> is <c>null</c>.</exception>
+            <remarks>
+            Do not move this method, it is used by Catel.Fody.
+            </remarks>
+        </member>
+        <member name="P:Catel.Runtime.Serialization.XmlSchemaManager.GenerateFlatSchemas">
+            <summary>
+            Gets or sets a value indicating whether the xml schema manager should generate flat schemas.
+            <para />
+            This means that classes will be generated as is. This results in easier types, but the complex types
+            cannot be re-used using WCF.
+            </summary>
+            <value><c>true</c> if the xml schema manager should generate flat schemas; otherwise, <c>false</c>.</value>
         </member>
         <member name="T:Catel.Services.IService">
             <summary>

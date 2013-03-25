@@ -4,6 +4,107 @@
         <name>Catel.MVVM</name>
     </assembly>
     <members>
+        <member name="T:Catel.Collections.FastObservableCollection`1">
+            <summary>
+            Fast implementation of <see cref="T:System.Collections.ObjectModel.ObservableCollection`1"/> where the change notifications
+            can be suspended.
+            </summary>
+            <typeparam name="T">Type of the elements contained by this collection.</typeparam>
+        </member>
+        <member name="M:Catel.Collections.FastObservableCollection`1.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Catel.Collections.FastObservableCollection`1"/> class.
+            </summary>
+        </member>
+        <member name="M:Catel.Collections.FastObservableCollection`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Catel.Collections.FastObservableCollection`1"/> class.
+            </summary>
+            <param name="collection">The collection.</param>
+        </member>
+        <member name="M:Catel.Collections.FastObservableCollection`1.AddItems(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Adds the specified items to the collection without causing a change notification for all items.
+            <para/>
+            This method will raise a change notification at the end.
+            </summary>
+            <param name="collection">The collection.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="collection"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.Collections.FastObservableCollection`1.AddItems(System.Collections.IEnumerable)">
+            <summary>
+            Adds the specified items to the collection without causing a change notification for all items.
+            <para/>
+            This method will raise a change notification at the end.
+            </summary>
+            <param name="collection">The collection.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="collection"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.Collections.FastObservableCollection`1.RemoveItems(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Removes the specified items from the collection without causing a change notification for all items.
+            <para/>
+            This method will raise a change notification at the end.
+            </summary>
+            <param name="collection">The collection.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="collection"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.Collections.FastObservableCollection`1.RemoveItems(System.Collections.IEnumerable)">
+            <summary>
+            Removes the specified items from the collection without causing a change notification for all items.
+            <para/>
+            This method will raise a change notification at the end.
+            </summary>
+            <param name="collection">The collection.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="collection"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.Collections.FastObservableCollection`1.SuspendChangeNotifications">
+            <summary>
+            Suspends the change notifications until the returned <see cref="T:System.IDisposable"/> is disposed.
+            <example>
+            <code>
+            <![CDATA[
+            var fastCollection = new FastObservableCollection<int>();
+            using (fastCollection.SuspendChangeNotificaftions())
+            {
+                // Adding or removing events inside here will not raise events
+                fastCollection.Add(1);
+                fastCollection.Add(2);
+                fastCollection.Add(3);
+            
+                fastCollection.Remove(3);
+                fastCollection.Remove(2);
+                fastCollection.Remove(1);
+            }
+            ]]>
+            </code>
+            </example>
+            </summary>
+            <returns>IDisposable.</returns>
+        </member>
+        <member name="M:Catel.Collections.FastObservableCollection`1.NotifyChanges">
+            <summary>
+            Notifies external classes of property changes.
+            </summary>
+        </member>
+        <member name="M:Catel.Collections.FastObservableCollection`1.OnCollectionChanged(System.Collections.Specialized.NotifyCollectionChangedEventArgs)">
+            <summary>
+            Raises the <see cref="E:System.Collections.ObjectModel.ObservableCollection`1.CollectionChanged"/> event, but also makes sure the event is dispatched to the UI thread.
+            </summary>
+            <param name="e">The <see cref="T:System.Collections.Specialized.NotifyCollectionChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:Catel.Collections.FastObservableCollection`1.OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs)">
+            <summary>
+            Raises the <see cref="E:System.Collections.ObjectModel.ObservableCollection`1.PropertyChanged"/> event, but also makes sure the event is dispatched to the UI thread.
+            </summary>
+            <param name="e">The <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="P:Catel.Collections.FastObservableCollection`1.AutomaticallyDispatchChangeNotifications">
+            <summary>
+            Gets or sets a value indicating whether events should automatically be dispatched to the UI thread.
+            </summary>
+            <value><c>true</c> if events should automatically be dispatched to the UI thread; otherwise, <c>false</c>.</value>
+        </member>
         <member name="T:Catel.Data.DispatcherObservableObject">
             <summary>
             Implementation of the <see cref="T:Catel.Data.ObservableObject"/> class that will dispatch all change notifications
@@ -4795,11 +4896,19 @@
             <see cref="T:System.EventArgs"/> implementation for the <see cref="E:Catel.MVVM.IViewModel.Closed"/> event.
             </summary>
         </member>
-        <member name="M:Catel.MVVM.ViewModelClosedEventArgs.#ctor(System.Nullable{System.Boolean})">
+        <member name="M:Catel.MVVM.ViewModelClosedEventArgs.#ctor(Catel.MVVM.IViewModel,System.Nullable{System.Boolean})">
             <summary>
             Initializes a new instance of the <see cref="T:Catel.MVVM.ViewModelClosedEventArgs"/> class.
             </summary>
+            <param name="viewModel">The view model.</param>
             <param name="result">The result to pass to the view. This will, for example, be used as <c>DialogResult</c>.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="viewModel"/> is <c>null</c>.</exception>
+        </member>
+        <member name="P:Catel.MVVM.ViewModelClosedEventArgs.ViewModel">
+            <summary>
+            Gets the view model.
+            </summary>
+            <value>The view model.</value>
         </member>
         <member name="P:Catel.MVVM.ViewModelClosedEventArgs.Result">
             <summary>
@@ -5532,9 +5641,11 @@
             	<c>true</c> if the <see cref="T:System.ComponentModel.IEditableObject"/> interface should be used on the model if possible; otherwise, <c>false</c>.
             </value>
         </member>
-        <member name="T:Catel.MVVM.ViewModels.ProgressNotifyableViewModel">
+        <member name="T:Catel.MVVM.NavigationViewModelBase">
             <summary>
-            The progress notifyable view model base.
+            Extended base class for view models that include navigation.
+            <para />
+            This class adds navigation commands and the navigation service.
             </summary>
         </member>
         <member name="T:Catel.MVVM.ViewModelBase">
@@ -5884,10 +5995,25 @@
             	<c>true</c> if successful; otherwise <c>false</c>.
             </returns>
         </member>
+        <member name="M:Catel.MVVM.ViewModelBase.OnClosing">
+            <summary>
+            Called when the view model is about to be closed.
+            <para/>
+            This method also raises the <see cref="E:Catel.MVVM.ViewModelBase.Closing"/> event.
+            </summary>
+        </member>
         <member name="M:Catel.MVVM.ViewModelBase.Close">
             <summary>
             Closes this instance. Always called after the <see cref="M:Catel.MVVM.ViewModelBase.Cancel"/> of <see cref="M:Catel.MVVM.ViewModelBase.Save"/> method.
             </summary>
+        </member>
+        <member name="M:Catel.MVVM.ViewModelBase.OnClosed(System.Nullable{System.Boolean})">
+            <summary>
+            Called when the view model has just been closed.
+            <para/>
+            This method also raises the <see cref="E:Catel.MVVM.ViewModelBase.Closed"/> event.
+            </summary>
+            <param name="result">The result to pass to the view. This will, for example, be used as <c>DialogResult</c>.</param>
         </member>
         <member name="M:Catel.MVVM.ViewModelBase.IsModelRegistered(System.String)">
             <summary>
@@ -6310,6 +6436,76 @@
         <member name="F:Catel.MVVM.ViewModelBase.ModelCleanUpMode.EndEdit">
             <summary>
             Call <see cref="M:System.ComponentModel.IEditableObject.EndEdit"/>.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.NavigationViewModelBase.#ctor(System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Catel.MVVM.ViewModelBase"/> class.
+            </summary>
+            <param name="supportIEditableObject">if set to <c>true</c>, the view model will natively support models that
+            implement the <see cref="T:System.ComponentModel.IEditableObject"/> interface.</param>
+            <param name="ignoreMultipleModelsWarning">if set to <c>true</c>, the warning when using multiple models is ignored.</param>
+            <param name="skipViewModelAttributesInitialization">
+            if set to <c>true</c>, the initialization will be skipped and must be done manually via <see cref="M:Catel.MVVM.ViewModelBase.InitializeViewModelAttributes"/>.
+            </param>
+            <exception cref="T:Catel.MVVM.ModelNotRegisteredException">A mapped model is not registered.</exception>
+            <exception cref="T:Catel.MVVM.PropertyNotFoundInModelException">A mapped model property is not found.</exception>
+        </member>
+        <member name="M:Catel.MVVM.NavigationViewModelBase.#ctor(Catel.IoC.IServiceLocator,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Catel.MVVM.ViewModelBase"/> class.
+            <para/>
+            This constructor allows the injection of a custom <see cref="T:Catel.IoC.IServiceLocator"/>.
+            </summary>
+            <param name="serviceLocator">The service locator to inject. If <c>null</c>, the <see cref="P:Catel.IoC.ServiceLocator.Default"/> will be used.</param>
+            <param name="supportIEditableObject">if set to <c>true</c>, the view model will natively support models that
+            implement the <see cref="T:System.ComponentModel.IEditableObject"/> interface.</param>
+            <param name="ignoreMultipleModelsWarning">if set to <c>true</c>, the warning when using multiple models is ignored.</param>
+            <param name="skipViewModelAttributesInitialization">if set to <c>true</c>, the initialization will be skipped and must be done manually via <see cref="M:Catel.MVVM.ViewModelBase.InitializeViewModelAttributes"/>.</param>
+            <exception cref="T:Catel.MVVM.ModelNotRegisteredException">A mapped model is not registered.</exception>
+            <exception cref="T:Catel.MVVM.PropertyNotFoundInModelException">A mapped model property is not found.</exception>
+        </member>
+        <member name="M:Catel.MVVM.NavigationViewModelBase.OnBackCanExecute">
+            <summary>
+            Method to check whether the Back command can be executed.
+            </summary>
+            <returns><c>true</c> if the command can be executed; otherwise <c>false</c></returns>
+        </member>
+        <member name="M:Catel.MVVM.NavigationViewModelBase.OnBackExecute">
+            <summary>
+            Method to invoke when the Back command is executed.
+            </summary>
+        </member>
+        <member name="M:Catel.MVVM.NavigationViewModelBase.OnForwardCanExecute">
+            <summary>
+            Method to check whether the Forward command can be executed.
+            </summary>
+            <returns><c>true</c> if the command can be executed; otherwise <c>false</c></returns>
+        </member>
+        <member name="M:Catel.MVVM.NavigationViewModelBase.OnForwardExecute">
+            <summary>
+            Method to invoke when the Forward command is executed.
+            </summary>
+        </member>
+        <member name="P:Catel.MVVM.NavigationViewModelBase.NavigationService">
+            <summary>
+            Gets the navigation service which can be used to navigate inside an application.
+            </summary>
+            <value>The navigation service.</value>
+        </member>
+        <member name="P:Catel.MVVM.NavigationViewModelBase.Back">
+            <summary>
+            Gets the Back command.
+            </summary>
+        </member>
+        <member name="P:Catel.MVVM.NavigationViewModelBase.Forward">
+            <summary>
+            Gets the Forward command.
+            </summary>
+        </member>
+        <member name="T:Catel.MVVM.ViewModels.ProgressNotifyableViewModel">
+            <summary>
+            The progress notifyable view model base.
             </summary>
         </member>
         <member name="F:Catel.MVVM.ViewModels.ProgressNotifyableViewModel.TaskProperty">
@@ -7569,6 +7765,10 @@
             Subscribes an instance of the <see cref="T:Catel.Windows.Controls.WarningAndErrorValidator"/> class.
             </summary>
             <param name="validator">The validator.</param>
+            <remarks>
+            Keep in mind that this method is normally handled by Catel. Only use this method if you really know
+            what you are doing.
+            </remarks>
             <exception cref="T:System.ArgumentNullException">The <paramref name="validator"/> is <c>null</c>.</exception>
         </member>
         <member name="M:Catel.Windows.Controls.InfoBarMessageControl.UnsubscribeWarningAndErrorValidator(Catel.Windows.Controls.WarningAndErrorValidator)">
@@ -7576,6 +7776,10 @@
             Unsubscribes the warning and error validator.
             </summary>
             <param name="validator">The validator.</param>
+            <remarks>
+            Keep in mind that this method is normally handled by Catel. Only use this method if you really know
+            what you are doing.
+            </remarks>
             <exception cref="T:System.ArgumentNullException">The <paramref name="validator"/> is <c>null</c>.</exception>
         </member>
         <member name="M:Catel.Windows.Controls.InfoBarMessageControl.SubscribeToEvents">
@@ -7868,6 +8072,51 @@
             </summary>
             <value>The type of the view model.</value>
         </member>
+        <member name="T:Catel.LogicExtensions">
+            <summary>
+            Extension methods to safely interact with logic from inside views.
+            </summary>
+        </member>
+        <member name="M:Catel.LogicExtensions.SetValue``1(Catel.Windows.Controls.MVVMProviders.Logic.LogicBase,System.Action{``0})">
+            <summary>
+            Sets the value of the logic property.
+            </summary>
+            <param name="logic">The logic, can be <c>null</c> so the caller don't have to check for this.</param>
+            <param name="action">The action that will set the actual value, will only be executed if <paramref name="logic"/> is not <c>null</c>.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="action"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.LogicExtensions.GetValue``2(Catel.Windows.Controls.MVVMProviders.Logic.LogicBase,System.Func{``0,``1})">
+            <summary>
+            Sets the value of the logic property.
+            </summary>
+            <param name="logic">The logic, can be <c>null</c> so the caller don't have to check for this.</param>
+            <param name="function">The function that will get the actual value, will only be executed if <paramref name="logic"/> is not <c>null</c>.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="function"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.LogicExtensions.GetValue``2(Catel.Windows.Controls.MVVMProviders.Logic.LogicBase,System.Func{``0,``1},``1)">
+            <summary>
+            Sets the value of the logic property.
+            </summary>
+            <param name="logic">The logic, can be <c>null</c> so the caller don't have to check for this.</param>
+            <param name="function">The function that will get the actual value, will only be executed if <paramref name="logic"/> is not <c>null</c>.</param>
+            <param name="defaultValue">The default value to return if the logic is not available.</param>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="function"/> is <c>null</c>.</exception>
+        </member>
+        <member name="T:Catel.Windows.Controls.MVVMProviders.Logic.LogicViewModelBehavior">
+            <summary>
+            The available view model behaviors.
+            </summary>
+        </member>
+        <member name="F:Catel.Windows.Controls.MVVMProviders.Logic.LogicViewModelBehavior.Injected">
+            <summary>
+            View model was injected thus will be stable during the lifetime of the view.
+            </summary>
+        </member>
+        <member name="F:Catel.Windows.Controls.MVVMProviders.Logic.LogicViewModelBehavior.Dynamic">
+            <summary>
+            View model is dynamic and will be automatically determined.
+            </summary>
+        </member>
         <member name="T:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase">
             <summary>
             Base implementation of the behaviors, which defines all the different possible situations
@@ -8101,6 +8350,18 @@
             When a new value is set, the old view model will be disposed.
             </remarks>
         </member>
+        <member name="P:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.UniqueIdentifier">
+            <summary>
+            Gets the unique identifier.
+            </summary>
+            <value>The unique identifier.</value>
+        </member>
+        <member name="P:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.ViewModelBehavior">
+            <summary>
+            Gets the view model behavior.
+            </summary>
+            <value>The view model behavior.</value>
+        </member>
         <member name="P:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.ViewModelType">
             <summary>
             Gets the type of the view model.
@@ -8120,6 +8381,21 @@
             <value>
             	<c>true</c> if the target control is loaded; otherwise, <c>false</c>.
             </value>
+        </member>
+        <member name="P:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.CanControlBeLoaded">
+            <summary>
+            Gets a value indicating whether the control can be loaded. This is very useful in non-WPF classes where
+            the <c>LayoutUpdated</c> is used instead of the <c>Loaded</c> event.
+            <para/>
+            If this value is <c>true</c>, this logic implementation can call the <see cref="M:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.OnTargetControlLoaded(System.Object,System.EventArgs)"/> when
+            the control is loaded. Otherwise, the call will be ignored.
+            </summary>
+            <remarks>
+            This value is introduced for Windows Phone because a navigation backwards still leads to a call to
+            <c>LayoutUpdated</c>. To prevent new view models from being created, this property can be overridden by 
+            such logic implementations.
+            </remarks>
+            <value><c>true</c> if this instance can control be loaded; otherwise, <c>false</c>.</value>
         </member>
         <member name="E:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.DetermineViewModelInstance">
             <summary>
@@ -8193,40 +8469,52 @@
             <param name="sender">The sender.</param>
             <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
         </member>
-        <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.NavigationLogicBase`1.OnNavigating(System.Object,System.Windows.Navigation.NavigatingCancelEventArgs)">
+        <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.NavigationLogicBase`1.OnNavigatingEvent(System.Object,System.Windows.Navigation.NavigatingCancelEventArgs)">
             <summary>
             Called when the <c>Navigating</c> event is invoked.
             </summary>
             <param name="sender">The sender.</param>
             <param name="e">The <see cref="T:System.Windows.Navigation.NavigatingCancelEventArgs"/> instance containing the event data.</param>
             <remarks>
-            This method is public due to the face that weak events are used. Otherwise, the navigation completed events
+            This method is public due to the fact that weak events are used. Otherwise, the navigation completed events
             could not be handled (because we unsubscribed from the _rootFrame) when navigating away to prevent memory
             leaks.
             <para/>
             Please, do not call this method yourself, otherwise you can seriously ruin your apps.
             </remarks>
         </member>
-        <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.NavigationLogicBase`1.OnNavigated(System.Object,System.Windows.Navigation.NavigationEventArgs)">
+        <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.NavigationLogicBase`1.OnNavigating(System.Windows.Navigation.NavigatingCancelEventArgs)">
+            <summary>
+            Called when the control is about to navigate.
+            </summary>
+            <param name="e">The <see cref="T:System.Windows.Navigation.NavigatingCancelEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.NavigationLogicBase`1.OnNavigatedEvent(System.Object,System.Windows.Navigation.NavigationEventArgs)">
             <summary>
             Called when the <c>Navigated</c> event is invoked.
             </summary>
             <param name="sender">The sender.</param>
             <param name="e">The <see cref="T:System.Windows.Navigation.NavigationEventArgs"/> instance containing the event data.</param>
             <remarks>
-            This method is public due to the face that weak events are used. Otherwise, the navigation completed events
+            This method is public due to the fact that weak events are used. Otherwise, the navigation completed events
             could not be handled (because we unsubscribed from the _rootFrame) when navigating away to prevent memory
             leaks.
             <para/>
             Please, do not call this method yourself, otherwise you can seriously ruin your apps.
             </remarks>
         </member>
+        <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.NavigationLogicBase`1.OnNavigated(System.Windows.Navigation.NavigationEventArgs)">
+            <summary>
+            Called when the control has just navigated.
+            </summary>
+            <param name="e">The <see cref="T:System.Windows.Navigation.NavigationEventArgs"/> instance containing the event data.</param>
+        </member>
         <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.NavigationLogicBase`1.HandleNavigated(System.Object)">
             <summary>
             Handles the navigated event.
             </summary>
             <remarks>
-            This is a separate method and not handled in the <see cref="M:Catel.Windows.Controls.MVVMProviders.Logic.NavigationLogicBase`1.OnNavigated(System.Object,System.Windows.Navigation.NavigationEventArgs)"/> method because it should be
+            This is a separate method and not handled in the <see cref="M:Catel.Windows.Controls.MVVMProviders.Logic.NavigationLogicBase`1.OnNavigatedEvent(System.Object,System.Windows.Navigation.NavigationEventArgs)"/> method because it should be
             possible to call this without actually having event args.
             </remarks>
         </member>
@@ -8270,6 +8558,11 @@
             <param name="uri">The URI.</param>
             <returns>The URI without parameters.</returns>
             <exception cref="T:System.ArgumentException">The <paramref name="uri"/> is <c>null</c> or whitespace.</exception>
+        </member>
+        <member name="P:Catel.Windows.Controls.MVVMProviders.Logic.NavigationLogicBase`1.CanHandleNavigation">
+            <summary>
+            Gets a value indicating whether the logic can currently handle navigation.
+            </summary>
         </member>
         <member name="P:Catel.Windows.Controls.MVVMProviders.Logic.NavigationLogicBase`1.TargetPage">
             <summary>
@@ -8325,6 +8618,11 @@
             <summary>
             The grid that is injected into every user control to use as data context container
             with the view model.
+            </summary>
+        </member>
+        <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.UserControlLogic.#cctor">
+            <summary>
+            Initializes static members of the <see cref="T:Catel.Windows.Controls.MVVMProviders.Logic.UserControlLogic"/> class.
             </summary>
         </member>
         <member name="M:Catel.Windows.Controls.MVVMProviders.Logic.UserControlLogic.#ctor(System.Windows.Controls.UserControl,System.Type,Catel.MVVM.IViewModel)">
@@ -8552,8 +8850,28 @@
             <para/>
             The default value is <c>false</c>.
             </summary>
-            <value>The default value.</value>
-            <remarks></remarks>
+        </member>
+        <member name="P:Catel.Windows.Controls.MVVMProviders.Logic.UserControlLogic.CreateWarningAndErrorValidatorForViewModel">
+            <summary>
+            Gets or sets a value indicating whether to create a <see cref="T:Catel.Windows.Controls.WarningAndErrorValidator"/> for the current
+            control.
+            <para/>
+            If a user control does not have any <see cref="T:Catel.Windows.Controls.InfoBarMessageControl"/> or equivalent control, it is useless to create
+            a <see cref="T:Catel.Windows.Controls.WarningAndErrorValidator"/> for the current control.
+            <para/>
+            The default value is determined by the <see cref="P:Catel.Windows.Controls.MVVMProviders.Logic.UserControlLogic.DefaultCreateWarningAndErrorValidatorForViewModelValue"/> property.
+            </summary>
+            <value>
+            	<c>true</c> if the <see cref="T:Catel.Windows.Controls.WarningAndErrorValidator"/> should be created; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:Catel.Windows.Controls.MVVMProviders.Logic.UserControlLogic.DefaultCreateWarningAndErrorValidatorForViewModelValue">
+            <summary>
+            Gets or sets a value for the <see cref="P:Catel.Windows.Controls.MVVMProviders.Logic.UserControlLogic.CreateWarningAndErrorValidatorForViewModel"/> property. This way, the behavior
+            can be changed an entire application to prevent disabling it on every control.
+            <para/>
+            The default value is <c>true</c>.
+            </summary>
         </member>
         <member name="P:Catel.Windows.Controls.MVVMProviders.Logic.UserControlLogic.DisableWhenNoViewModel">
             <summary>
@@ -8843,7 +9161,7 @@
             <param name="sender">The sender.</param>
             <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
         </member>
-        <member name="M:Catel.Windows.Controls.MVVMProviders.MVVMBehaviorBase`2.OnLogicTargetControlPropertyChanged(System.Object,System.ComponentModel.PropertyChangedEventArgs)">
+        <member name="M:Catel.Windows.Controls.MVVMProviders.MVVMBehaviorBase`2.OnLogicTargetControlPropertyChanged(System.Object,Catel.Windows.Data.DependencyPropertyValueChangedEventArgs)">
             <summary>
             Called when a property on the <see cref="P:Catel.Windows.Controls.MVVMProviders.Logic.LogicBase.TargetControl"/> has changed.
             </summary>
@@ -8916,7 +9234,6 @@
             <summary>
             Occurs when a property on the target control has changed.
             </summary>
-            <remarks></remarks>
         </member>
         <member name="P:Catel.Windows.Controls.MVVMProviders.MVVMBehaviorBase`2.IsAssociatedObjectLoaded">
             <summary>
@@ -9294,6 +9611,15 @@
             </summary>
             <param name="e">The <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance containing the event data.</param>
         </member>
+        <member name="M:Catel.Windows.Controls.Page.OnViewModelChanged">
+            <summary>
+            Called when the <see cref="P:Catel.Windows.Controls.Page.ViewModel"/> has changed.
+            </summary>
+            <remarks>
+            This method does not implement any logic and saves a developer from subscribing/unsubscribing
+            to the <see cref="E:Catel.Windows.Controls.Page.ViewModelChanged"/> event inside the same user control.
+            </remarks>
+        </member>
         <member name="M:Catel.Windows.Controls.Page.ValidateData">
             <summary>
             Validates the data.
@@ -9564,6 +9890,28 @@
             <remarks>
             Internally this value uses the <see cref="P:Catel.Windows.Controls.MVVMProviders.Logic.UserControlLogic.DefaultSkipSearchingForInfoBarMessageControlValue"/> property.
             </remarks>
+        </member>
+        <member name="P:Catel.Windows.Controls.UserControl.CreateWarningAndErrorValidatorForViewModel">
+            <summary>
+            Gets or sets a value indicating whether to create a <see cref="T:Catel.Windows.Controls.WarningAndErrorValidator"/> for the current
+            control.
+            <para/>
+            If a user control does not have any <see cref="T:Catel.Windows.Controls.InfoBarMessageControl"/> or equivalent control, it is useless to create
+            a <see cref="T:Catel.Windows.Controls.WarningAndErrorValidator"/> for the current control.
+            <para/>
+            The default value is determined by the <see cref="P:Catel.Windows.Controls.UserControl.DefaultCreateWarningAndErrorValidatorForViewModelValue"/> property.
+            </summary>
+            <value>
+            	<c>true</c> if the <see cref="T:Catel.Windows.Controls.WarningAndErrorValidator"/> should be created; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:Catel.Windows.Controls.UserControl.DefaultCreateWarningAndErrorValidatorForViewModelValue">
+            <summary>
+            Gets or sets a value for the <see cref="P:Catel.Windows.Controls.UserControl.CreateWarningAndErrorValidatorForViewModel"/> property. This way, the behavior
+            can be changed an entire application to prevent disabling it on every control.
+            <para/>
+            The default value is <c>true</c>.
+            </summary>
         </member>
         <member name="P:Catel.Windows.Controls.UserControl.DisableWhenNoViewModel">
             <summary>
@@ -11049,6 +11397,12 @@
             <exception cref="T:System.ArgumentException">The <paramref name="propertyName"/> is <c>null</c> or whitespace.</exception>
             <exception cref="T:System.ArgumentNullException">The <paramref name="e"/> is <c>null</c>.</exception>
         </member>
+        <member name="P:Catel.Windows.Data.DependencyPropertyValueChangedEventArgs.FxEventArgs">
+            <summary>
+            Gets the framework event args.
+            </summary>
+            <value>The framework event args.</value>
+        </member>
         <member name="P:Catel.Windows.Data.DependencyPropertyValueChangedEventArgs.PropertyName">
             <summary>
             Gets the name of the property.
@@ -11116,6 +11470,21 @@
             <summary>
             Dictionary containing a dependency to real dependency name mapping.
             </summary>
+        </member>
+        <member name="F:Catel.Windows.Data.DependencyPropertyChangedHelper._realDependencyPropertiesCache">
+            <summary>
+            Dictionary containing values whether a property is a real dependency property.
+            </summary>
+        </member>
+        <member name="M:Catel.Windows.Data.DependencyPropertyChangedHelper.IsRealDependencyProperty(System.Windows.FrameworkElement,System.String)">
+            <summary>
+            Determines whether the specified dependency property is a real dependency or a wrapper or handler one for internal usage.
+            </summary>
+            <param name="frameworkElement">The framework element.</param>
+            <param name="propertyName">Name of the property.</param>
+            <returns><c>true</c> if the property is a real dependency property; otherwise, <c>false</c>.</returns>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="frameworkElement"/> is <c>null</c>.</exception>
+            <exception cref="T:System.ArgumentException">The <paramref name="propertyName"/> is <c>null</c> or whitespace.</exception>
         </member>
         <member name="M:Catel.Windows.Data.DependencyPropertyChangedHelper.SubscribeToAllDependencyProperties(System.Windows.FrameworkElement,System.EventHandler{Catel.Windows.Data.DependencyPropertyValueChangedEventArgs})">
             <summary>
@@ -11232,6 +11601,14 @@
             <param name="dependencyProperty">The dependency property.</param>
             <returns>The name of the dependency property or <c>null</c> if the name could not be found.</returns>
         </member>
+        <member name="M:Catel.Windows.Data.DependencyPropertyHelper.GetDependencyPropertyCacheKeyPrefix(System.Windows.FrameworkElement)">
+            <summary>
+            Gets the dependency property cache key prefix.
+            </summary>
+            <param name="frameworkElement">The framework element.</param>
+            <returns>The dependency property cache key prefix based on the framework element..</returns>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="frameworkElement"/> is <c>null</c>.</exception>
+        </member>
         <member name="M:Catel.Windows.Data.DependencyPropertyHelper.GetDependencyPropertyCacheKey(System.Windows.FrameworkElement,System.String)">
             <summary>
             Gets the dependency property key for the cache.
@@ -11289,6 +11666,14 @@
             <param name="maxDepth">The maximum number of levels to go up when searching for the parent. If smaller than 0, no maximum is used.</param>
             <returns>object or <c>null</c> if the ancestor is not found.</returns>
         </member>
+        <member name="M:Catel.Windows.DependencyObjectExtensions.FindLogicalOrVisualAncestorByType``1(System.Windows.DependencyObject)">
+            <summary>
+            Finds the logical or visual ancestor by type.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="startElement">The start element.</param>
+            <returns>object or <c>null</c> if the ancestor is not found.</returns>
+        </member>
         <member name="M:Catel.Windows.DependencyObjectExtensions.FindLogicalAncestor(System.Windows.DependencyObject,System.Predicate{System.Object},System.Int32)">
             <summary>
             Finds the logical ancestor according to the predicate.
@@ -11313,9 +11698,17 @@
             <param name="startElement">The start element.</param>
             <returns>object or <c>null</c> if the ancestor is not found.</returns>
         </member>
-        <member name="M:Catel.Windows.DependencyObjectExtensions.GetParent(System.Windows.DependencyObject)">
+        <member name="M:Catel.Windows.DependencyObjectExtensions.GetLogicalParent(System.Windows.DependencyObject)">
             <summary>
-            Gets the parent of the specified dependency object.
+            Gets the logical parent of the specified dependency object.
+            </summary>
+            <param name="element">The element to retrieve the parent from.</param>
+            <returns>The parent or <c>null</c> if the parent could not be found.</returns>
+            <exception cref="T:System.ArgumentNullException">The <paramref name="element"/> is <c>null</c>.</exception>
+        </member>
+        <member name="M:Catel.Windows.DependencyObjectExtensions.GetVisualParent(System.Windows.DependencyObject)">
+            <summary>
+            Gets the logical parent of the specified dependency object.
             </summary>
             <param name="element">The element to retrieve the parent from.</param>
             <returns>The parent or <c>null</c> if the parent could not be found.</returns>
@@ -11386,26 +11779,6 @@
             <returns>
             	<see cref="T:System.Collections.Generic.IEnumerable`1"/> containing all bindings.
             </returns>
-            <remarks>
-            This code is originally found at http://stackoverflow.com/questions/3586870/retrieve-all-data-bindings-from-wpf-window.
-            </remarks>
-        </member>
-        <member name="M:Catel.Windows.DependencyObjectExtensions.GetDependencyProperties(System.Windows.DependencyObject)">
-            <summary>
-            Gets the dependency properties of the specified <paramref name="element"/>.
-            </summary>
-            <param name="element">The element.</param>
-            <returns><see cref="T:System.Collections.Generic.IEnumerable`1"/> containing all dependency properties.</returns>
-            <remarks>
-            This code is originally found at http://stackoverflow.com/questions/3586870/retrieve-all-data-bindings-from-wpf-window.
-            </remarks>
-        </member>
-        <member name="M:Catel.Windows.DependencyObjectExtensions.GetAttachedProperties(System.Windows.DependencyObject)">
-            <summary>
-            Gets the attached properties of the specified <paramref name="element"/>.
-            </summary>
-            <param name="element">The element.</param>
-            <returns><see cref="T:System.Collections.Generic.IEnumerable`1"/> containing all attached properties.</returns>
             <remarks>
             This code is originally found at http://stackoverflow.com/questions/3586870/retrieve-all-data-bindings-from-wpf-window.
             </remarks>
@@ -11592,13 +11965,14 @@
             The log.
             </summary>
         </member>
-        <member name="M:Catel.Windows.WindowExtensions.SetOwnerWindow(System.Windows.Window,System.Boolean)">
+        <member name="M:Catel.Windows.WindowExtensions.SetOwnerWindow(System.Windows.Window,System.Boolean,System.Boolean)">
             <summary>
             Sets the owner window to the main window of the current process.
             </summary>
             <param name="window">Reference to the current window.</param>
             <param name="forceNewOwner">If true, the new owner will be forced. Otherwise, if the
             window currently has an owner, that owner will be respected (and thus not changed).</param>
+            <param name="focusFirstControl">If true, the first control will automatically be focused.</param>
         </member>
         <member name="M:Catel.Windows.WindowExtensions.SetOwnerWindowAndFocus(System.Windows.Window,System.Boolean)">
             <summary>
@@ -14036,6 +14410,127 @@
             </summary>
             <value>The update delay.</value>
         </member>
+        <member name="T:Catel.Windows.Interactivity.WindowEventToCommand">
+            <summary>
+            Behavior class that catches an event from the root window element.
+            <para/>
+            The event is forwarded to the DataContext of the <see cref="T:System.Windows.FrameworkElement"/> it is attached to.
+            </summary>
+        </member>
+        <member name="F:Catel.Windows.Interactivity.WindowEventToCommand._action">
+            <summary>
+            Will be executed instead of the command if set.
+            </summary>
+        </member>
+        <member name="F:Catel.Windows.Interactivity.WindowEventToCommand._currentWindow">
+            <summary>
+            Stores a reference to the window the event handler is registered on.
+            <para />
+            Will be used to deregister the event handler.
+            </summary>
+        </member>
+        <member name="M:Catel.Windows.Interactivity.WindowEventToCommand.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Catel.Windows.Interactivity.WindowEventToCommand"/> class.
+            </summary>
+        </member>
+        <member name="M:Catel.Windows.Interactivity.WindowEventToCommand.#ctor(System.Action{System.Windows.Window})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Catel.Windows.Interactivity.WindowEventToCommand"/> class.
+            </summary>
+            <param name="action">The action to execute on double click. This is very useful when the behavior is added
+            via code and an action must be invoked instead of a command.</param>
+        </member>
+        <member name="M:Catel.Windows.Interactivity.WindowEventToCommand.OnAssociatedObjectLoaded(System.Object,System.EventArgs)">
+            <summary>
+            Called when the associated object is loaded.<br/>
+            <para/>
+            Registers the event subscription.
+            </summary>
+            <param name="sender">The sender.</param>
+            <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:Catel.Windows.Interactivity.WindowEventToCommand.OnAssociatedObjectUnloaded(System.Object,System.EventArgs)">
+            <summary>
+            Called when the associated object is unloaded.
+            Deregisters the event subscription.
+            </summary>
+            <param name="sender">The sender.</param>
+            <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:Catel.Windows.Interactivity.WindowEventToCommand.SubscribeToWindowEvent">
+            <summary>
+            Registers the handler to the event of the current window.
+            </summary>
+        </member>
+        <member name="M:Catel.Windows.Interactivity.WindowEventToCommand.UnsubscribeFromWindowEvent">
+            <summary>
+            Removes the handler registration from the previous window.
+            </summary>
+        </member>
+        <member name="M:Catel.Windows.Interactivity.WindowEventToCommand.RegisterEventHandler(System.Windows.Window)">
+            <summary>
+            Registers the handler to the event of the given window.
+            <code>
+            protected override void RegisterEventHandler(Window window)
+            {
+                window.Closing += WindowOnClosing;
+            }
+            
+            private void WindowOnClosing(object sender, CancelEventArgs cancelEventArgs)
+            {
+                ExecuteCommand(sender);
+            }
+            </code>
+            </summary>
+            <param name="window">The window instance the eventhandler has to be registered to.</param>
+        </member>
+        <member name="M:Catel.Windows.Interactivity.WindowEventToCommand.UnregisterEventHandler(System.Windows.Window)">
+            <summary>
+            Unregisters the handler from the event of the given window.
+            <code>
+            protected override void RegisterEventHandler(Window window)
+            {
+                window.Closed += WindowOnClosed;
+            }
+            
+            private void WindowOnClosed(object sender, EventArgs eventArgs)
+            {
+                ExecuteCommand(sender);
+            }
+            </code>
+            </summary>
+            <param name="window">The window instance the eventhandler has to be unregistered from.</param>
+        </member>
+        <member name="M:Catel.Windows.Interactivity.WindowEventToCommand.ExecuteCommand">
+            <summary>
+            Invokes the Action or executes the Command.
+            <para />
+            The current window instance is used as parameter.
+            </summary>
+        </member>
+        <member name="M:Catel.Windows.Interactivity.WindowEventToCommand.ExecuteCommand(System.Object)">
+            <summary>
+            Invokes the Action or executes the Command.
+            The given window instance is used as parameter.
+            </summary>
+        </member>
+        <member name="M:Catel.Windows.Interactivity.WindowEventToCommand.OnEventOccurred(System.Object,System.EventArgs)">
+            <summary>
+            Called when the event occurs.
+            </summary>
+            <param name="sender">The sender.</param>
+            <param name="e">The <see cref="T:System.EventArgs"/> instance containing the event data.</param>
+            <remarks>
+            This method is public to allow the WeakEventListener to support this in Silverlight.
+            </remarks>
+        </member>
+        <member name="P:Catel.Windows.Interactivity.WindowEventToCommand.EventName">
+            <summary>
+            Gets or sets the name of the event to subscribe to.
+            </summary>
+            <value>The name of the event.</value>
+        </member>
         <member name="T:Catel.Windows.Markup.ServiceDependencyExtension">
             <summary>
             Service dependency extension to allow service access in xaml for services with properties.
@@ -14291,7 +14786,7 @@
         </member>
         <member name="M:Catel.Windows.DataWindow.OnKeyDown(System.Windows.Input.KeyEventArgs)">
             <summary>
-            Invoked when an unhandled <see cref="E:System.Windows.Input.Keyboard.KeyDown"/> attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
+            Invoked when an unhandled <see cref="F:System.Windows.Input.Keyboard.KeyDownEvent"/> attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event.
             </summary>
             <param name="e">The <see cref="T:System.Windows.Input.KeyEventArgs"/> that contains the event data.</param>
         </member>
