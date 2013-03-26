@@ -17,24 +17,7 @@
 		</catel:StackGrid.RowDefinitions>
 
         <StackPanel>
-            <Label>Folder To Watch</Label>
-            <StackPanel Orientation="Horizontal">
-                <TextBox Text="{Binding FolderToWatch, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch"/>
-                <Button Content="Browse" HorizontalAlignment="Right"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" >
-                <Label>Number of emails to display</Label>
-                <TextBox Text="{Binding FileNumber, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="LostFocus">
-                            <catel:EventToCommand Command="{Binding CheckMessagesCommand}"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </TextBox>
-            </StackPanel>
-            <StackPanel>
-                <Button Content="Refresh" Command="{Binding CheckMessagesCommand}"/>
-            </StackPanel>
+            <Button Content="Refresh" Command="{Binding CheckMessagesCommand}"/>
         </StackPanel>
         <DataGrid ItemsSource="{Binding Messages}" AutoGenerateColumns="False" IsReadOnly="True">
             <DataGrid.Columns>

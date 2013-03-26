@@ -21,20 +21,21 @@ namespace EmailInBox.ViewModels
     /// <summary>
     /// UserControl view model.
     /// </summary>
+    /// 
+    [InterestedIn(typeof (SettingsWindowViewModel))]
     public class HomeWindowViewModel : WindowViewModelBase
     {
         private FileSystemWatcher watcher;
         private IMessageMediator mediator = MessageMediator.Default;
+        private string FolderToWatch ;
+        private int FileNumber;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeWindowViewModel"/> class.
         /// </summary>
         public HomeWindowViewModel():base()
         {
-            FolderToWatch = Settings.Default.FolderToWatch;
-            FileNumber = Settings.Default.NumberOfEmails;
-            //LogManager.RegisterDebugListener();
-            InitializeWatcher();
+            //InitializeWatcher();
             RowDoubleClick = new Command<MouseButtonEventArgs>(OnRowDoubleClickExecute, OnRowDoubleClickCanExecute);
             OnFileCreatedCmd = new Command<FileSystemEventArgs>(OnFileCreatedCmdExecute,null,"FileCreatedCommand");
             CheckMessagesCommand = new Command(OnCheckMessagesCommandExecute);
@@ -65,6 +66,14 @@ namespace EmailInBox.ViewModels
             watcher.EnableRaisingEvents = true;
         }
 
+        private void ChangeWatcherSettings()
+        {
+            if (watcher != null)
+                watcher.Path = FolderToWatch;
+            else
+                InitializeWatcher();
+        }
+
         private void OnFileDeleted(object sender, FileSystemEventArgs e)
         {
             CheckMessagesCommand.Execute(); 
@@ -83,21 +92,6 @@ namespace EmailInBox.ViewModels
 
         public static readonly PropertyData MessagesProperty = RegisterProperty("Messages", typeof(ObservableCollection<MessageModel>), null);
 
-        public string FolderToWatch
-        {
-            get { return GetValue<string>(FolderToWatchProperty); }
-            set { SetValue(FolderToWatchProperty, value); }
-        }
-
-        public static readonly PropertyData FolderToWatchProperty = RegisterProperty("FolderToWatch", typeof(string), null);
-
-        public int FileNumber
-        {
-            get { return GetValue<int>(FileNumberProperty); }
-            set { SetValue(FileNumberProperty, value); }
-        }
-
-        public static readonly PropertyData FileNumberProperty = RegisterProperty("FileNumber", typeof(int), null);
         
         public Command<MouseButtonEventArgs> RowDoubleClick { get; private set; }
         
@@ -135,6 +129,19 @@ namespace EmailInBox.ViewModels
             {
                 mediator.SendMessage<MessageModel>(message, "New Message");
             }
+        }
+
+        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
+        {
+            var settingViewModel = viewModel as SettingsWindowViewModel;
+
+            if (propertyName == "FolderToWatch")
+            {
+                FolderToWatch = settingViewModel.FolderToWatch;
+                ChangeWatcherSettings();
+            }
+            else if (propertyName == "FileNumber")
+                FileNumber = settingViewModel.FileNumber;
         }
     }
 }
