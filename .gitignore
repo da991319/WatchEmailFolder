@@ -12,3 +12,5 @@ WindowsInstallerEmailInBox
 output
 output/
 output
+output/Debug/EmailInBox.exe
+output/Debug/EmailInBox.pdb
