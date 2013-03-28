@@ -15,7 +15,7 @@ namespace EmailInBox.ViewModels
     /// MainWindow view model.
     /// </summary>
     /// 
-    [InterestedIn(typeof(HomeWindowViewModel))]
+    //[InterestedIn(typeof(HomeWindowViewModel))]
     public class MainWindowViewModel : WindowViewModelBase
     {
         public bool trueExit;
@@ -36,7 +36,6 @@ namespace EmailInBox.ViewModels
             IconLeftClickCommand = new Command(OnIconLeftClickCommandExecute);
             QuitMenuItemClickCommand = new Command(OnQuitMenuItemClickCommandExecute);
             HiddenAppCommand = new Command<CancelEventArgs>(OnHiddenAppCommandExecute);
-            SelectedTabChanged = new Command<SelectionChangedEventArgs>(OnSelectedTabChangedExecute);
             Tabs = new ObservableCollection<WindowViewModelBase>{homeViewModel,settingsViewModel};
         }
 
@@ -103,23 +102,7 @@ namespace EmailInBox.ViewModels
             EmailListToFileTask.SaveEmailListToFile(homeViewModel.Messages);
             Application.Current.MainWindow.Close();
         }
-        
-        /// <summary>
-        /// Gets the name command.
-        /// </summary>
-        public Command<SelectionChangedEventArgs> SelectedTabChanged { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the name command is executed.
-        /// </summary>
-        private void OnSelectedTabChangedExecute(SelectionChangedEventArgs e)
-        {
-            var source = e.Source as TabControl;
-            if (source.SelectedIndex == 0)
-                CurrentViewModel = homeViewModel;
-            else
-                CurrentViewModel = settingsViewModel;
-        }
         #endregion
         #region Methods
 

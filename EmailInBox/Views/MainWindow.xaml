@@ -51,12 +51,6 @@
                     <TextBlock Text="{Binding Title}"></TextBlock>
                 </DataTemplate>
             </TabControl.ItemTemplate>
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="SelectionChanged">
-                    <catel:EventToCommand Command="{Binding SelectedTabChanged}" DisableAssociatedObjectOnCannotExecute="False"
-                                  PassEventArgsToCommand="True"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
         </TabControl>
     </catel:StackGrid>
 </catel:DataWindow>
