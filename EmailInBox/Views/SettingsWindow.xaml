@@ -17,8 +17,8 @@
 
         <StackPanel>
             <Label>Folder To Watch</Label>
-            <StackPanel Orientation="Horizontal">
-                <TextBox Text="{Binding FolderToWatch, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch"/>
+            <StackPanel Orientation="Horizontal" Margin="0,0,-6,0">
+                <TextBox Text="{Binding FolderToWatch, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" MinWidth="160" Margin="0,0,20,0"/>
                 <Button Content="Browse" HorizontalAlignment="Right"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" >
@@ -32,7 +32,7 @@
                 </TextBox>
             </StackPanel>
             <StackPanel>
-                <Button Content="Refresh" Command="{Binding CheckMessagesCommand}"/>
+                <Button Content="Save" Command="{Binding SaveSettingsCommand}"/>
             </StackPanel>
         </StackPanel>
     </catel:StackGrid>
