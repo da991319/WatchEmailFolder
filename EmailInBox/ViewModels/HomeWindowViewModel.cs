@@ -3,7 +3,7 @@ using Catel.Logging;
 using Catel.Messaging;
 using Catel.MVVM;
 using EmailInBox.Models;
-using EmailInBox.Properties;
+using EmailInBox.Utils;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -13,7 +13,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
-using EmailInBox.Utils;
 
 namespace EmailInBox.ViewModels
 {
@@ -22,7 +21,7 @@ namespace EmailInBox.ViewModels
     /// UserControl view model.
     /// </summary>
     /// 
-    [InterestedIn(typeof (SettingsWindowViewModel))]
+    [InterestedIn(typeof (MainWindowViewModel))]
     public class HomeWindowViewModel : WindowViewModelBase
     {
         private FileSystemWatcher watcher;
@@ -35,6 +34,7 @@ namespace EmailInBox.ViewModels
         /// </summary>
         public HomeWindowViewModel():base()
         {
+            LogManager.RegisterDebugListener();
             //InitializeWatcher();
             RowDoubleClick = new Command<MouseButtonEventArgs>(OnRowDoubleClickExecute, OnRowDoubleClickCanExecute);
             OnFileCreatedCmd = new Command<FileSystemEventArgs>(OnFileCreatedCmdExecute,null,"FileCreatedCommand");
@@ -133,15 +133,18 @@ namespace EmailInBox.ViewModels
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
-            var settingViewModel = viewModel as SettingsWindowViewModel;
+            var mainViewModel = viewModel as MainWindowViewModel;
 
-            if (propertyName == "FolderToWatch")
+            if (propertyName.Equals("FolderToWatch"))
             {
-                FolderToWatch = settingViewModel.FolderToWatch;
+                FolderToWatch = mainViewModel.FolderToWatch;
                 ChangeWatcherSettings();
             }
-            else if (propertyName == "FileNumber")
-                FileNumber = settingViewModel.FileNumber;
+            else if (propertyName.Equals("FileNumber"))
+            {
+                FileNumber = mainViewModel.FileNumber;
+                Messages = new ObservableCollection<MessageModel>(new UpdateMessagesListTask().UpdateMessageList(Messages.ToList(), FolderToWatch, FileNumber));
+            }
         }
     }
 }

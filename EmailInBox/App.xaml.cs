@@ -22,6 +22,9 @@ namespace EmailInBox
 
             // TODO: Using a custom IoC container like Unity? Register it here:
             // Catel.IoC.ServiceLocator.Instance.RegisterExternalContainer(MyUnityContainer);
+#if DEBUG
+            Catel.Logging.LogManager.RegisterDebugListener();
+#endif
             base.OnStartup(e);
         }
     }

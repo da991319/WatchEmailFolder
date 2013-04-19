@@ -13,6 +13,7 @@
         public SettingsWindow()
         {
             InitializeComponent();
+            CloseViewModelOnUnloaded = false;
         }
     }
 }

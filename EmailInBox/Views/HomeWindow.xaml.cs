@@ -13,6 +13,7 @@
         public HomeWindow()
         {
             InitializeComponent();
+            CloseViewModelOnUnloaded = false;
         }
     }
 }

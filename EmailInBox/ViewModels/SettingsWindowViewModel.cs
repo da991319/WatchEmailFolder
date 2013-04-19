@@ -17,6 +17,7 @@ namespace EmailInBox.ViewModels
         {
             FolderToWatch = Settings.Default.FolderToWatch;
             FileNumber = Settings.Default.NumberOfEmails;
+            SaveSettingsCommand = new Command(OnSaveSettingsCommandExecute,null, "saveSettings");
         }
 
         /// <summary>
@@ -44,5 +45,20 @@ namespace EmailInBox.ViewModels
         // TODO: Register models with the vmpropmodel codesnippet
         // TODO: Register view model properties with the vmprop or vmpropviewmodeltomodel codesnippets
         // TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
+        /// <summary>
+        /// Gets the SaveSettingsCommand command.
+        /// </summary>
+        
+        public Command SaveSettingsCommand { get; private set; }
+        
+        /// <summary>
+        /// Method to invoke when the SaveSettingsCommand command is executed.
+        /// </summary>
+        private void OnSaveSettingsCommandExecute()
+        {
+            Settings.Default.FolderToWatch = FolderToWatch;
+            Settings.Default.NumberOfEmails = FileNumber;
+            Settings.Default.Save();
+        }
     }
 }

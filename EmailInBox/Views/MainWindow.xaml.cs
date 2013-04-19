@@ -1,12 +1,9 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Text;
-using Catel.MVVM;
-using Catel.Messaging;
+﻿using Catel.Messaging;
 using EmailInBox.Models;
-using EmailInBox.ViewModels;
 using Hardcodet.Wpf.TaskbarNotification;
+using System;
+using System.Diagnostics;
+using System.Text;
 
 namespace EmailInBox.Views
 {

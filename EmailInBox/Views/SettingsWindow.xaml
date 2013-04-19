@@ -18,18 +18,12 @@
         <StackPanel>
             <Label>Folder To Watch</Label>
             <StackPanel Orientation="Horizontal" Margin="0,0,-6,0">
-                <TextBox Text="{Binding FolderToWatch, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch" MinWidth="160" Margin="0,0,20,0"/>
+                <TextBox Text="{Binding FolderToWatch, UpdateSourceTrigger=LostFocus}" HorizontalAlignment="Stretch" MinWidth="160" Margin="0,0,20,0"/>
                 <Button Content="Browse" HorizontalAlignment="Right"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" >
                 <Label>Number of emails to display</Label>
-                <TextBox Text="{Binding FileNumber, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Stretch">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="LostFocus">
-                            <catel:EventToCommand Command="{Binding CheckMessagesCommand}"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </TextBox>
+                <TextBox Text="{Binding FileNumber, UpdateSourceTrigger=LostFocus}" HorizontalAlignment="Stretch"/>
             </StackPanel>
             <StackPanel>
                 <Button Content="Save" Command="{Binding SaveSettingsCommand}"/>
