@@ -1,4 +1,5 @@
-﻿using Catel.Data;
+﻿using System.ComponentModel;
+using Catel.Data;
 using Catel.Logging;
 using Catel.Messaging;
 using Catel.MVVM;
@@ -21,13 +22,14 @@ namespace EmailInBox.ViewModels
     /// UserControl view model.
     /// </summary>
     /// 
-    [InterestedIn(typeof (MainWindowViewModel))]
+    /// 
+    [InterestedIn(typeof (SettingsWindowViewModel))]
+    [InterestedIn(typeof(MainWindowViewModel))]
     public class HomeWindowViewModel : WindowViewModelBase
     {
         private FileSystemWatcher watcher;
         private IMessageMediator mediator = MessageMediator.Default;
-        private string FolderToWatch ;
-        private int FileNumber;
+        private string folderToWatch ;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeWindowViewModel"/> class.
@@ -46,7 +48,7 @@ namespace EmailInBox.ViewModels
 
         private void InitializeWatcher()
         {
-            watcher = new FileSystemWatcher(FolderToWatch, "*.eml")
+            watcher = new FileSystemWatcher(folderToWatch, "*.eml")
                 {
                     NotifyFilter = NotifyFilters.LastAccess
                          | NotifyFilters.LastWrite
@@ -69,7 +71,7 @@ namespace EmailInBox.ViewModels
         private void ChangeWatcherSettings()
         {
             if (watcher != null)
-                watcher.Path = FolderToWatch;
+                watcher.Path = folderToWatch;
             else
                 InitializeWatcher();
         }
@@ -121,7 +123,7 @@ namespace EmailInBox.ViewModels
 
         private void OnCheckMessagesCommandExecute()
         {
-            Messages = new ObservableCollection<MessageModel>(new UpdateMessagesListTask().UpdateMessageList(Messages.ToList(), FolderToWatch, FileNumber));
+            Messages = new ObservableCollection<MessageModel>(new UpdateMessagesListTask().UpdateMessageList(Messages.ToList()));
 
             MessageModel message = Messages.FirstOrDefault(m => m.NewEmail);
             
@@ -131,19 +133,30 @@ namespace EmailInBox.ViewModels
             }
         }
 
-        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
+        protected override void OnViewModelCommandExecuted(IViewModel viewModel, ICatelCommand command, object commandParameter)
         {
-            var mainViewModel = viewModel as MainWindowViewModel;
+            base.OnViewModelCommandExecuted(viewModel, command, commandParameter);
 
-            if (propertyName.Equals("FolderToWatch"))
+            if (viewModel != null && command.Tag != null)
             {
-                FolderToWatch = mainViewModel.FolderToWatch;
-                ChangeWatcherSettings();
-            }
-            else if (propertyName.Equals("FileNumber"))
-            {
-                FileNumber = mainViewModel.FileNumber;
-                Messages = new ObservableCollection<MessageModel>(new UpdateMessagesListTask().UpdateMessageList(Messages.ToList(), FolderToWatch, FileNumber));
+                switch (command.Tag.ToString())
+                {
+                    case "saveSettings":
+                        var settingsViewModel = viewModel as SettingsWindowViewModel;
+                        folderToWatch = settingsViewModel.FolderToWatch;
+                        ChangeWatcherSettings();
+                        CheckMessagesCommand.Execute();
+                        break;
+                    case "quitting":
+                        var param = commandParameter as CancelEventArgs;
+                        if (!param.Cancel)
+                        {
+                            new FinalSaveCommand().Save(Messages);
+                        }
+                        
+                        break;
+                }
+                
             }
         }
     }

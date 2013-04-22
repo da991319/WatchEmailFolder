@@ -37,20 +37,13 @@
                 </ContextMenu>
             </ContextMenuService.ContextMenu>
         </tb:TaskbarIcon>
-        <TabControl ItemsSource="{Binding Tabs}" SelectedItem="{Binding CurrentViewModel}">
-            <TabControl.Resources>
-                <DataTemplate DataType="{x:Type vm:HomeWindowViewModel}">
-                    <views:HomeWindow/>
-                </DataTemplate>
-                <DataTemplate DataType="{x:Type vm:SettingsWindowViewModel}">
-                    <views:SettingsWindow/>
-                </DataTemplate>
-            </TabControl.Resources>
-            <TabControl.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Title}"></TextBlock>
-                </DataTemplate>
-            </TabControl.ItemTemplate>
+        <TabControl>
+            <TabItem Header="Home">
+                <views:HomeWindow/>
+            </TabItem>
+            <TabItem Header="Settings">
+                <views:SettingsWindow/>
+            </TabItem>
         </TabControl>
     </catel:StackGrid>
 </catel:DataWindow>

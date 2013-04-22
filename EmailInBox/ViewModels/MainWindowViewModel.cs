@@ -15,14 +15,12 @@ namespace EmailInBox.ViewModels
     /// MainWindow view model.
     /// </summary>
     /// 
-    [InterestedIn(typeof(SettingsWindowViewModel))]
     public class MainWindowViewModel : WindowViewModelBase
     {
         public bool trueExit;
 
         #region Fields
-        private HomeWindowViewModel homeViewModel = new HomeWindowViewModel();
-        private SettingsWindowViewModel settingsViewModel = new SettingsWindowViewModel();
+
         #endregion
 
         #region Constructors
@@ -32,13 +30,9 @@ namespace EmailInBox.ViewModels
         public MainWindowViewModel()
         {
             Visibility = Visibility.Visible;
-            //CurrentViewModel = homeViewModel;
             IconLeftClickCommand = new Command(OnIconLeftClickCommandExecute);
             QuitMenuItemClickCommand = new Command(OnQuitMenuItemClickCommandExecute);
-            HiddenAppCommand = new Command<CancelEventArgs>(OnHiddenAppCommandExecute);
-            //Tabs = new ObservableCollection<WindowViewModelBase>{homeViewModel,settingsViewModel};
-            //FolderToWatch = settingsViewModel.FolderToWatch;
-            //FileNumber = settingsViewModel.FileNumber;
+            HiddenAppCommand = new Command<CancelEventArgs>(OnHiddenAppCommandExecute,null, "quitting");
         }
 
         #endregion
@@ -74,34 +68,6 @@ namespace EmailInBox.ViewModels
 
         public static readonly PropertyData CurrentViewModelProperty = RegisterProperty("CurrentViewModel", typeof(WindowViewModelBase), null);
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public string FolderToWatch
-        {
-            get { return GetValue<string>(FolderToWatchProperty); }
-            set { SetValue(FolderToWatchProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the FolderPath property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData FolderToWatchProperty = RegisterProperty("FolderToWatch", typeof(string), null);
-
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public int FileNumber
-        {
-            get { return GetValue<int>(FileNumberProperty); }
-            set { SetValue(FileNumberProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the NumberOfFiles property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData FileNumberProperty = RegisterProperty("FileNumber", typeof(int), null);
         #endregion
 
         #region Commands
@@ -129,24 +95,12 @@ namespace EmailInBox.ViewModels
         private void OnQuitMenuItemClickCommandExecute()
         {
             trueExit = true;
-            EmailListToFileTask.SaveEmailListToFile(homeViewModel.Messages);
             Application.Current.MainWindow.Close();
         }
 
         #endregion
         #region Methods
-
-        protected override void OnViewModelCommandExecuted(IViewModel viewModel, ICatelCommand command, object commandParameter)
-        {
-            if (command.Tag.Equals("saveSettings"))
-            {
-                FolderToWatch = settingsViewModel.FolderToWatch;
-                FileNumber = settingsViewModel.FileNumber;
-            }
-
-
-        }
-        
+       
         private void ExitAppWrapper(object sender, EventArgs e)
         {
             trueExit = true;

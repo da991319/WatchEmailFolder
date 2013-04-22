@@ -1,21 +1,26 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 
 using EmailInBox.Models;
+using EmailInBox.Properties;
 
 namespace EmailInBox.Utils
 {
     public interface IUpdateMessagesListTask
     {
-        List<MessageModel> UpdateMessageList(List<MessageModel> initialList, string folderPath, int numberOfFile);
+        List<MessageModel> UpdateMessageList(List<MessageModel> initialList);
     }
 
     public class UpdateMessagesListTask : IUpdateMessagesListTask
     {
-        public List<MessageModel> UpdateMessageList(List<MessageModel> initialList, string folderPath, int numberOfFile)
+        public List<MessageModel> UpdateMessageList(List<MessageModel> initialList)
         {
+            string folderPath = Settings.Default.FolderToWatch;
+            int numberOfFile = Settings.Default.NumberOfEmails;
+
             DateTime referenceDate = DateTime.Now;
 
             if (initialList.Count > 0)
