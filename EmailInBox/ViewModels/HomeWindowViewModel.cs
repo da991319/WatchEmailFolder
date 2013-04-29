@@ -104,7 +104,7 @@ namespace EmailInBox.ViewModels
 
         private void OnRowDoubleClickExecute(MouseButtonEventArgs e)
         {
-            var source = e.Source as DataGrid;
+            var source = e.Source as ListView;
 
             if (source.SelectedItem == null) return;
             MessageModel selectedMessage = source.SelectedItem as MessageModel;

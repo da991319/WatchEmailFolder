@@ -19,32 +19,6 @@
         <StackPanel>
             <Button Content="Refresh" Command="{Binding CheckMessagesCommand}"/>
         </StackPanel>
-        <DataGrid ItemsSource="{Binding Messages}" AutoGenerateColumns="False" IsReadOnly="True">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Delivery Date" Binding="{Binding DateReceived}"/>
-                <DataGridTextColumn Header="From" Binding="{Binding From}"/>
-                <DataGridTextColumn Header="To" Binding="{Binding To}"/>
-                <DataGridTextColumn Header="Subject" Binding="{Binding Subject}" Width="*"/>
-                <DataGridTextColumn Header="File" Binding="{Binding Path}"/>
-                <DataGridTextColumn Header="new email" Binding="{Binding NewEmail}"/>
-            </DataGrid.Columns>
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="MouseDoubleClick">
-                    <catel:EventToCommand Command="{Binding RowDoubleClick}" DisableAssociatedObjectOnCannotExecute="False"
-                                         PassEventArgsToCommand="True"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-            <DataGrid.Resources>
-                <Style TargetType="{x:Type DataGridCell}" >
-                    <Setter Property="FontWeight" Value="Normal"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding NewEmail}" Value="true">
-                            <Setter Property="FontWeight" Value="ExtraBold"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </DataGrid.Resources>
-        </DataGrid>
         <ListView ItemsSource="{Binding Messages}">
             <ListView.View>
                 <GridView>
@@ -56,6 +30,35 @@
                     <GridViewColumn Header="new email" DisplayMemberBinding="{Binding NewEmail}"></GridViewColumn>
                 </GridView>
             </ListView.View>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseDoubleClick">
+                    <catel:EventToCommand Command="{Binding RowDoubleClick}" DisableAssociatedObjectOnCannotExecute="False"
+                                         PassEventArgsToCommand="True"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            <ListView.Resources>
+                <Style TargetType="{x:Type ListView}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Messages.Count}" Value="0">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <TextBlock>No items to display</TextBlock>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+                <Style TargetType="{x:Type ListViewItem }">
+                    <Setter Property="FontWeight" Value="Normal"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding NewEmail}" Value="true">
+                            <Setter Property="FontWeight" Value="ExtraBold"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.Resources>
         </ListView>
     </catel:StackGrid>
 </catel:UserControl>
