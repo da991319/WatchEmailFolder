@@ -123,9 +123,11 @@ namespace EmailInBox.ViewModels
 
         private void OnCheckMessagesCommandExecute()
         {
+            var referenceDate = Messages.Count > 0 ? Messages.Max(x => x.DateReceived) : DateTime.Now;
+
             Messages = new ObservableCollection<MessageModel>(new UpdateMessagesListTask().UpdateMessageList(Messages.ToList()));
 
-            MessageModel message = Messages.FirstOrDefault(m => m.NewEmail);
+            MessageModel message = Messages.FirstOrDefault(m => m.NewEmail && m.DateReceived > referenceDate);
             
             if (message != null)
             {
