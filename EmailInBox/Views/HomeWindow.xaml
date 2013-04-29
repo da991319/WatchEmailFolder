@@ -45,6 +45,17 @@
                 </Style>
             </DataGrid.Resources>
         </DataGrid>
-
+        <ListView ItemsSource="{Binding Messages}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Delivery Date" DisplayMemberBinding="{Binding DateReceived}"></GridViewColumn>
+                    <GridViewColumn Header="From" DisplayMemberBinding="{Binding From}"></GridViewColumn>
+                    <GridViewColumn Header="To" DisplayMemberBinding="{Binding To}"></GridViewColumn>
+                    <GridViewColumn Header="Subject" DisplayMemberBinding="{Binding Subject}"></GridViewColumn>
+                    <GridViewColumn Header="File" DisplayMemberBinding="{Binding Path}"></GridViewColumn>
+                    <GridViewColumn Header="new email" DisplayMemberBinding="{Binding NewEmail}"></GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
     </catel:StackGrid>
 </catel:UserControl>
