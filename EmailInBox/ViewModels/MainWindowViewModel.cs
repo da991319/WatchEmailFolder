@@ -137,7 +137,7 @@ namespace EmailInBox.ViewModels
         {
             var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
-            return String.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Revision);
+            return String.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor,version.Build, version.Revision);
         }
         #endregion
     }
