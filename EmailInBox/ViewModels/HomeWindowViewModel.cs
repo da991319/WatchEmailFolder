@@ -4,6 +4,7 @@ using Catel.Logging;
 using Catel.Messaging;
 using Catel.MVVM;
 using EmailInBox.Models;
+using EmailInBox.Properties;
 using EmailInBox.Utils;
 using System;
 using System.Collections.ObjectModel;
@@ -37,7 +38,7 @@ namespace EmailInBox.ViewModels
         public HomeWindowViewModel():base()
         {
             LogManager.RegisterDebugListener();
-            //InitializeWatcher();
+            InitializeWatcher();
             RowDoubleClick = new Command<MouseButtonEventArgs>(OnRowDoubleClickExecute, OnRowDoubleClickCanExecute);
             OnFileCreatedCmd = new Command<FileSystemEventArgs>(OnFileCreatedCmdExecute,null,"FileCreatedCommand");
             CheckMessagesCommand = new Command(OnCheckMessagesCommandExecute);
@@ -49,6 +50,9 @@ namespace EmailInBox.ViewModels
 
         private void InitializeWatcher()
         {
+            if (String.IsNullOrWhiteSpace(folderToWatch))
+                folderToWatch = Settings.Default.FolderToWatch;
+
             watcher = new FileSystemWatcher(folderToWatch, "*.eml")
                 {
                     NotifyFilter = NotifyFilters.LastAccess
