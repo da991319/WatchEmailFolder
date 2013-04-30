@@ -25,8 +25,8 @@
     
     <catel:StackGrid x:Name="LayoutRoot">
 		<catel:StackGrid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
 		</catel:StackGrid.RowDefinitions>
         <tb:TaskbarIcon Name="TaskIcon"

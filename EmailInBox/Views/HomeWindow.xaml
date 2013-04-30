@@ -9,17 +9,17 @@
     </UserControl.Resources>
 
     <!-- Content -->
-    <catel:StackGrid>
+    <catel:StackGrid >
 		<catel:StackGrid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-			<RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
 		</catel:StackGrid.RowDefinitions>
 
         <StackPanel>
             <Button Content="Refresh" Command="{Binding CheckMessagesCommand}"/>
         </StackPanel>
-        <ListView ItemsSource="{Binding Messages}">
+        
+        <ListView ItemsSource="{Binding Messages}" >
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Delivery Date" DisplayMemberBinding="{Binding DateReceived}"></GridViewColumn>
@@ -43,7 +43,7 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate>
-                                        <TextBlock>No items to display</TextBlock>
+                                        <TextBlock VerticalAlignment="Top">No items to display</TextBlock>
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
