@@ -26,6 +26,8 @@
     <catel:StackGrid x:Name="LayoutRoot">
 		<catel:StackGrid.RowDefinitions>
 			<RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
 		</catel:StackGrid.RowDefinitions>
         <tb:TaskbarIcon Name="TaskIcon"
       IconSource="/Icons/email.ico" TrayBalloonTipClicked="TaskIcon_TrayBalloonTipClicked"
@@ -44,5 +46,8 @@
                 <views:SettingsWindow/>
             </TabItem>
         </TabControl>
+        <StackPanel Orientation="Horizontal">
+            <Label>Ver:</Label><TextBlock Text="{Binding AppVersion}"/>
+        </StackPanel>
     </catel:StackGrid>
 </catel:DataWindow>

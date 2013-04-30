@@ -33,6 +33,7 @@ namespace EmailInBox.ViewModels
             IconLeftClickCommand = new Command(OnIconLeftClickCommandExecute);
             QuitMenuItemClickCommand = new Command(OnQuitMenuItemClickCommandExecute);
             HiddenAppCommand = new Command<CancelEventArgs>(OnHiddenAppCommandExecute,null, "quitting");
+            AppVersion = GetAppVersion();
         }
 
         #endregion
@@ -67,6 +68,20 @@ namespace EmailInBox.ViewModels
         }
 
         public static readonly PropertyData CurrentViewModelProperty = RegisterProperty("CurrentViewModel", typeof(WindowViewModelBase), null);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public string AppVersion
+        {
+            get { return GetValue<string>(AppVersionProperty); }
+            set { SetValue(AppVersionProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the AppVersion property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData AppVersionProperty = RegisterProperty("AppVersion", typeof(string), null);
 
         #endregion
 
@@ -118,7 +133,12 @@ namespace EmailInBox.ViewModels
             return tempMenu;
         }
 
+        private string GetAppVersion()
+        {
+            var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
+            return String.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Revision);
+        }
         #endregion
     }
 }
