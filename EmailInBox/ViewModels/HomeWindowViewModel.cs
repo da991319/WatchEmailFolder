@@ -42,6 +42,7 @@ namespace EmailInBox.ViewModels
             OnFileCreatedCmd = new Command<FileSystemEventArgs>(OnFileCreatedCmdExecute,null,"FileCreatedCommand");
             CheckMessagesCommand = new Command(OnCheckMessagesCommandExecute);
             Messages = new InitialLoadCommand().Load();
+            CheckMessagesCommand.Execute();
         }
 
         public override string Title { get { return "Home"; } }
