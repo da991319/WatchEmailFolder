@@ -3,6 +3,7 @@ using Catel.Data;
 using Catel.Logging;
 using Catel.Messaging;
 using Catel.MVVM;
+using Catel.Windows.Threading;
 using EmailInBox.Models;
 using EmailInBox.Properties;
 using EmailInBox.Utils;
@@ -41,7 +42,7 @@ namespace EmailInBox.ViewModels
             InitializeWatcher();
             RowDoubleClick = new Command<MouseButtonEventArgs>(OnRowDoubleClickExecute, OnRowDoubleClickCanExecute);
             OnFileCreatedCmd = new Command<FileSystemEventArgs>(OnFileCreatedCmdExecute,null,"FileCreatedCommand");
-            CheckMessagesCommand = new Command(OnCheckMessagesCommandExecute);
+            CheckMessagesCommand = new AsynchronousCommand(OnCheckMessagesCommandExecute, () => !CheckMessagesCommand.IsExecuting);
             Messages = new InitialLoadCommand().Load();
             CheckMessagesCommand.Execute();
         }
@@ -126,13 +127,21 @@ namespace EmailInBox.ViewModels
             CheckMessagesCommand.Execute();
         }
 
-        public Command CheckMessagesCommand { get; private set; }
+        public AsynchronousCommand CheckMessagesCommand { get; private set; }
 
         private void OnCheckMessagesCommandExecute()
         {
             var referenceDate = Messages.Count > 0 ? Messages.Max(x => x.DateReceived) : DateTime.Now;
 
-            Messages = new ObservableCollection<MessageModel>(new UpdateMessagesListTask().UpdateMessageList(Messages.ToList()));
+            DispatcherHelper.CurrentDispatcher.Invoke((Action)(
+                () =>
+                    {
+                        Messages =
+                            new ObservableCollection<MessageModel>(
+                                new UpdateMessagesListTask().UpdateMessageList(Messages.ToList()));
+                    })
+        );
+            
 
             MessageModel message = Messages.FirstOrDefault(m => m.NewEmail && m.DateReceived > referenceDate);
             
