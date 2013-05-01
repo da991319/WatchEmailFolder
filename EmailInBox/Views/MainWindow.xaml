@@ -38,7 +38,7 @@
                 </ContextMenu>
             </ContextMenuService.ContextMenu>
         </tb:TaskbarIcon>
-        <TabControl>
+        <TabControl SelectedIndex="{Binding SelectedIndexTab}">
             <TabItem Header="Home">
                 <views:HomeWindow/>
             </TabItem>

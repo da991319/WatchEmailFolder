@@ -1,12 +1,10 @@
 ﻿
-using System.Collections.ObjectModel;
-using System.Deployment.Application;
 using Catel.Data;
 using System;
 using System.ComponentModel;
+using System.Deployment.Application;
 using System.Windows;
 using System.Windows.Controls;
-using EmailInBox.Task.Emails;
 
 namespace EmailInBox.ViewModels
 {
@@ -15,7 +13,8 @@ namespace EmailInBox.ViewModels
     /// <summary>
     /// MainWindow view model.
     /// </summary>
-    /// 
+    ///
+    [InterestedIn(typeof(SettingsWindowViewModel))]
     public class MainWindowViewModel : WindowViewModelBase
     {
         public bool trueExit;
@@ -40,20 +39,6 @@ namespace EmailInBox.ViewModels
         #endregion
 
         #region Properties
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public ObservableCollection<WindowViewModelBase> Tabs
-        {
-            get { return GetValue<ObservableCollection<WindowViewModelBase>>(TabsProperty); }
-            set { SetValue(TabsProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the name property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData TabsProperty = RegisterProperty("Tabs", typeof(ObservableCollection<WindowViewModelBase>), null);
-
         public Visibility Visibility
         {
             get { return GetValue<Visibility>(VisibilityProperty); }
@@ -61,14 +46,6 @@ namespace EmailInBox.ViewModels
         }
 
         public static readonly PropertyData VisibilityProperty = RegisterProperty("Visibility", typeof(Visibility), null);
-        
-        public WindowViewModelBase CurrentViewModel
-        {
-            get { return GetValue<WindowViewModelBase>(CurrentViewModelProperty); }
-            set { SetValue(CurrentViewModelProperty, value); }
-        }
-
-        public static readonly PropertyData CurrentViewModelProperty = RegisterProperty("CurrentViewModel", typeof(WindowViewModelBase), null);
 
         /// <summary>
         /// Gets or sets the property value.
@@ -83,6 +60,20 @@ namespace EmailInBox.ViewModels
         /// Register the AppVersion property so it is known in the class.
         /// </summary>
         public static readonly PropertyData AppVersionProperty = RegisterProperty("AppVersion", typeof(string), null);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public int SelectedIndexTab
+        {
+            get { return GetValue<int>(SelectedIndexTabProperty); }
+            set { SetValue(SelectedIndexTabProperty, value); }
+        }
+
+        /// <summary>
+        /// Register the SelectedIndexTab property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData SelectedIndexTabProperty = RegisterProperty("SelectedIndexTab", typeof(int), null);
 
         #endregion
 
@@ -138,6 +129,15 @@ namespace EmailInBox.ViewModels
         {
             var version = ApplicationDeployment.IsNetworkDeployed ? ApplicationDeployment.CurrentDeployment.CurrentVersion : System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             return String.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+        }
+
+        protected override void OnViewModelCommandExecuted(IViewModel viewModel, ICatelCommand command,
+                                                           object commandParameter)
+        {
+            if (command.Tag.ToString().Equals("saveSettings"))
+            {
+                SelectedIndexTab = 0;
+            }
         }
 
         #endregion
