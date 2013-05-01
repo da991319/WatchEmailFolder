@@ -113,7 +113,9 @@ namespace EmailInBox.ViewModels
 
             if (source.SelectedItem == null) return;
             MessageModel selectedMessage = source.SelectedItem as MessageModel;
-            Messages.ToList().Find(m => m == selectedMessage).NewEmail = false;
+            Messages.First(m => m == selectedMessage).NewEmail = false;
+            //there must be a way to notify the change to the list without having to recreate it
+            Messages = new ObservableCollection<MessageModel>(Messages);
             Process.Start(selectedMessage.Path);
         }
 
