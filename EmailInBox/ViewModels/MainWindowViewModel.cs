@@ -1,5 +1,6 @@
 ﻿
 using System.Collections.ObjectModel;
+using System.Deployment.Application;
 using Catel.Data;
 using System;
 using System.ComponentModel;
@@ -135,10 +136,10 @@ namespace EmailInBox.ViewModels
 
         private string GetAppVersion()
         {
-            var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-
-            return String.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor,version.Build, version.Revision);
+            var version = ApplicationDeployment.IsNetworkDeployed ? ApplicationDeployment.CurrentDeployment.CurrentVersion : System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            return String.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
         }
+
         #endregion
     }
 }
