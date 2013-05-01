@@ -27,7 +27,6 @@
                     <GridViewColumn Header="To" DisplayMemberBinding="{Binding To}"></GridViewColumn>
                     <GridViewColumn Header="Subject" DisplayMemberBinding="{Binding Subject}"></GridViewColumn>
                     <GridViewColumn Header="File" DisplayMemberBinding="{Binding Path}"></GridViewColumn>
-                    <GridViewColumn Header="new email" DisplayMemberBinding="{Binding NewEmail}"></GridViewColumn>
                 </GridView>
             </ListView.View>
             <i:Interaction.Triggers>
