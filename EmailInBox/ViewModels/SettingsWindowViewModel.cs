@@ -1,4 +1,7 @@
-﻿using Catel.Data;
+﻿using System;
+using System.Windows.Forms;
+using Catel.Data;
+using Catel.MVVM.Services;
 using EmailInBox.Properties;
 
 namespace EmailInBox.ViewModels
@@ -18,6 +21,7 @@ namespace EmailInBox.ViewModels
             FolderToWatch = Settings.Default.FolderToWatch;
             FileNumber = Settings.Default.NumberOfEmails;
             SaveSettingsCommand = new Command(OnSaveSettingsCommandExecute,null, "saveSettings");
+            BrowseFolderCommand = new Command(OnBrowseFolderCommandExecute);
         }
 
         /// <summary>
@@ -59,6 +63,25 @@ namespace EmailInBox.ViewModels
             Settings.Default.FolderToWatch = FolderToWatch;
             Settings.Default.NumberOfEmails = FileNumber;
             Settings.Default.Save();
+        }
+
+        /// <summary>
+        /// Gets the name command.
+        /// </summary>
+        public Command BrowseFolderCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the name command is executed.
+        /// </summary>
+        private void OnBrowseFolderCommandExecute()
+        {
+            var folderBrowser = new FolderBrowserDialog {RootFolder = Environment.SpecialFolder.Desktop, ShowNewFolderButton = false};
+            var result = folderBrowser.ShowDialog();
+
+            if (result.Equals(DialogResult.OK))
+            {
+                FolderToWatch = folderBrowser.SelectedPath;
+            }
         }
     }
 }

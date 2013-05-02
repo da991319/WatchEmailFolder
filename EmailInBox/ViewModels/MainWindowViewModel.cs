@@ -134,7 +134,7 @@ namespace EmailInBox.ViewModels
         protected override void OnViewModelCommandExecuted(IViewModel viewModel, ICatelCommand command,
                                                            object commandParameter)
         {
-            if (command.Tag.ToString().Equals("saveSettings"))
+            if (command.Tag != null && command.Tag.ToString().Equals("saveSettings"))
             {
                 SelectedIndexTab = 0;
             }

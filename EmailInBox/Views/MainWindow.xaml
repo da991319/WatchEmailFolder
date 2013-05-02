@@ -6,7 +6,7 @@
                   xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                   xmlns:tb="http://www.hardcodet.net/taskbar"
                   ShowInTaskbar="True" ResizeMode="CanResize" SizeToContent="Manual" WindowStartupLocation="Manual"
-                  Visibility="{Binding Visibility, Mode=TwoWay}">
+                  Visibility="{Binding Visibility, Mode=TwoWay}" Title="WatchEmailFolder">
     
     <!-- Resources -->
     <catel:DataWindow.Resources>
