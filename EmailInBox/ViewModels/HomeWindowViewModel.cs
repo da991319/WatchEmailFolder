@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using Catel.Data;
 using Catel.Logging;
+using Catel.MVVM.Services;
 using Catel.Messaging;
 using Catel.MVVM;
 using Catel.Windows.Threading;
@@ -44,7 +45,7 @@ namespace EmailInBox.ViewModels
             OnFileCreatedCmd = new Command<FileSystemEventArgs>(OnFileCreatedCmdExecute,null,"FileCreatedCommand");
             CheckMessagesCommand = new AsynchronousCommand(OnCheckMessagesCommandExecute, () => !CheckMessagesCommand.IsExecuting);
             Messages = new InitialLoadCommand().Load();
-            CheckMessagesCommand.Execute();
+            CheckMessagesWithWaiting();
         }
 
         public override string Title { get { return "Home"; } }
@@ -84,7 +85,7 @@ namespace EmailInBox.ViewModels
 
         private void OnFileDeleted(object sender, FileSystemEventArgs e)
         {
-            CheckMessagesCommand.Execute(); 
+            CheckMessage(); 
         }
 
         private void OnFileCreated(object sender, FileSystemEventArgs e)
@@ -111,7 +112,6 @@ namespace EmailInBox.ViewModels
         private void OnRowDoubleClickExecute(MouseButtonEventArgs e)
         {
             var source = e.Source as ListView;
-
             if (source.SelectedItem == null) return;
             MessageModel selectedMessage = source.SelectedItem as MessageModel;
             Messages.First(m => m == selectedMessage).NewEmail = false;
@@ -124,32 +124,17 @@ namespace EmailInBox.ViewModels
 
         private void OnFileCreatedCmdExecute(FileSystemEventArgs e)
         {
-            CheckMessagesCommand.Execute();
+            CheckMessage();
         }
 
         public AsynchronousCommand CheckMessagesCommand { get; private set; }
 
         private void OnCheckMessagesCommandExecute()
         {
-            var referenceDate = Messages.Count > 0 ? Messages.Max(x => x.DateReceived) : DateTime.Now;
-
-            DispatcherHelper.CurrentDispatcher.Invoke((Action)(
-                () =>
-                    {
-                        Messages =
-                            new ObservableCollection<MessageModel>(
-                                new UpdateMessagesListTask().UpdateMessageList(Messages.ToList()));
-                    })
-        );
-            
-
-            MessageModel message = Messages.FirstOrDefault(m => m.NewEmail && m.DateReceived > referenceDate);
-            
-            if (message != null)
-            {
-                mediator.SendMessage<MessageModel>(message, "New Message");
-            }
+            CheckMessagesWithWaiting();
         }
+
+        
 
         protected override void OnViewModelCommandExecuted(IViewModel viewModel, ICatelCommand command, object commandParameter)
         {
@@ -163,7 +148,7 @@ namespace EmailInBox.ViewModels
                         var settingsViewModel = viewModel as SettingsWindowViewModel;
                         folderToWatch = settingsViewModel.FolderToWatch;
                         ChangeWatcherSettings();
-                        CheckMessagesCommand.Execute();
+                        CheckMessagesWithWaiting();
                         break;
                     case "quitting":
                         var param = commandParameter as CancelEventArgs;
@@ -175,6 +160,34 @@ namespace EmailInBox.ViewModels
                         break;
                 }
                 
+            }
+        }
+
+        private void CheckMessagesWithWaiting()
+        {
+            DispatcherHelper.CurrentDispatcher.Invoke((Action) (
+                                                                   () =>
+                                                                       {
+                                                                           var pleaseWaiteService =
+                                                                               GetService<IPleaseWaitService>();
+                                                                           pleaseWaiteService.Show(CheckMessage);
+                                                                       }));
+        }
+
+        private void CheckMessage()
+        {
+            var referenceDate = Messages.Count > 0 ? Messages.Max(x => x.DateReceived) : DateTime.Now;
+
+            Messages = new ObservableCollection<MessageModel>(new UpdateMessagesListTask()
+                                                                  .UpdateMessageList(
+                                                                      Messages.ToList()));
+
+
+            MessageModel message = Messages.FirstOrDefault(m => m.NewEmail && m.DateReceived > referenceDate);
+
+            if (message != null)
+            {
+                mediator.SendMessage<MessageModel>(message, "New Message");
             }
         }
     }
