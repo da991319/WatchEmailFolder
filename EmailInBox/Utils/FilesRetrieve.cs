@@ -1,10 +1,8 @@
 ﻿
-using System;
+using EmailInBox.Models;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using EmailInBox.Models;
-using EmailInBox.Properties;
 
 namespace EmailInBox.Utils
 {
@@ -17,7 +15,7 @@ namespace EmailInBox.Utils
                           let message = new MimeReader().GetEmail(file)
                           select new MessageModel
                                      {
-                                         DateReceived = message.DeliveryDate,
+                                         DateReceived = message.DeliveryDate.ToLocalTime(),
                                          From = message.From.Address,
                                          To = message.To.ToString(),
                                          Path = file,
