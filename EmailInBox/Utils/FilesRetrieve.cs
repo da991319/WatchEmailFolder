@@ -12,6 +12,7 @@ namespace EmailInBox.Utils
         {
             return Directory.Exists(path)
                        ? (from file in Directory.GetFiles(path, "*.eml")
+                          where File.Exists(file)
                           let message = new MimeReader().GetEmail(file)
                           select new MessageModel
                                      {
