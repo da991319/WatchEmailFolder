@@ -38,7 +38,7 @@ namespace EmailInBox.Utils
                                                             {
                                                                 DateReceived = x.DateReceived,
                                                                 From = x.From,
-                                                                NewEmail = x.DateReceived > referenceDate,
+                                                                NewEmail = x.DateReceived >= referenceDate,
                                                                 Path = x.Path,
                                                                 Subject = x.Subject,
                                                                 To = x.To

@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel;
+using System.Threading.Tasks;
+using System.Timers;
 using Catel.Data;
 using Catel.Logging;
 using Catel.MVVM.Services;
@@ -39,10 +41,11 @@ namespace EmailInBox.ViewModels
         /// </summary>
         public HomeWindowViewModel():base()
         {
+            fileCreatedCmdExecuting = true;
             LogManager.RegisterDebugListener();
             InitializeWatcher();
             RowDoubleClick = new Command<MouseButtonEventArgs>(OnRowDoubleClickExecute, OnRowDoubleClickCanExecute);
-            OnFileCreatedCmd = new Command<FileSystemEventArgs>(OnFileCreatedCmdExecute,null,"FileCreatedCommand");
+            OnFileCreatedCmd = new Command<FileSystemEventArgs>(OnFileCreatedCmdExecute, OnFileCreatedCmdCanExecute, "FileCreatedCommand");
             CheckMessagesCommand = new AsynchronousCommand(OnCheckMessagesCommandExecute, () => !CheckMessagesCommand.IsExecuting);
             Messages = new InitialLoadCommand().Load();
             CheckMessagesWithWaiting();
@@ -100,8 +103,9 @@ namespace EmailInBox.ViewModels
         }
 
         public static readonly PropertyData MessagesProperty = RegisterProperty("Messages", typeof(ObservableCollection<MessageModel>), null);
+        private bool fileCreatedCmdExecuting;
 
-        
+
         public Command<MouseButtonEventArgs> RowDoubleClick { get; private set; }
         
         private bool OnRowDoubleClickCanExecute(MouseButtonEventArgs e)
@@ -125,6 +129,11 @@ namespace EmailInBox.ViewModels
         private void OnFileCreatedCmdExecute(FileSystemEventArgs e)
         {
             CheckMessage();
+        }
+
+        private bool OnFileCreatedCmdCanExecute(FileSystemEventArgs e)
+        {
+            return true;
         }
 
         public AsynchronousCommand CheckMessagesCommand { get; private set; }
@@ -178,12 +187,11 @@ namespace EmailInBox.ViewModels
         {
             var referenceDate = Messages.Count > 0 ? Messages.Max(x => x.DateReceived) : DateTime.Now;
 
-            Messages = new ObservableCollection<MessageModel>(new UpdateMessagesListTask()
+            Messages = new ObservableCollection<MessageModel>( new UpdateMessagesListTask()
                                                                   .UpdateMessageList(
                                                                       Messages.ToList()));
 
-
-            MessageModel message = Messages.FirstOrDefault(m => m.NewEmail && m.DateReceived > referenceDate);
+            MessageModel message = Messages.FirstOrDefault(m => m.NewEmail && m.DateReceived >= referenceDate);
 
             if (message != null)
             {
