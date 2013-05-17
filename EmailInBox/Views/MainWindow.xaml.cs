@@ -15,7 +15,7 @@ namespace EmailInBox.Views
     
     public partial class MainWindow : DataWindow
     {
-        private string lastMessagePath;
+        private MessageModel lastMessage;
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow"/> class.
         /// </summary>
@@ -29,7 +29,7 @@ namespace EmailInBox.Views
         [MessageRecipient(Tag = "New Message")]
         public void ShowBallon(MessageModel message)
         {
-            lastMessagePath = message.Path;
+            lastMessage = message;
 
             var sb = new StringBuilder();
 
@@ -43,7 +43,8 @@ namespace EmailInBox.Views
 
         private void TaskIcon_TrayBalloonTipClicked(object sender, System.Windows.RoutedEventArgs e)
         {
-            Process.Start(lastMessagePath);
+            MessageMediator.Default.SendMessageAsync(lastMessage, "Balloon Clicked");
+            Process.Start(lastMessage.Path);
         }
     }
 }

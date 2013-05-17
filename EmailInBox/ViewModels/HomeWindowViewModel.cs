@@ -115,10 +115,19 @@ namespace EmailInBox.ViewModels
             var source = e.Source as ListView;
             if (source.SelectedItem == null) return;
             var selectedMessage = source.SelectedItem as MessageModel;
-            Messages.First(m => m == selectedMessage).NewEmail = false;
-            //there must be a way to notify the change to the list without having to recreate it
-            Messages = new ObservableCollection<MessageModel>(Messages);
+            MarkedAsRead(selectedMessage);
             Process.Start(selectedMessage.Path);
+        }
+
+        [MessageRecipient(Tag = "Balloon Clicked")]
+        private void MarkedAsRead(MessageModel selectedMessage)
+        {
+            DispatcherHelper.CurrentDispatcher.Invoke((Action)(() =>
+                                                                   {
+                                                                       Messages.First(m => m == selectedMessage).NewEmail = false;
+                                                                       //there must be a way to notify the change to the list without having to recreate it
+                                                                       Messages = new ObservableCollection<MessageModel>(Messages);
+                                                                   }));
         }
 
         public Command<FileSystemEventArgs> OnFileCreatedCmd { get; private set; }
@@ -180,11 +189,11 @@ namespace EmailInBox.ViewModels
                                                                   .UpdateMessageList(
                                                                       Messages.ToList()));
 
-            MessageModel message = Messages.FirstOrDefault(m => m.NewEmail && m.DateReceived >= referenceDate);
+            var message = Messages.FirstOrDefault(m => m.NewEmail && m.DateReceived >= referenceDate);
 
             if (message != null)
             {
-                mediator.SendMessage<MessageModel>(message, "New Message");
+                mediator.SendMessage(message, "New Message");
             }
         }
     }
