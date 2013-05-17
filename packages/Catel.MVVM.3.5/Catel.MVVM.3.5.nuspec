@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Catel.MVVM</id>
+    <version>3.5</version>
+    <title>Catel.MVVM</title>
+    <authors>GeertvanHorrik</authors>
+    <owners>GeertvanHorrik</owners>
+    <licenseUrl>http://catel.codeplex.com/license</licenseUrl>
+    <projectUrl>http://catel.codeplex.com/</projectUrl>
+    <iconUrl>http://www.catenalogic.com/catel.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Catel.MVVM library which includes the MVVM Framework for WPF and user controls.</description>
+    <releaseNotes />
+    <copyright />
+    <language>en-US</language>
+    <tags>mvvm data object wpf windows</tags>
+    <dependencies>
+      <dependency id="Catel.Core" version="3.5" />
+    </dependencies>
+    <references>
+      <reference file="Catel.MVVM.dll" />
+      <reference file="System.Windows.Interactivity.dll" />
+      <reference file="_._" />
+      <reference file="System.Windows.Controls.dll" />
+      <reference file="System.Windows.Controls.Toolkit.dll" />
+      <reference file="Phone7.Fx.Mango.dll" />
+    </references>
+  </metadata>
+</package>

@@ -1,5 +1,7 @@
 ﻿
+using Catel.IoC;
 using Catel.Messaging;
+using EmailInBox.Utils;
 
 namespace EmailInBox
 {
@@ -22,6 +24,7 @@ namespace EmailInBox
 
             // TODO: Using a custom IoC container like Unity? Register it here:
             // Catel.IoC.ServiceLocator.Instance.RegisterExternalContainer(MyUnityContainer);
+            ServiceLocator.Default.RegisterType<IUpdateMessagesListTask, UpdateMessagesListTask>(RegistrationType.Transient);
 #if DEBUG
             Catel.Logging.LogManager.RegisterDebugListener();
 #endif

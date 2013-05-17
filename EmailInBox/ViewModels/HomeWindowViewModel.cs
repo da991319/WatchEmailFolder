@@ -1,17 +1,14 @@
-﻿using System.ComponentModel;
-using System.Threading.Tasks;
-using System.Timers;
-using Catel.Data;
-using Catel.Logging;
-using Catel.MVVM.Services;
+﻿using Catel.Data;
 using Catel.Messaging;
 using Catel.MVVM;
+using Catel.MVVM.Services;
 using Catel.Windows.Threading;
 using EmailInBox.Models;
 using EmailInBox.Properties;
 using EmailInBox.Utils;
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -32,6 +29,8 @@ namespace EmailInBox.ViewModels
     [InterestedIn(typeof(MainWindowViewModel))]
     public class HomeWindowViewModel : WindowViewModelBase
     {
+        private readonly IPleaseWaitService pleaseWaitService;
+        private readonly IUpdateMessagesListTask updateMessagesListTask;
         private FileSystemWatcher watcher;
         private IMessageMediator mediator = MessageMediator.Default;
         private string folderToWatch ;
@@ -39,10 +38,10 @@ namespace EmailInBox.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeWindowViewModel"/> class.
         /// </summary>
-        public HomeWindowViewModel():base()
+        public HomeWindowViewModel(IUpdateMessagesListTask updateMessagesListTask, IPleaseWaitService pleaseWaitService)
         {
-            fileCreatedCmdExecuting = true;
-            LogManager.RegisterDebugListener();
+            this.updateMessagesListTask = updateMessagesListTask;
+            this.pleaseWaitService = pleaseWaitService;
             InitializeWatcher();
             RowDoubleClick = new Command<MouseButtonEventArgs>(OnRowDoubleClickExecute, OnRowDoubleClickCanExecute);
             OnFileCreatedCmd = new Command<FileSystemEventArgs>(OnFileCreatedCmdExecute, OnFileCreatedCmdCanExecute, "FileCreatedCommand");
@@ -103,9 +102,7 @@ namespace EmailInBox.ViewModels
         }
 
         public static readonly PropertyData MessagesProperty = RegisterProperty("Messages", typeof(ObservableCollection<MessageModel>), null);
-        private bool fileCreatedCmdExecuting;
-
-
+        
         public Command<MouseButtonEventArgs> RowDoubleClick { get; private set; }
         
         private bool OnRowDoubleClickCanExecute(MouseButtonEventArgs e)
@@ -117,7 +114,7 @@ namespace EmailInBox.ViewModels
         {
             var source = e.Source as ListView;
             if (source.SelectedItem == null) return;
-            MessageModel selectedMessage = source.SelectedItem as MessageModel;
+            var selectedMessage = source.SelectedItem as MessageModel;
             Messages.First(m => m == selectedMessage).NewEmail = false;
             //there must be a way to notify the change to the list without having to recreate it
             Messages = new ObservableCollection<MessageModel>(Messages);
@@ -143,8 +140,6 @@ namespace EmailInBox.ViewModels
             CheckMessagesWithWaiting();
         }
 
-        
-
         protected override void OnViewModelCommandExecuted(IViewModel viewModel, ICatelCommand command, object commandParameter)
         {
             base.OnViewModelCommandExecuted(viewModel, command, commandParameter);
@@ -168,26 +163,20 @@ namespace EmailInBox.ViewModels
                         
                         break;
                 }
-                
             }
         }
 
         private void CheckMessagesWithWaiting()
         {
             DispatcherHelper.CurrentDispatcher.Invoke((Action) (
-                                                                   () =>
-                                                                       {
-                                                                           var pleaseWaiteService =
-                                                                               GetService<IPleaseWaitService>();
-                                                                           pleaseWaiteService.Show(CheckMessage);
-                                                                       }));
+                                                                   () => pleaseWaitService.Show(CheckMessage) ));
         }
 
         private void CheckMessage()
         {
             var referenceDate = Messages.Count > 0 ? Messages.Max(x => x.DateReceived) : DateTime.Now;
 
-            Messages = new ObservableCollection<MessageModel>( new UpdateMessagesListTask()
+            Messages = new ObservableCollection<MessageModel>( updateMessagesListTask
                                                                   .UpdateMessageList(
                                                                       Messages.ToList()));
 
