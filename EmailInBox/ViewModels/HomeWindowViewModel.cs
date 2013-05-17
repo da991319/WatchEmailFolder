@@ -46,6 +46,7 @@ namespace EmailInBox.ViewModels
             RowDoubleClick = new Command<MouseButtonEventArgs>(OnRowDoubleClickExecute, OnRowDoubleClickCanExecute);
             OnFileCreatedCmd = new Command<FileSystemEventArgs>(OnFileCreatedCmdExecute, OnFileCreatedCmdCanExecute, "FileCreatedCommand");
             CheckMessagesCommand = new AsynchronousCommand(OnCheckMessagesCommandExecute, () => !CheckMessagesCommand.IsExecuting);
+            MarkAsReadCommand = new Command<MessageModel>(OnMarkAsReadCommandExecute);
             Messages = new InitialLoadCommand().Load();
             CheckMessagesWithWaiting();
         }
@@ -140,6 +141,19 @@ namespace EmailInBox.ViewModels
         private bool OnFileCreatedCmdCanExecute(FileSystemEventArgs e)
         {
             return true;
+        }
+
+        /// <summary>
+        /// Gets the name command.
+        /// </summary>
+        public Command<MessageModel> MarkAsReadCommand { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the name command is executed.
+        /// </summary>
+        private void OnMarkAsReadCommandExecute(MessageModel e)
+        {
+            MarkedAsRead(e);
         }
 
         public AsynchronousCommand CheckMessagesCommand { get; private set; }

@@ -58,6 +58,11 @@
                     </Style.Triggers>
                 </Style>
             </ListView.Resources>
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Mark as read" Command="{Binding MarkAsReadCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=ContextMenu}, Path=PlacementTarget.SelectedItem}"/>
+                </ContextMenu>
+            </ListView.ContextMenu>
         </ListView>
     </catel:StackGrid>
 </catel:UserControl>
