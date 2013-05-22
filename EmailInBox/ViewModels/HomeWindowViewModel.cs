@@ -4,7 +4,6 @@ using Catel.MVVM;
 using Catel.MVVM.Services;
 using Catel.Windows.Threading;
 using EmailInBox.Models;
-using EmailInBox.Properties;
 using EmailInBox.Utils;
 using System;
 using System.Collections.ObjectModel;
@@ -15,7 +14,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace EmailInBox.ViewModels
 {
@@ -53,49 +51,6 @@ namespace EmailInBox.ViewModels
         }
         
         public override string Title { get { return "Home"; } }
-
-//        private void InitializeWatcher()
-//        {
-//            if (String.IsNullOrWhiteSpace(folderToWatch))
-//                folderToWatch = Settings.Default.FolderToWatch;
-//
-//            watcher = new FileSystemWatcher(folderToWatch, "*.eml")
-//                {
-//                    NotifyFilter = NotifyFilters.LastAccess
-//                         | NotifyFilters.LastWrite
-//                         | NotifyFilters.FileName
-//                         | NotifyFilters.DirectoryName
-//                };
-//
-//            var switchThreadForFsEvent = (Func<FileSystemEventHandler, FileSystemEventHandler>)(
-//        (FileSystemEventHandler handler) =>
-//                (object obj, FileSystemEventArgs e) =>
-//                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() =>
-//                        handler(obj, e))));                    
-//
-//        watcher.Created += switchThreadForFsEvent(OnFileCreated);
-//        watcher.Deleted += switchThreadForFsEvent(OnFileDeleted);
-//
-//            watcher.EnableRaisingEvents = true;
-//        }
-//
-//        private void ChangeWatcherSettings()
-//        {
-//            if (watcher != null)
-//                watcher.Path = folderToWatch;
-//            else
-//                InitializeWatcher();
-//        }
-//
-//        private void OnFileDeleted(object sender, FileSystemEventArgs e)
-//        {
-//            CheckMessage(); 
-//        }
-//
-//        private void OnFileCreated(object sender, FileSystemEventArgs e)
-//        {
-//            OnFileCreatedCmd.Execute(e);
-//        }
 
         public ObservableCollection<MessageModel> Messages
         {
@@ -205,7 +160,7 @@ namespace EmailInBox.ViewModels
         }
 
         [MessageRecipient(Tag = "folderModified")]
-        private void CheckMessage(string updateString = "")
+        private void CheckMessage(string updateString)
         {
             var referenceDate = Messages.Count > 0 ? Messages.Max(x => x.DateReceived) : DateTime.Now;
 
