@@ -26,7 +26,7 @@ namespace EmailInBox.Views
             MessageMediatorHelper.SubscribeRecipient(this);
         }
 
-        [MessageRecipient(Tag = "New Message")]
+        [MessageRecipient(Tag = "newMessage")]
         public void ShowBallon(MessageModel message)
         {
             lastMessage = message;
@@ -43,7 +43,7 @@ namespace EmailInBox.Views
 
         private void TaskIcon_TrayBalloonTipClicked(object sender, System.Windows.RoutedEventArgs e)
         {
-            MessageMediator.Default.SendMessageAsync(lastMessage, "Balloon Clicked");
+            MessageMediator.Default.SendMessageAsync(lastMessage, "balloonClicked");
             Process.Start(lastMessage.Path);
         }
     }

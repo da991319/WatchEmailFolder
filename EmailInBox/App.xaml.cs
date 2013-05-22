@@ -25,6 +25,7 @@ namespace EmailInBox
             // TODO: Using a custom IoC container like Unity? Register it here:
             // Catel.IoC.ServiceLocator.Instance.RegisterExternalContainer(MyUnityContainer);
             ServiceLocator.Default.RegisterType<IUpdateMessagesListTask, UpdateMessagesListTask>(RegistrationType.Transient);
+            ServiceLocator.Default.RegisterType<IFolderWatcher, FolderWatcher>(RegistrationType.Singleton);
 #if DEBUG
             Catel.Logging.LogManager.RegisterDebugListener();
 #endif

@@ -30,19 +30,20 @@ namespace EmailInBox.ViewModels
     public class HomeWindowViewModel : WindowViewModelBase
     {
         private readonly IPleaseWaitService pleaseWaitService;
+        private readonly IFolderWatcher folderWatcher;
         private readonly IUpdateMessagesListTask updateMessagesListTask;
-        private FileSystemWatcher watcher;
-        private IMessageMediator mediator = MessageMediator.Default;
+        private readonly IMessageMediator mediator;
         private string folderToWatch ;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeWindowViewModel"/> class.
         /// </summary>
-        public HomeWindowViewModel(IUpdateMessagesListTask updateMessagesListTask, IPleaseWaitService pleaseWaitService)
+        public HomeWindowViewModel(IUpdateMessagesListTask updateMessagesListTask,IMessageMediator mediator, IPleaseWaitService pleaseWaitService, IFolderWatcher folderWatcher)
         {
             this.updateMessagesListTask = updateMessagesListTask;
+            this.mediator = mediator;
             this.pleaseWaitService = pleaseWaitService;
-            InitializeWatcher();
+            this.folderWatcher = folderWatcher;
             RowDoubleClick = new Command<MouseButtonEventArgs>(OnRowDoubleClickExecute, OnRowDoubleClickCanExecute);
             OnFileCreatedCmd = new Command<FileSystemEventArgs>(OnFileCreatedCmdExecute, OnFileCreatedCmdCanExecute, "FileCreatedCommand");
             CheckMessagesCommand = new AsynchronousCommand(OnCheckMessagesCommandExecute, () => !CheckMessagesCommand.IsExecuting);
@@ -50,51 +51,51 @@ namespace EmailInBox.ViewModels
             Messages = new InitialLoadCommand().Load();
             CheckMessagesWithWaiting();
         }
-
+        
         public override string Title { get { return "Home"; } }
 
-        private void InitializeWatcher()
-        {
-            if (String.IsNullOrWhiteSpace(folderToWatch))
-                folderToWatch = Settings.Default.FolderToWatch;
-
-            watcher = new FileSystemWatcher(folderToWatch, "*.eml")
-                {
-                    NotifyFilter = NotifyFilters.LastAccess
-                         | NotifyFilters.LastWrite
-                         | NotifyFilters.FileName
-                         | NotifyFilters.DirectoryName
-                };
-
-            var switchThreadForFsEvent = (Func<FileSystemEventHandler, FileSystemEventHandler>)(
-        (FileSystemEventHandler handler) =>
-                (object obj, FileSystemEventArgs e) =>
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() =>
-                        handler(obj, e))));                    
-
-        watcher.Created += switchThreadForFsEvent(OnFileCreated);
-        watcher.Deleted += switchThreadForFsEvent(OnFileDeleted);
-
-            watcher.EnableRaisingEvents = true;
-        }
-
-        private void ChangeWatcherSettings()
-        {
-            if (watcher != null)
-                watcher.Path = folderToWatch;
-            else
-                InitializeWatcher();
-        }
-
-        private void OnFileDeleted(object sender, FileSystemEventArgs e)
-        {
-            CheckMessage(); 
-        }
-
-        private void OnFileCreated(object sender, FileSystemEventArgs e)
-        {
-            OnFileCreatedCmd.Execute(e);
-        }
+//        private void InitializeWatcher()
+//        {
+//            if (String.IsNullOrWhiteSpace(folderToWatch))
+//                folderToWatch = Settings.Default.FolderToWatch;
+//
+//            watcher = new FileSystemWatcher(folderToWatch, "*.eml")
+//                {
+//                    NotifyFilter = NotifyFilters.LastAccess
+//                         | NotifyFilters.LastWrite
+//                         | NotifyFilters.FileName
+//                         | NotifyFilters.DirectoryName
+//                };
+//
+//            var switchThreadForFsEvent = (Func<FileSystemEventHandler, FileSystemEventHandler>)(
+//        (FileSystemEventHandler handler) =>
+//                (object obj, FileSystemEventArgs e) =>
+//                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() =>
+//                        handler(obj, e))));                    
+//
+//        watcher.Created += switchThreadForFsEvent(OnFileCreated);
+//        watcher.Deleted += switchThreadForFsEvent(OnFileDeleted);
+//
+//            watcher.EnableRaisingEvents = true;
+//        }
+//
+//        private void ChangeWatcherSettings()
+//        {
+//            if (watcher != null)
+//                watcher.Path = folderToWatch;
+//            else
+//                InitializeWatcher();
+//        }
+//
+//        private void OnFileDeleted(object sender, FileSystemEventArgs e)
+//        {
+//            CheckMessage(); 
+//        }
+//
+//        private void OnFileCreated(object sender, FileSystemEventArgs e)
+//        {
+//            OnFileCreatedCmd.Execute(e);
+//        }
 
         public ObservableCollection<MessageModel> Messages
         {
@@ -113,14 +114,17 @@ namespace EmailInBox.ViewModels
 
         private void OnRowDoubleClickExecute(MouseButtonEventArgs e)
         {
-            var source = e.Source as ListView;
-            if (source.SelectedItem == null) return;
-            var selectedMessage = source.SelectedItem as MessageModel;
-            MarkedAsRead(selectedMessage);
-            Process.Start(selectedMessage.Path);
+            if (TryFindParent.Search<GridViewColumnHeader>(e.OriginalSource as DependencyObject) == null)
+            {
+                var source = e.Source as ListView;
+                if (source.SelectedItem == null) return;
+                var selectedMessage = source.SelectedItem as MessageModel;
+                MarkedAsRead(selectedMessage);
+                Process.Start(selectedMessage.Path);
+            }
         }
 
-        [MessageRecipient(Tag = "Balloon Clicked")]
+        [MessageRecipient(Tag = "balloonClicked")]
         private void MarkedAsRead(MessageModel selectedMessage)
         {
             DispatcherHelper.CurrentDispatcher.Invoke((Action)(() =>
@@ -174,7 +178,7 @@ namespace EmailInBox.ViewModels
                     case "saveSettings":
                         var settingsViewModel = viewModel as SettingsWindowViewModel;
                         folderToWatch = settingsViewModel.FolderToWatch;
-                        ChangeWatcherSettings();
+                        folderWatcher.ChangeWatcherFolder(folderToWatch);
                         CheckMessagesWithWaiting();
                         break;
                     case "quitting":
@@ -197,6 +201,12 @@ namespace EmailInBox.ViewModels
 
         private void CheckMessage()
         {
+            CheckMessage("");
+        }
+
+        [MessageRecipient(Tag = "folderModified")]
+        private void CheckMessage(string updateString = "")
+        {
             var referenceDate = Messages.Count > 0 ? Messages.Max(x => x.DateReceived) : DateTime.Now;
 
             Messages = new ObservableCollection<MessageModel>( updateMessagesListTask
@@ -207,7 +217,7 @@ namespace EmailInBox.ViewModels
 
             if (message != null)
             {
-                mediator.SendMessage(message, "New Message");
+                mediator.SendMessage(message, "newMessage");
             }
         }
     }

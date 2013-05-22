@@ -113,6 +113,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Utils\FinalSaveCommand.cs" />
+    <Compile Include="Utils\FolderWatcher.cs" />
+    <Compile Include="Utils\TryFindParent.cs" />
     <Compile Include="Views\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
