@@ -25,7 +25,7 @@
                     <GridViewColumn>
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Command="{Binding RelativeSource={RelativeSource AncestorType=ListView}, Path=DataContext.ImageSingleClick}" CommandParameter="{Binding}">
+                                <Button ToolTip="Read email" Command="{Binding RelativeSource={RelativeSource AncestorType=ListView}, Path=DataContext.ImageSingleClick}" CommandParameter="{Binding}">
                                     <Button.Template>
                                         <ControlTemplate>
                                             <Image Width="20" Height="20" Source="/WatchEmailFolder;component/Icons/readEmail.png"/>
