@@ -19,9 +19,9 @@ namespace EmailInBox.ViewModels
     {
         public bool trueExit;
 
-        #region Fields
-
-        #endregion
+        public Command<CancelEventArgs> HiddenAppCommand { get; private set; }
+        public Command IconLeftClickCommand { get; private set; }
+        public Command QuitMenuItemClickCommand { get; private set; }
 
         #region Constructors
         /// <summary>
@@ -38,7 +38,6 @@ namespace EmailInBox.ViewModels
 
         #endregion
 
-        #region Properties
         public Visibility Visibility
         {
             get { return GetValue<Visibility>(VisibilityProperty); }
@@ -47,39 +46,23 @@ namespace EmailInBox.ViewModels
 
         public static readonly PropertyData VisibilityProperty = RegisterProperty("Visibility", typeof(Visibility), null);
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
         public string AppVersion
         {
             get { return GetValue<string>(AppVersionProperty); }
             set { SetValue(AppVersionProperty, value); }
         }
 
-        /// <summary>
-        /// Register the AppVersion property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData AppVersionProperty = RegisterProperty("AppVersion", typeof(string), null);
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
         public int SelectedIndexTab
         {
             get { return GetValue<int>(SelectedIndexTabProperty); }
             set { SetValue(SelectedIndexTabProperty, value); }
         }
 
-        /// <summary>
-        /// Register the SelectedIndexTab property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData SelectedIndexTabProperty = RegisterProperty("SelectedIndexTab", typeof(int), null);
 
-        #endregion
-
-        #region Commands
-
-        public Command<CancelEventArgs> HiddenAppCommand { get; private set; }
+        #region implement command
 
         private void OnHiddenAppCommandExecute(EventArgs e)
         {
@@ -90,14 +73,10 @@ namespace EmailInBox.ViewModels
             }
         }
         
-        public Command IconLeftClickCommand { get; private set; }
-
         private void OnIconLeftClickCommandExecute()
         {
             Visibility = Visibility.Visible;
         }
-
-        public Command QuitMenuItemClickCommand { get; private set; }
 
         private void OnQuitMenuItemClickCommandExecute()
         {
@@ -105,9 +84,18 @@ namespace EmailInBox.ViewModels
             Application.Current.MainWindow.Close();
         }
 
+        protected override void OnViewModelCommandExecuted(IViewModel viewModel, ICatelCommand command,
+                                                           object commandParameter)
+        {
+            if (command.Tag != null && command.Tag.ToString().Equals("saveSettings"))
+            {
+                SelectedIndexTab = 0;
+            }
+        }
+
         #endregion
-        #region Methods
-       
+
+        #region private method
         private void ExitAppWrapper(object sender, EventArgs e)
         {
             trueExit = true;
@@ -130,16 +118,6 @@ namespace EmailInBox.ViewModels
             var version = ApplicationDeployment.IsNetworkDeployed ? ApplicationDeployment.CurrentDeployment.CurrentVersion : System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             return String.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
         }
-
-        protected override void OnViewModelCommandExecuted(IViewModel viewModel, ICatelCommand command,
-                                                           object commandParameter)
-        {
-            if (command.Tag != null && command.Tag.ToString().Equals("saveSettings"))
-            {
-                SelectedIndexTab = 0;
-            }
-        }
-
         #endregion
     }
 }
