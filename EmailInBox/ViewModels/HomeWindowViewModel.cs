@@ -33,6 +33,13 @@ namespace EmailInBox.ViewModels
         private readonly IMessageMediator mediator;
         private string folderToWatch ;
 
+        public override string Title { get { return "Home"; } }
+        public Command<MouseButtonEventArgs> RowDoubleClick { get; private set; }
+        public Command<MessageModel> ImageSingleClick { get; private set; }
+        public Command<FileSystemEventArgs> OnFileCreatedCmd { get; private set; }
+        public Command<MessageModel> MarkAsReadCommand { get; private set; }
+        public AsynchronousCommand CheckMessagesCommand { get; private set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeWindowViewModel"/> class.
         /// </summary>
@@ -51,8 +58,6 @@ namespace EmailInBox.ViewModels
             CheckMessagesWithWaiting();
         }
         
-        public override string Title { get { return "Home"; } }
-
         public ObservableCollection<MessageModel> Messages
         {
             get { return GetValue<ObservableCollection<MessageModel>>(MessagesProperty); }
@@ -60,9 +65,9 @@ namespace EmailInBox.ViewModels
         }
 
         public static readonly PropertyData MessagesProperty = RegisterProperty("Messages", typeof(ObservableCollection<MessageModel>), null);
-        
-        public Command<MouseButtonEventArgs> RowDoubleClick { get; private set; }
-        
+
+        #region Command Implementation
+
         private bool OnRowDoubleClickCanExecute(MouseButtonEventArgs e)
         {
             return true;
@@ -80,33 +85,13 @@ namespace EmailInBox.ViewModels
             }
         }
 
-        /// <summary>
-        /// Gets the name command.
-        /// </summary>
-        public Command<MessageModel> ImageSingleClick { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the name command is executed.
-        /// </summary>
         private void OnImageSingleClickExecute(MessageModel message)
         {
             MarkedAsRead(message);
             Process.Start(message.Path);
         }
 
-        [MessageRecipient(Tag = "balloonClicked")]
-        private void MarkedAsRead(MessageModel selectedMessage)
-        {
-            DispatcherHelper.CurrentDispatcher.Invoke((Action)(() =>
-                                                                   {
-                                                                       Messages.First(m => m == selectedMessage).NewEmail = false;
-                                                                       //there must be a way to notify the change to the list without having to recreate it
-                                                                       Messages = new ObservableCollection<MessageModel>(Messages);
-                                                                   }));
-        }
-
-        public Command<FileSystemEventArgs> OnFileCreatedCmd { get; private set; }
-
+        
         private void OnFileCreatedCmdExecute(FileSystemEventArgs e)
         {
             CheckMessage();
@@ -117,20 +102,10 @@ namespace EmailInBox.ViewModels
             return true;
         }
 
-        /// <summary>
-        /// Gets the name command.
-        /// </summary>
-        public Command<MessageModel> MarkAsReadCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the name command is executed.
-        /// </summary>
         private void OnMarkAsReadCommandExecute(MessageModel e)
         {
             MarkedAsRead(e);
         }
-
-        public AsynchronousCommand CheckMessagesCommand { get; private set; }
 
         private void OnCheckMessagesCommandExecute()
         {
@@ -163,6 +138,21 @@ namespace EmailInBox.ViewModels
             }
         }
 
+
+        #endregion
+
+        #region private method
+        [MessageRecipient(Tag = "balloonClicked")]
+        private void MarkedAsRead(MessageModel selectedMessage)
+        {
+            DispatcherHelper.CurrentDispatcher.Invoke((Action)(() =>
+            {
+                Messages.First(m => m == selectedMessage).NewEmail = false;
+                //there must be a way to notify the change to the list without having to recreate it
+                Messages = new ObservableCollection<MessageModel>(Messages);
+            }));
+        }
+
         private void CheckMessagesWithWaiting()
         {
             DispatcherHelper.CurrentDispatcher.Invoke((Action) (
@@ -190,5 +180,7 @@ namespace EmailInBox.ViewModels
                 mediator.SendMessage(message, "newMessage");
             }
         }
+
+        #endregion
     }
 }
