@@ -46,6 +46,7 @@ namespace EmailInBox.ViewModels
             OnFileCreatedCmd = new Command<FileSystemEventArgs>(OnFileCreatedCmdExecute, OnFileCreatedCmdCanExecute, "FileCreatedCommand");
             CheckMessagesCommand = new AsynchronousCommand(OnCheckMessagesCommandExecute, () => !CheckMessagesCommand.IsExecuting);
             MarkAsReadCommand = new Command<MessageModel>(OnMarkAsReadCommandExecute);
+            ImageSingleClick = new Command<MessageModel>(OnImageSingleClickExecute);
             Messages = new InitialLoadCommand().Load();
             CheckMessagesWithWaiting();
         }
@@ -77,6 +78,20 @@ namespace EmailInBox.ViewModels
                 MarkedAsRead(selectedMessage);
                 Process.Start(selectedMessage.Path);
             }
+        }
+
+        /// <summary>
+        /// Gets the name command.
+        /// </summary>
+        public Command<MessageModel> ImageSingleClick { get; private set; }
+
+        /// <summary>
+        /// Method to invoke when the name command is executed.
+        /// </summary>
+        private void OnImageSingleClickExecute(MessageModel message)
+        {
+            MarkedAsRead(message);
+            Process.Start(message.Path);
         }
 
         [MessageRecipient(Tag = "balloonClicked")]

@@ -19,9 +19,22 @@
             <Button Content="Refresh" Command="{Binding CheckMessagesCommand}"/>
         </StackPanel>
         
-        <ListView ItemsSource="{Binding Messages}" >
+        <ListView ItemsSource="{Binding Messages}" SelectionMode="Single" >
             <ListView.View>
                 <GridView>
+                    <GridViewColumn>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding RelativeSource={RelativeSource AncestorType=ListView}, Path=DataContext.ImageSingleClick}" CommandParameter="{Binding}">
+                                    <Button.Template>
+                                        <ControlTemplate>
+                                            <Image Width="20" Height="20" Source="/WatchEmailFolder;component/Icons/readEmail.png"/>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                     <GridViewColumn Header="Delivery Date" DisplayMemberBinding="{Binding DateReceived}"></GridViewColumn>
                     <GridViewColumn Header="From" DisplayMemberBinding="{Binding From}"></GridViewColumn>
                     <GridViewColumn Header="To" DisplayMemberBinding="{Binding To}"></GridViewColumn>
