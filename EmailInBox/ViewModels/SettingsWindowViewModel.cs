@@ -13,6 +13,9 @@ namespace EmailInBox.ViewModels
     /// </summary>
     public class SettingsWindowViewModel : WindowViewModelBase
     {
+        public Command BrowseFolderCommand { get; private set; }
+        public Command SaveSettingsCommand { get; private set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingsWindowViewModel"/> class.
         /// </summary>
@@ -24,10 +27,7 @@ namespace EmailInBox.ViewModels
             BrowseFolderCommand = new Command(OnBrowseFolderCommandExecute);
         }
 
-        /// <summary>
-        /// Gets the title of the view model.
-        /// </summary>
-        /// <value>The title.</value>
+
         public override string Title { get { return "Settings"; } }
 
         public string FolderToWatch
@@ -45,19 +45,8 @@ namespace EmailInBox.ViewModels
         }
 
         public static readonly PropertyData FileNumberProperty = RegisterProperty("FileNumber", typeof(int), null);
-        
-        // TODO: Register models with the vmpropmodel codesnippet
-        // TODO: Register view model properties with the vmprop or vmpropviewmodeltomodel codesnippets
-        // TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
-        /// <summary>
-        /// Gets the SaveSettingsCommand command.
-        /// </summary>
-        
-        public Command SaveSettingsCommand { get; private set; }
-        
-        /// <summary>
-        /// Method to invoke when the SaveSettingsCommand command is executed.
-        /// </summary>
+
+        #region implement command
         private void OnSaveSettingsCommandExecute()
         {
             Settings.Default.FolderToWatch = FolderToWatch;
@@ -65,14 +54,6 @@ namespace EmailInBox.ViewModels
             Settings.Default.Save();
         }
 
-        /// <summary>
-        /// Gets the name command.
-        /// </summary>
-        public Command BrowseFolderCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the name command is executed.
-        /// </summary>
         private void OnBrowseFolderCommandExecute()
         {
             var folderBrowser = new FolderBrowserDialog {RootFolder = Environment.SpecialFolder.Desktop, ShowNewFolderButton = false};
@@ -83,5 +64,7 @@ namespace EmailInBox.ViewModels
                 FolderToWatch = folderBrowser.SelectedPath;
             }
         }
+
+        #endregion
     }
 }
