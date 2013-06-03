@@ -9,7 +9,6 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,18 +16,13 @@ using System.Windows.Input;
 
 namespace EmailInBox.ViewModels
 {
-
-    /// <summary>
-    /// UserControl view model.
-    /// </summary>
-    /// 
-    /// 
     [InterestedIn(typeof (SettingsWindowViewModel))]
     [InterestedIn(typeof(MainWindowViewModel))]
     public class HomeWindowViewModel : WindowViewModelBase
     {
         private readonly IPleaseWaitService pleaseWaitService;
         private readonly IFolderWatcher folderWatcher;
+        private readonly ITryFindParent tryFindParent;
         private readonly IUpdateMessagesListTask updateMessagesListTask;
         private readonly IMessageMediator mediator;
         private string folderToWatch ;
@@ -36,21 +30,20 @@ namespace EmailInBox.ViewModels
         public override string Title { get { return "Home"; } }
         public Command<MouseButtonEventArgs> RowDoubleClick { get; private set; }
         public Command<MessageModel> ImageSingleClick { get; private set; }
-        public Command<FileSystemEventArgs> OnFileCreatedCmd { get; private set; }
         public Command<MessageModel> MarkAsReadCommand { get; private set; }
         public AsynchronousCommand CheckMessagesCommand { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeWindowViewModel"/> class.
         /// </summary>
-        public HomeWindowViewModel(IUpdateMessagesListTask updateMessagesListTask,IMessageMediator mediator, IPleaseWaitService pleaseWaitService, IFolderWatcher folderWatcher)
+        public HomeWindowViewModel(IUpdateMessagesListTask updateMessagesListTask,IMessageMediator mediator, IPleaseWaitService pleaseWaitService, IFolderWatcher folderWatcher, ITryFindParent tryFindParent)
         {
             this.updateMessagesListTask = updateMessagesListTask;
             this.mediator = mediator;
             this.pleaseWaitService = pleaseWaitService;
             this.folderWatcher = folderWatcher;
+            this.tryFindParent = tryFindParent;
             RowDoubleClick = new Command<MouseButtonEventArgs>(OnRowDoubleClickExecute, OnRowDoubleClickCanExecute);
-            OnFileCreatedCmd = new Command<FileSystemEventArgs>(OnFileCreatedCmdExecute, OnFileCreatedCmdCanExecute, "FileCreatedCommand");
             CheckMessagesCommand = new AsynchronousCommand(OnCheckMessagesCommandExecute, () => !CheckMessagesCommand.IsExecuting);
             MarkAsReadCommand = new Command<MessageModel>(OnMarkAsReadCommandExecute);
             ImageSingleClick = new Command<MessageModel>(OnImageSingleClickExecute);
@@ -75,7 +68,7 @@ namespace EmailInBox.ViewModels
 
         private void OnRowDoubleClickExecute(MouseButtonEventArgs e)
         {
-            if (TryFindParent.Search<GridViewColumnHeader>(e.OriginalSource as DependencyObject) == null)
+            if (tryFindParent.Search<GridViewColumnHeader>(e.OriginalSource as DependencyObject) == null)
             {
                 var source = e.Source as ListView;
                 if (source.SelectedItem == null) return;
@@ -89,17 +82,6 @@ namespace EmailInBox.ViewModels
         {
             MarkedAsRead(message);
             Process.Start(message.Path);
-        }
-
-        
-        private void OnFileCreatedCmdExecute(FileSystemEventArgs e)
-        {
-            CheckMessage();
-        }
-
-        private bool OnFileCreatedCmdCanExecute(FileSystemEventArgs e)
-        {
-            return true;
         }
 
         private void OnMarkAsReadCommandExecute(MessageModel e)
@@ -143,7 +125,7 @@ namespace EmailInBox.ViewModels
 
         #region private method
         [MessageRecipient(Tag = "balloonClicked")]
-        private void MarkedAsRead(MessageModel selectedMessage)
+        public void MarkedAsRead(MessageModel selectedMessage)
         {
             DispatcherHelper.CurrentDispatcher.Invoke((Action)(() =>
             {
@@ -180,6 +162,8 @@ namespace EmailInBox.ViewModels
                 mediator.SendMessage(message, "newMessage");
             }
         }
+
+        
 
         #endregion
     }

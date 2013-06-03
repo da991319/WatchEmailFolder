@@ -87,33 +87,33 @@ namespace TestEmailInbox
             }
         }
 
-        //public class when_quit_menu_item_click_is_triggered : ContextSpec<MainWindowViewModel>
-        //{
-        //    private Application application;
-
-        //    [Test]
-        //    public void it_should_have_set_true_exit_to_true()
-        //    {
-        //        sut.trueExit.ShouldBeTrue();
-        //    }
-
-        //    [Test]
-        //    public void it_should_have_close_the_application()
-        //    {
-        //        application.ShouldHaveBeenToldTo(x => x.MainWindow.Close());
-        //    }
-
-        //    protected override void UnderTheseConditions()
-        //    {
-        //        application = MakeMock<Application>();
-
-        //        application.Setup(x => x.MainWindow, new Window());
-        //    }
-
-        //    protected override void BecauseOf()
-        //    {
-        //        sut.QuitMenuItemClickCommand.Execute();
-        //    }
-        //}
+//        public class when_quit_menu_item_click_is_triggered : ContextSpec<MainWindowViewModel>
+//        {
+//            private Application application;
+//
+//            [Test]
+//            public void it_should_have_set_true_exit_to_true()
+//            {
+//                sut.trueExit.ShouldBeTrue();
+//            }
+//
+//            [Test]
+//            public void it_should_have_close_the_application()
+//            {
+//                application.ShouldHaveBeenToldTo(x => x.MainWindow.Close());
+//            }
+//
+//            protected override void UnderTheseConditions()
+//            {
+//                application = MakeMock<Application>();
+//
+//                application.Setup(x => x.MainWindow, new Window());
+//            }
+//
+//            protected override void BecauseOf()
+//            {
+//                sut.QuitMenuItemClickCommand.Execute();
+//            }
+//        }
     }
 }

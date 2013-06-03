@@ -4,9 +4,14 @@ using System.Windows.Media;
 
 namespace EmailInBox.Utils
 {
-    public static class TryFindParent
+    public interface ITryFindParent
     {
-        public static T Search<T>(DependencyObject current) where T : class
+        T Search<T>(DependencyObject current) where T : class;
+    }
+
+    public class TryFindParent : ITryFindParent
+    {
+        public T Search<T>(DependencyObject current) where T : class
         {
             DependencyObject parent = VisualTreeHelper.GetParent(current);
 
