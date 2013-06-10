@@ -8,7 +8,6 @@ using EmailInBox.Utils;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,6 +22,7 @@ namespace EmailInBox.ViewModels
         private readonly IPleaseWaitService pleaseWaitService;
         private readonly IFolderWatcher folderWatcher;
         private readonly ITryFindParent tryFindParent;
+        private readonly IOpenEmailFile openEmailFile;
         private readonly IUpdateMessagesListTask updateMessagesListTask;
         private readonly IMessageMediator mediator;
         private string folderToWatch ;
@@ -36,13 +36,14 @@ namespace EmailInBox.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeWindowViewModel"/> class.
         /// </summary>
-        public HomeWindowViewModel(IUpdateMessagesListTask updateMessagesListTask,IMessageMediator mediator, IPleaseWaitService pleaseWaitService, IFolderWatcher folderWatcher, ITryFindParent tryFindParent)
+        public HomeWindowViewModel(IUpdateMessagesListTask updateMessagesListTask,IMessageMediator mediator, IPleaseWaitService pleaseWaitService, IFolderWatcher folderWatcher, ITryFindParent tryFindParent, IOpenEmailFile openEmailFile)
         {
             this.updateMessagesListTask = updateMessagesListTask;
             this.mediator = mediator;
             this.pleaseWaitService = pleaseWaitService;
             this.folderWatcher = folderWatcher;
             this.tryFindParent = tryFindParent;
+            this.openEmailFile = openEmailFile;
             RowDoubleClick = new Command<MouseButtonEventArgs>(OnRowDoubleClickExecute, OnRowDoubleClickCanExecute);
             CheckMessagesCommand = new AsynchronousCommand(OnCheckMessagesCommandExecute, () => !CheckMessagesCommand.IsExecuting);
             MarkAsReadCommand = new Command<MessageModel>(OnMarkAsReadCommandExecute);
@@ -68,20 +69,13 @@ namespace EmailInBox.ViewModels
 
         private void OnRowDoubleClickExecute(MouseButtonEventArgs e)
         {
-            if (tryFindParent.Search<GridViewColumnHeader>(e.OriginalSource as DependencyObject) == null)
-            {
-                var source = e.Source as ListView;
-                if (source.SelectedItem == null) return;
-                var selectedMessage = source.SelectedItem as MessageModel;
-                MarkedAsRead(selectedMessage);
-                Process.Start(selectedMessage.Path);
-            }
+            ReadAndOpenMessage(e.OriginalSource as DependencyObject, e.Source as ListView);
         }
 
         private void OnImageSingleClickExecute(MessageModel message)
         {
             MarkedAsRead(message);
-            Process.Start(message.Path);
+            openEmailFile.Execute(message.Path);
         }
 
         private void OnMarkAsReadCommandExecute(MessageModel e)
@@ -163,7 +157,16 @@ namespace EmailInBox.ViewModels
             }
         }
 
-        
+        public void ReadAndOpenMessage(DependencyObject originalSource, ListView source)
+        {
+            if (tryFindParent.Search<GridViewColumnHeader>(originalSource) == null)
+            {
+                if (source.SelectedItem == null) return;
+                var selectedMessage = source.SelectedItem as MessageModel;
+                MarkedAsRead(selectedMessage);
+                openEmailFile.Execute(selectedMessage.Path);
+            }
+        }
 
         #endregion
     }

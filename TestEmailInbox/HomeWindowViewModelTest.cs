@@ -1,7 +1,9 @@
 ﻿
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using EmailInBox.Models;
 using EmailInBox.Utils;
@@ -44,28 +46,36 @@ namespace TestEmailInbox
 
         public class when_double_clicking_on_a_row : ContextSpec<HomeWindowViewModel>
         {
-            private MouseButtonEventArgs param;
+            private readonly IOpenEmailFile openEmailFile;
             private MessageModel message;
             private readonly ITryFindParent tryFindParent;
+            private DependencyObject originalSource;
+            ListView source;
 
             [Test]
             public void it_should_have_called_marked_as_read()
             {
-                sut.ShouldHaveBeenToldTo(x => x.MarkedAsRead(message));
+                message.NewEmail.ShouldBeFalse();
+            }
+
+            [Test]
+            public void it_should_have_open_the_email()
+            {
+                openEmailFile.ShouldHaveBeenToldTo(x => x.Execute(message.Path));
             }
 
             protected override void UnderTheseConditions()
             {
-                var mouseDevice = Mouse.PrimaryDevice;
-                param = new MouseButtonEventArgs(mouseDevice,2, MouseButton.Left ) {Source = new ListView()};
-                //param.Setup(x => x.Source, new ListView());
-
-                tryFindParent.Setup(x => x.Search<GridViewColumnHeader>(param.OriginalSource as DependencyObject), null);
+                originalSource = new DependencyObject();
+                message = new MessageModel{NewEmail = true, Path = ""};
+                tryFindParent.Setup(x => x.Search<GridViewColumnHeader>(originalSource), null);
+                source = new ListView {ItemsSource = new List<MessageModel>{new MessageModel(), message}, SelectedItem = message};
+                sut.Messages = new ObservableCollection<MessageModel>{new MessageModel(), message};
             }
 
             protected override void BecauseOf()
             {
-                sut.RowDoubleClick.Execute(param);
+                sut.ReadAndOpenMessage(originalSource, source);
             }
         }
     }

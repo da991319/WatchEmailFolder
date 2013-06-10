@@ -27,6 +27,8 @@ namespace EmailInBox
             ServiceLocator.Default.RegisterType<IUpdateMessagesListTask, UpdateMessagesListTask>(RegistrationType.Transient);
             ServiceLocator.Default.RegisterType<IFolderWatcher, FolderWatcher>(RegistrationType.Singleton);
             ServiceLocator.Default.RegisterType < ITryFindParent, TryFindParent>(RegistrationType.Transient);
+            ServiceLocator.Default.RegisterType<IUpdateMessagesListTask, UpdateMessagesListTask>(RegistrationType.Transient);
+            ServiceLocator.Default.RegisterType<IOpenEmailFile, OpenEmailFile>(RegistrationType.Transient);
 #if DEBUG
             Catel.Logging.LogManager.RegisterDebugListener();
 #endif
